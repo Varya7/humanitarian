@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:gravity="center"
+    android:paddingStart="40dp"
+    android:paddingEnd="40dp"
+    android:background="@drawable/background_b"
+    tools:context=".RegisterC">
+
+    <TextView
+        android:text="@string/register_center"
+        android:textSize="25sp"
+android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="serif"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/name_center"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:hint="@string/center_name"
+android:layout_marginEnd="40dp"
+        android:fontFamily="sans-serif"
+        android:layout_marginStart="40dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        />
+
+    <EditText
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+android:layout_marginEnd="40dp"
+android:maxLines="3"
+        android:scrollbars="vertical"
+        android:fontFamily="sans-serif"
+        android:layout_marginStart="40dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hint="@string/address"
+        />
+
+    <EditText
+        android:id="@+id/work_time"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:hint="Часы работы"
+        android:fontFamily="sans-serif"
+        android:layout_marginStart="40dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_marginEnd="40dp"
+        />
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginEnd="40dp"
+android:fontFamily="sans-serif"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_marginStart="40dp"
+
+        android:hint="@string/email"
+        />
+  <EditText
+        android:id="@+id/fio"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+      android:layout_marginStart="40dp"
+      android:layout_marginEnd="40dp"
+      android:focusable="true"
+      android:focusableInTouchMode="true"
+      android:fontFamily="sans-serif"
+        android:hint="ФИО представителя"
+        />
+
+    <EditText
+        android:id="@+id/phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:hint="Контактный телефон"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:fontFamily="sans-serif"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"        />
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:hint="@string/password"
+        android:fontFamily="sans-serif"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="15dp"
+        />
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+    <Button
+        android:id="@+id/btn_register"
+        android:text="Далее"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape"
+        android:textSize="15sp"
+        android:paddingHorizontal="10dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:fontFamily="sans-serif"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        />
+    <TextView
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:id="@+id/loginNow"
+        android:text="@string/click_to_login"
+        android:fontFamily="sans-serif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:id="@+id/reg_u"
+        android:text="@string/register_user"
+android:fontFamily="sans-serif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

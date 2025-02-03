@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "639385855927",
+    "firebase_url": "https://hum1-e8060-default-rtdb.firebaseio.com",
+    "project_id": "hum1-e8060",
+    "storage_bucket": "hum1-e8060.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639385855927:android:9d4a289be5d54212772a32",
+        "android_client_info": {
+          "package_name": "com.example.hum1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrkSzwfDbVUOK213Kw29NoUz1eG1C3FvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

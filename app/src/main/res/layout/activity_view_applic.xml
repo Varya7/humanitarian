@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:paddingTop="50dp"
+    android:padding="15dp"
+    android:background="@drawable/background_b"
+    >
+
+    <TextView
+        android:paddingTop="20dp"
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Дата"
+        android:textSize="20sp"
+        android:padding="8dp"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Время"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:padding="8dp"
+        android:fontFamily="sans-serif"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Почта"
+        android:padding="8dp"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/black"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/fio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FIO"
+android:fontFamily="sans-serif"
+        android:padding="8dp"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        tools:ignore="MissingConstraints" />
+
+
+    <TextView
+        android:id="@+id/phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Номер телефона"
+        android:fontFamily="sans-serif"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:padding="8dp"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/birth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Дата рождения"
+        android:padding="8dp"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif"
+        tools:ignore="MissingConstraints"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/family_members"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Количество членов семьи"
+        android:padding="8dp"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif"
+        tools:ignore="MissingConstraints"
+        android:textSize="20sp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:maxHeight="50dp">
+    <TextView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Список вещей"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif"
+        tools:ignore="MissingConstraints"
+        android:padding="8dp"
+        android:textSize="20sp"/>
+</ScrollView>
+
+    <TextView
+        android:id="@+id/center"
+        android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+        android:text="Центр"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif"
+        android:padding="8dp"
+        android:textSize="20sp"
+        />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hello world!"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif"
+        tools:ignore="MissingConstraints"
+        android:padding="8dp"
+        android:textSize="20sp"
+        />
+
+    <TextView
+        android:id="@+id/comm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hello world!"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif"
+        tools:ignore="MissingConstraints"
+        android:padding="8dp"
+        android:textSize="20sp"
+        />
+
+
+</LinearLayout>

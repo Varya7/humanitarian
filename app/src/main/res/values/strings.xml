@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">hum1</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="login">Вход</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+    <string name="register">Регистрация</string>
+    <string name="click_to_login">Вход в аккаунт</string>
+    <string name="click_to_register">Регистрация аккаунта</string>
+    <string name="logout">Выход</string>
+    <string name="name">Имя</string>
+    <string name="surname">Фамилия</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="registration_of_the_center">Регистрация центра</string>
+    <string name="center_name">Название центра</string>
+    <string name="address">Адрес</string>
+    <string name="register_center">Регистрация центра</string>
+    <string name="reg_center">Регистрация центра</string>
+    <string name="register_user">Регистрация аккаунта</string>
+    <string name="title_activity_app_true">Одобрено</string>
+    <string name="title_activity_app_false">Отклонено</string>
+    <string name="title_activity_map_c">MapActivityC</string>
+</resources>
