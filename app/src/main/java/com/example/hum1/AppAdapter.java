@@ -44,6 +44,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
         Application app = applications.get(position);
         holder.date.setText("Дата: " + app.getDate());
         holder.time.setText("Время: " + app.getTime());
+
         //holder.email.setText(app.getEmail());
         //holder.name.setText(app.getName());
         //holder.surname.setText(app.getSurname());

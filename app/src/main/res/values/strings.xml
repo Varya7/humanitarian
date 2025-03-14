@@ -23,4 +23,5 @@
     <string name="title_activity_app_true">Одобрено</string>
     <string name="title_activity_app_false">Отклонено</string>
     <string name="title_activity_map_c">MapActivityC</string>
+    <string name="title_activity_view_applic_qr">ViewApplicQR</string>
 </resources>

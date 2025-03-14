@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,7 +33,7 @@ public class ViewApplic extends AppCompatActivity {
 
     TextView centerV, statusV, dateV, timeV, emailV, fioV, phone_numberV, birthV, family_membersV, listV, comV;
     String date, time, email, fio, phone_number, birth, family_members, list, status, com;
-
+    Button qrcode;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class ViewApplic extends AppCompatActivity {
         centerV = findViewById(R.id.center);
         statusV = findViewById(R.id.status);
         comV = findViewById(R.id.comm);
-
+        qrcode = findViewById(R.id.qrcode);
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
         String id = bundle.getString("id");
@@ -120,6 +121,21 @@ public class ViewApplic extends AppCompatActivity {
                     } else {
                         Log.d("firebase", "No data available");
                     }
+                }
+            }
+        });
+
+        qrcode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if ("Одобрено".equals(status))
+                {
+                    Intent intent = new Intent(getApplicationContext(), QRcodeActivity.class);
+                    intent.putExtra("id", id);
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(ViewApplic.this, "Генерация QR-ода доступна после одобрения заявки", Toast.LENGTH_SHORT).show();
                 }
             }
         });

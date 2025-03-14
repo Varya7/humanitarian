@@ -30,11 +30,10 @@
         android:paddingTop="20dp"
         android:id="@+id/email"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="wrap_content"
         android:text="Hello World!"
         android:textSize="20sp"
         android:padding="8dp"
-        android:gravity="center"
         android:textColor="@color/black"
         android:fontFamily="sans-serif"
         tools:ignore="MissingConstraints" />
@@ -43,11 +42,10 @@
         android:paddingTop="20dp"
         android:id="@+id/fio"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="wrap_content"
         android:text="Hello World!"
         android:textSize="20sp"
         android:padding="8dp"
-        android:gravity="center"
         android:textColor="@color/black"
         android:fontFamily="sans-serif"
         tools:ignore="MissingConstraints" />
@@ -56,10 +54,9 @@
         android:paddingTop="20dp"
         android:id="@+id/birth"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="wrap_content"
         android:text="Hello World!"
         android:textSize="20sp"
-        android:gravity="center"
         android:padding="8dp"
         android:textColor="@color/black"
         android:fontFamily="sans-serif"
@@ -69,11 +66,10 @@
         android:paddingTop="20dp"
         android:id="@+id/phone_number"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="wrap_content"
         android:text="Hello World!"
         android:textSize="20sp"
         android:padding="8dp"
-        android:gravity="center"
         android:textColor="@color/black"
         android:fontFamily="sans-serif"
         tools:ignore="MissingConstraints" />
@@ -147,6 +143,7 @@
         android:layout_height="wrap_content" />
 
 </LinearLayout>
+    
 </ScrollView>
 
 <com.google.android.material.bottomnavigation.BottomNavigationView

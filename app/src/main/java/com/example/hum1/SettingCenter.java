@@ -95,6 +95,8 @@ public class SettingCenter extends AppCompatActivity {
             }
         });
 
+
+
         logoutV.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -159,22 +161,12 @@ edit_listB.setOnClickListener(new View.OnClickListener() {
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                    if (item.getItemId()==R.id.navigation_true){
-                        Intent intent = new Intent(SettingCenter.this, AppTrue.class);
-                        startActivity(intent);
-                        return true;
-                    }
-                    else if (item.getItemId()== R.id.navigation_see){
+                    if (item.getItemId()== R.id.navigation_see){
                         Intent intent = new Intent(SettingCenter.this, MainActivity2.class);
                         startActivity(intent);
                         return true;
                     }
-                    else if (item.getItemId()== R.id.navigation_false){
-                        Intent intent = new Intent(SettingCenter.this, AppFalse.class);
-                        startActivity(intent);
-                        return true;
-                    }
+
                     else if (item.getItemId() == R.id.navigation_setting){
                         return true;
                     }

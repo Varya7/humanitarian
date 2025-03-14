@@ -2,34 +2,44 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label=""
+        android:label="Гуманитарная помощь"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-
         android:theme="@style/Theme.AppCompat.Light"
         tools:targetApi="31">
-
+        <activity
+            android:name=".ViewApplicQR"
+            android:exported="false"
+            android:label="@string/title_activity_view_applic_qr" />
+        <activity
+            android:name=".ScanActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".QRcodeActivity"
+            android:exported="true" />
         <activity
             android:name=".MapActivityC"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light">
-
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".MapActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light">
-
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".MainActivity3"
             android:exported="false"
@@ -93,8 +103,7 @@
         <activity
             android:name=".MainActivity2"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light"
-            />
+            android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".RegisterC"
             android:exported="false"

@@ -4,67 +4,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_b"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-
-
+    <!-- LinearLayout для Spinner -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="20dp">
 
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center" />
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
-            android:paddingTop="50dp"
-
-
+            android:paddingTop="20dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-    </LinearLayout>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        >
-
-
-
+        
         <Button
             android:id="@+id/appl"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-        android:paddingHorizontal="10dp"
-        android:fontFamily="sans-serif"
-        android:text="Подать заявку"
-        android:background="@drawable/shape"
-        android:gravity="center"
-        android:textSize="15sp"
-        android:textColor="@color/white" />
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:fontFamily="sans-serif"
+            android:text="Подать заявку"
+            android:background="@drawable/shape"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="10dp" />
+    </FrameLayout>
 
-
-    </LinearLayout>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="10dp" />
-
+    <!-- BottomNavigationView -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:background="@drawable/shape1"
-        app:menu="@menu/lower_menu_user"/>
-
+        app:menu="@menu/lower_menu_user" />
 </LinearLayout>

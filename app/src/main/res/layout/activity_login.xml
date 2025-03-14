@@ -51,6 +51,8 @@
     android:textColorHint="#616161"
          />
 
+    <Space android:layout_height="20dp"
+         android:layout_width="match_parent"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

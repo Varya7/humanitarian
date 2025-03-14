@@ -23,7 +23,6 @@
 
         android:textSize="20sp"
         android:padding="8dp"
-        android:gravity="center"
         android:textColor="@color/black"
         android:fontFamily="sans-serif"
         tools:ignore="MissingConstraints" />
@@ -38,7 +37,6 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:padding="8dp"
-        android:gravity="center"
         android:textColor="@color/black"
         android:fontFamily="sans-serif"
         tools:ignore="MissingConstraints" />
@@ -52,7 +50,6 @@
         android:textSize="20sp"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:gravity="center"
         android:padding="8dp"
         android:textColor="@color/black"
         android:fontFamily="sans-serif"
@@ -66,7 +63,6 @@
 
         android:textSize="20sp"
         android:padding="8dp"
-        android:gravity="center"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:textColor="@color/black"
@@ -83,7 +79,6 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:padding="8dp"
-        android:gravity="center"
         android:textColor="@color/black"
         android:fontFamily="sans-serif"
         tools:ignore="MissingConstraints" />
@@ -97,7 +92,6 @@
 
         android:textSize="20sp"
         android:padding="8dp"
-        android:gravity="center"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:textColor="@color/black"

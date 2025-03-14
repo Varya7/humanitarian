@@ -54,8 +54,8 @@ public class AppFalse extends AppCompatActivity {
         }
         setContentView(R.layout.activity_app_false);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
+        //BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        //bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
@@ -157,33 +157,6 @@ public class AppFalse extends AppCompatActivity {
 
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                    if (item.getItemId()==R.id.navigation_true){
-                        Intent intent = new Intent(AppFalse.this, AppTrue.class);
-                        startActivity(intent);
-                        return true;
-                    }
-                    else if (item.getItemId()== R.id.navigation_see){
-                        Intent intent = new Intent(AppFalse.this, MainActivity2.class);
-                        startActivity(intent);
-                        return true;
-                    }
-                    else if (item.getItemId()== R.id.navigation_false){
-
-                        return true;
-                    }
-                    else if (item.getItemId() == R.id.navigation_setting){
-                        Intent intent = new Intent(AppFalse.this, SettingCenter.class);
-                        startActivity(intent);
-                        return true;
-                    }
-                    return false;
-                }
-            };
 
 
     private void setInitialData(){

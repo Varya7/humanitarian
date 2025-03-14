@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/navigation_true"
-        android:icon="@drawable/ic_check"
-        android:title="Одобрено" />
+
     <item
         android:id="@+id/navigation_see"
 android:icon="@drawable/ic_clock"
-        android:title="Рассмотреть" />
-    <item
-        android:id="@+id/navigation_false"
-    android:icon="@drawable/ic_cross"
-        android:title="Отклонено" />
+        android:title="Заявки" />
+
     <item
         android:id="@+id/navigation_setting"
         android:icon="@drawable/ic_account"

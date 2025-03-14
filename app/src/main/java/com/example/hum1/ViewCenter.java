@@ -79,8 +79,8 @@ public class ViewCenter extends AppCompatActivity {
                         address = snapshot.child("address").getValue(String.class);
                         center_name = snapshot.child("center_name").getValue(String.class);
                         list = snapshot.child("list_c").getValue(String.class);
-                        latitude = Double.valueOf(snapshot.child("latitude").getValue(String.class));
-                        longitude = Double.valueOf(snapshot.child("longitude").getValue(String.class));
+                        latitude = Double.valueOf(snapshot.child("latitude").getValue(Double.class));
+                        longitude = Double.valueOf(snapshot.child("longitude").getValue(Double.class));
                         fioV.setText("ФИО представителя: " + fio);
                         work_timeV.setText("Часы работы: " + work_time);
                         emailV.setText("Email: " + email);

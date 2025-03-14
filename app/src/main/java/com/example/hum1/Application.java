@@ -1,10 +1,5 @@
 package com.example.hum1;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 public class Application {
     private String id_appl, date, time, email, fio, phone_number, birth, family_members, list;
 
@@ -37,6 +32,8 @@ public class Application {
     public void setDate(String date){
         this.date = date;
     }
+
+
     public String getTime(){
         return this.time;
     }
