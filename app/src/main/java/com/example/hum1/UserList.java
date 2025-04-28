@@ -25,10 +25,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserList extends AppCompatActivity {
 
@@ -38,6 +41,8 @@ public class UserList extends AppCompatActivity {
     FirebaseUser user;
     FirebaseAuth auth;
 private CenterAdapter adapter;
+    private DatabaseReference listCRef;
+    private List<String> listC;
     private String id, userId, role,  center_name, address, email, fio, work_time, phone_number, list;
 
     @SuppressLint("MissingInflatedId")
@@ -49,19 +54,20 @@ private CenterAdapter adapter;
             getSupportActionBar().hide();
         }
         setContentView(R.layout.activity_user_list);
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
-
         SearchView searchView = findViewById(R.id.searchView);
-
         mDatabase = FirebaseDatabase.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         assert user != null;
         userId = user.getUid();
-        //setInitialData();
-         RecyclerView recyclerView = findViewById(R.id.list);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        listCRef = database.getReference("list_c");
+        listC = new ArrayList<>();
+        readListC();
+        RecyclerView recyclerView = findViewById(R.id.list);
 
         CenterAdapter.OnCenterClickListener centerClickListener = new CenterAdapter.OnCenterClickListener() {
             @Override
@@ -91,26 +97,24 @@ private CenterAdapter adapter;
                     Log.e("firebase", "Error getting data", task.getException());
                 } else {
                     DataSnapshot snapshot = task.getResult();
-                    //textView.setText(snapshot.toString());
-                    //заполнить лист, с помощью конструктора создать объекты и заполнить массив
-                    //
+
                     if (snapshot.exists()) {
                         for (DataSnapshot applicationSnapshot : snapshot.getChildren()) {
                             role = applicationSnapshot.child("role").getValue(String.class);
                             if (role.equals("center")) {
-                                center_name = applicationSnapshot.child("center_name").getValue(String.class);
-                                address = applicationSnapshot.child("address").getValue(String.class);
-                                email = applicationSnapshot.child("email").getValue(String.class);
-                                fio = applicationSnapshot.child("fio").getValue(String.class);
-                                work_time = applicationSnapshot.child("work_time").getValue(String.class);
-                                phone_number = applicationSnapshot.child("phone_number").getValue(String.class);
+                                String status = applicationSnapshot.child("status").getValue(String.class);
+                                if (status.equals("Одобрено")) {
+                                    center_name = applicationSnapshot.child("center_name").getValue(String.class);
+                                    address = applicationSnapshot.child("address").getValue(String.class);
+                                    email = applicationSnapshot.child("email").getValue(String.class);
+                                    fio = applicationSnapshot.child("fio").getValue(String.class);
+                                    work_time = applicationSnapshot.child("work_time").getValue(String.class);
+                                    phone_number = applicationSnapshot.child("phone_number").getValue(String.class);
+                                    id = applicationSnapshot.child("id").getValue(String.class);
+                                    centers.add(new Center(id, center_name, address, email, fio, work_time, phone_number, list));
+                                }
+                                }
 
-                                list = applicationSnapshot.child("list_c").getValue(String.class);//Application application = new Application(date, time, email, name, surname, phone_number, birth, family_members, list);
-                                id = applicationSnapshot.child("id").getValue(String.class);
-                                centers.add(new Center(id, center_name, address, email, fio, work_time, phone_number, list));
-                            }
-                            //    setInitialData();
-                            // Добавляем в список
                         }
 
                         adapter.notifyDataSetChanged();
@@ -171,13 +175,37 @@ private CenterAdapter adapter;
         for (Center center : centers) {
             if (center.getCenter_name().toLowerCase().contains(text.toLowerCase())||
                     center.getAddress().toLowerCase().contains(text.toLowerCase()) ||
-                    center.getFIO().toLowerCase().contains(text.toLowerCase()) ||
-                    center.getList().toLowerCase().contains(text.toLowerCase()))
+                    center.getFIO().toLowerCase().contains(text.toLowerCase()))
             {
                 filteredList.add(center);
             }
         }
         adapter.updateList(filteredList);
+    }
+
+    private void readListC() {
+        listCRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listC.clear();
+                for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
+                    String item = itemSnapshot.getValue(String.class);
+                    if (item != null) {
+                        listC.add(item);
+                    }
+                }
+
+                Log.d("FirebaseData", "Список list_c: " + listC.toString());
+
+
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("FirebaseError", "Ошибка чтения list_c", databaseError.toException());
+            }
+        });
     }
 
 }

@@ -1,87 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:paddingTop="?attr/actionBarSize"
-    android:paddingStart="40dp"
-    android:paddingEnd="40dp"
-    android:background="@drawable/background_b"
-    >
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/center_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello world!"
-        android:fontFamily="sans-serif"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:padding="25dp"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:id="@+id/date"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:fontFamily="sans-serif"
-        android:padding="8dp"
-        android:hint="Дата"
-        />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:id="@+id/time"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:hint="Время"
-        android:fontFamily="sans-serif"
-        android:padding="8dp"
-        />
-
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:id="@+id/fam"
-        android:fontFamily="sans-serif"
-        android:hint="Количество членов семьи"
-        android:padding="8dp"
-        />
-
-
-    <EditText
+    <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/list"
-        android:fontFamily="sans-serif"
-        android:hint="Список вещей"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_marginBottom="15dp"
-        android:padding="8dp"
-        android:maxLines="5"
-        android:scrollbars="vertical"
-        />
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="?attr/actionBarSize"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:background="@drawable/background_b">
+
+        <TextView
+            android:id="@+id/center_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Загрузка..."
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:padding="25dp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/date"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:fontFamily="sans-serif"
+            android:padding="8dp"
+            android:hint="Дата"
+            android:inputType="date"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/time"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="Время"
+            android:fontFamily="sans-serif"
+            android:padding="8dp"
+            android:inputType="time"/>
 
 
-    <Button
-        android:id="@+id/appl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="10dp"
-        android:fontFamily="sans-serif"
-        android:text="Подать заявку"
-        android:padding="10dp"
-        android:background="@drawable/shape"
-        android:textSize="15sp"
-        android:textColor="@color/white"
-        />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_list2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"/>
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"/>
+
+        <Button
+            android:id="@+id/appl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:fontFamily="sans-serif"
+            android:text="Подать заявку"
+            android:padding="10dp"
+            android:background="@drawable/shape"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
+</ScrollView>

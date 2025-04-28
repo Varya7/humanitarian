@@ -1,5 +1,6 @@
 package com.example.hum1;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,35 +25,47 @@ import com.google.android.gms.tasks.Task;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private ActivityMainBinding binding;
 
     FirebaseAuth auth;
     Button appl;
     Spinner spinner;
+    Integer currentId = 0;
+    private RecyclerView recyclerView, recyclerView2;
 
-    EditText editTextDate, editTextTime, editTextList, editTextFam;
+    EditText editTextDate, editTextTime;
     FirebaseUser user;
-    String userId = "", role = "", email = "", phone_number = "", fio = "", birth = "";
+    String userId = "", role = "", email = "", phone_number = "", fio = "", birth = "", idC = "";
     String[] centers;
+    private ListAdapter2 adapter1;
+    private ListU2Adapter adapter2;
     String center;
     private DatabaseReference mDatabase;
+    private ArrayList<Map<String, String>> listC;
     ArrayAdapter<String> adapter;
-    List<String> centerNames;
+    List<String> centerNames, centersId;
+    View view;
+    List<ListU2> listU;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_main);
         centerNames = new ArrayList<>();
+        centersId = new ArrayList<>();
         spinner = findViewById(R.id.center);
         auth = FirebaseAuth.getInstance();
         appl = findViewById(R.id.appl);
@@ -69,12 +83,25 @@ public class MainActivity extends AppCompatActivity {
 
         editTextDate = findViewById(R.id.date);
         editTextTime = findViewById(R.id.time);
-        editTextList = findViewById(R.id.list);
-        editTextFam = findViewById(R.id.fam);
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userId = user.getUid();
 
-        //List<String>centers  = new ArrayList<>();
+        listC = new ArrayList<>();
+        adapter1 = new ListAdapter2(listC);
+        recyclerView = findViewById(R.id.recyclerView_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter1);
+
+
+        listU = new ArrayList<>();
+        adapter2 = new ListU2Adapter(listU);
+        recyclerView2 = findViewById(R.id.recyclerView_list2);
+        recyclerView2.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView2.setAdapter(adapter2);
+        recyclerView2.setNestedScrollingEnabled(false);
+
+
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,8 +117,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //id пользователя к заявке, добавить статус
-
         mDatabase.child("Users").child(userId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -100,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
-                        // Извлекаем роль
+
                         role = snapshot.child("role").getValue(String.class);
 
                         fio = snapshot.child("fio").getValue(String.class);
@@ -124,19 +149,19 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
-                        // Инициализируем список для хранения имен
                         for (DataSnapshot centerSnapshot : snapshot.getChildren()) {
-                            String name = centerSnapshot.child("center_name").getValue(String.class); // Извлекаем имя
+                            String name = centerSnapshot.child("center_name").getValue(String.class);
+                            String id = centerSnapshot.child("id").getValue(String.class);
                             if (name != null) {
 
                                 centerNames.add(name);
+                                centersId.add(id);
                             }
                         }
                         adapter.notifyDataSetChanged();
 
 
-                        //  Log.d("firebase", "Center Names: " + Arrays.toString(NamesC)); // Логируем массив имен
-                    } else {
+                        } else {
                         Log.e("firebase", "No data found");
 
                     }
@@ -145,9 +170,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, centerNames);
-        // Определяем разметку для использования при выборе элемента
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Применяем адаптер к элементу spinner
         spinner.setAdapter(adapter);
 
         if (user == null) {
@@ -159,11 +182,13 @@ public class MainActivity extends AppCompatActivity {
         AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                // Получаем выбранный объект
                 String item = (String) parent.getItemAtPosition(position);
                 center = item;
-                //selection.setText(item);
+                currentId = position;
+                if (!centersId.isEmpty() && currentId < centersId.size()) {
+                    loadListData(centersId.get(currentId));
+                    loadListUData(centersId.get(currentId));
+                }
             }
 
             @Override
@@ -173,92 +198,92 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(itemSelectedListener);
 
 
+        if (!centerNames.isEmpty()) {
 
-    appl.setOnClickListener(new View.OnClickListener()
-
-    {
-        @Override
-        public void onClick (View view){
-        String fam, time, date, list;
-
-        fam = String.valueOf(editTextFam.getText());
-        time = String.valueOf(editTextTime.getText());
-        date = String.valueOf(editTextDate.getText());
-        list = String.valueOf(editTextList.getText());
-
-        if (TextUtils.isEmpty(fam)) {
-            Toast.makeText(MainActivity.this, "Введите количество членов семьи, на которых подаете заявку", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(time)) {
-            Toast.makeText(MainActivity.this, "Введите время", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(date)) {
-            Toast.makeText(MainActivity.this, "Введите дату", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(list)) {
-            Toast.makeText(MainActivity.this, "Введите список вещей", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(center)) {
-            Toast.makeText(MainActivity.this, "Выберите центр", Toast.LENGTH_SHORT).show();
-            return;
+            loadListData(centersId.get(currentId));
+            loadListUData(centersId.get(currentId));
         }
 
-        HashMap<String, String> applicationInfo = new HashMap<>();
-        applicationInfo.put("email", email);
-        applicationInfo.put("fio", fio);
-        applicationInfo.put("phone_number", phone_number);
-        applicationInfo.put("birth", birth);
-        applicationInfo.put("family_members", fam);
-        applicationInfo.put("date", date);
-        applicationInfo.put("time", time);
-        applicationInfo.put("list", list);
-        applicationInfo.put("center", center);
-        applicationInfo.put("id", userId);
-        applicationInfo.put("status", "Рассматривается");
-        applicationInfo.put("comment", "");
+        appl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String time = editTextTime.getText().toString();
+                String date = editTextDate.getText().toString();
 
-        editTextDate.setText("");
-        editTextTime.setText("");
-        editTextList.setText("");
-        editTextFam.setText("");
 
-            DatabaseReference newApplicationRef = FirebaseDatabase.getInstance().getReference().child("Applications").push();
-// Получение уникального ключа (id) новой заявки
-            String applicationId = newApplicationRef.getKey();
-            applicationInfo.put("id_appl", applicationId);
+                if (TextUtils.isEmpty(time)) {
+                    Toast.makeText(MainActivity.this, "Введите время", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (TextUtils.isEmpty(date)) {
+                    Toast.makeText(MainActivity.this, "Введите дату", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (TextUtils.isEmpty(center)) {
+                    Toast.makeText(MainActivity.this, "Выберите центр", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-// Сохранение данных в Realtime Database
-            newApplicationRef.setValue(applicationInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        // Заявка успешно добавлена
-                        Log.d("Firebase", "Application submitted with ID: " + applicationId);
-                    } else {
-                        // Ошибка при добавлении заявки
-                        Log.e("Firebase", "Failed to submit application", task.getException());
+                // Новый код считывания перед отправкой заявки
+                HashMap<String, String> listUData = new HashMap<>();
+
+                for (int i = 0; i < recyclerView2.getChildCount(); i++) {
+                    View itemView = recyclerView2.getChildAt(i);
+                    EditText editText = itemView.findViewById(R.id.margin);
+                    if (editText != null) {
+                        String text = editText.getText().toString().trim();
+                        if (text.isEmpty()) {
+                            Toast.makeText(MainActivity.this, "Заполните все поля!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String fieldName = listU.get(i).getMargin();
+                        listUData.put(fieldName, text);
                     }
                 }
-            });
+
+                HashMap<String, Object> applicationInfo = new HashMap<>();
+                applicationInfo.put("email", email);
+                applicationInfo.put("fio", fio);
+                applicationInfo.put("phone_number", phone_number);
+                applicationInfo.put("birth", birth);
+                applicationInfo.put("date", date);
+                applicationInfo.put("time", time);
+                applicationInfo.put("center", center);
+                applicationInfo.put("id", userId);
+                applicationInfo.put("status", "Рассматривается");
+                applicationInfo.put("comment", "");
+                applicationInfo.put("list_u", listUData); // СЮДА КЛАДЕМ МАПУ
+
+                Map<String, Integer> selectedItems = adapter1.getSelectedQuantities();
+                applicationInfo.put("selected_items", selectedItems);
+
+                editTextDate.setText("");
+                editTextTime.setText("");
+
+                DatabaseReference newApplicationRef = FirebaseDatabase.getInstance()
+                        .getReference("Applications").push();
+                String applicationId = newApplicationRef.getKey();
+                applicationInfo.put("id_appl", applicationId);
+
+                newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("Firebase", "Заявка успешно подана: " + applicationId);
+                        Toast.makeText(MainActivity.this, "Заявка подана", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MainActivity.this, MyApplications.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Log.e("Firebase", "Ошибка при подаче заявки", task.getException());
+                        Toast.makeText(MainActivity.this, "Ошибка при подаче заявки", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
 
 
 
-        Toast.makeText(MainActivity.this, "Заявка подана", Toast.LENGTH_SHORT).show();
-/*
-            FirebaseDatabase.getInstance().getReference().child("Applications")
-                .push()
-                .setValue(applicationInfo);
-*/
-            Intent intent = new Intent(MainActivity.this, MyApplications.class);
-            startActivity(intent);
-            finish();
-        }
-    });
-}
+
+    }
 
 
     private void showDatePickerDialog() {
@@ -267,9 +292,8 @@ public class MainActivity extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Создаём DatePickerDialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {
-            // Устанавливаем выбранную дату в EditText
+
             String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; // Месяцы начинаются с 0
             editTextDate.setText(selectedDate);
         }, year, month, day);
@@ -290,5 +314,52 @@ public class MainActivity extends AppCompatActivity {
 
         timePickerDialog.show();
     }
+
+    private void loadListData(String centerId) {
+        mDatabase.child("Users").child(centerId).child("list_c").addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listC.clear();
+                for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
+                    Map<String, String> item = (Map<String, String>) itemSnapshot.getValue();
+                    if (item != null && item.containsKey("name") && item.containsKey("quantity")) {
+                        listC.add(item);
+                    }
+                }
+                adapter1.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
+            }
+        });
+    }
+
+    private void loadListUData(String centerId){
+        mDatabase.child("Users").child(centerId).child("list_u").addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listU.clear();
+                for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
+                    String item = (String) itemSnapshot.getValue();
+                    if (item != null) {
+                        listU.add(new ListU2(item));
+                    }
+                }
+                adapter2.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
+            }
+        });
+    }
+
 
 }

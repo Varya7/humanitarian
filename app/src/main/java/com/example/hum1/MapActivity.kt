@@ -1,17 +1,27 @@
 package com.example.hum1
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PointF
+import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
+import android.provider.Settings
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.hum1.MapActivityC.Companion.LOCATION_PERMISSION_REQUEST_CODE
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
@@ -52,17 +62,15 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
 
     lateinit var jambut: Button
     lateinit var locationmapkit: UserLocationLayer
-    //lateinit var searchEdit: EditText
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
     lateinit var searchManager: SearchManager
     lateinit var searchSession: Session
     private var ROUTE_START_LOCATION = Point(51.735475, 36.190570)
     private var ROUTE_END_LOCATION = Point(47.214004, 39.794605)
     private val SCREEN_CENTER = Point(
-         (ROUTE_START_LOCATION.latitude+ROUTE_END_LOCATION.latitude)/2,
-     (ROUTE_START_LOCATION.longitude+ROUTE_END_LOCATION.longitude)/2)
+        (ROUTE_START_LOCATION.latitude+ROUTE_END_LOCATION.latitude)/2,
+        (ROUTE_START_LOCATION.longitude+ROUTE_END_LOCATION.longitude)/2)
     private var mapObjects:MapObjectCollection? = null
     private var drivingRouter: DrivingRouter? = null
     private var drivingSession:DrivingSession? = null
@@ -185,10 +193,6 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
                         latitude = location!!.latitude
                         longitude = location!!.longitude
                         ROUTE_START_LOCATION = Point(latitude, longitude)
-
-                        // Используйте полученные координаты по необходимости
-                    } else {
-                        // Обработка случая, когда местоположение недоступно
                     }
                 }
         } catch (e: SecurityException) {
@@ -205,8 +209,6 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         if (requestCode == MapActivityC.LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLastKnownLocation()
-            } else {
-                // Разрешение не предоставлено, обработайте этот случай
             }
         }
     }
@@ -218,14 +220,14 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         setAnchor(
             PointF((mapview.width() *0.5).toFloat(), (mapview.height()*0.5).toFloat()),
             PointF((mapview.width() *0.5).toFloat(), (mapview.height()*0.83).toFloat()))
-            userLocationView.arrow.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
+        userLocationView.arrow.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
         val picIcon = userLocationView.pin.useCompositeIcon()
         picIcon.setIcon("icon", ImageProvider.fromResource(this, R.drawable.search_result), IconStyle().
         setAnchor(PointF(0f, 0f))
-        .setRotationType(RotationType.ROTATE).setZIndex(0f).setScale(1f)
+            .setRotationType(RotationType.ROTATE).setZIndex(0f).setScale(1f)
         )
         picIcon.setIcon("pin", ImageProvider.fromResource(this, R.drawable.nothing),
-        IconStyle().setAnchor(PointF(0.5f, 0.5f)).setRotationType(RotationType.ROTATE).setZIndex(1f).setScale(0.5f))
+            IconStyle().setAnchor(PointF(0.5f, 0.5f)).setRotationType(RotationType.ROTATE).setZIndex(1f).setScale(0.5f))
         userLocationView.accuracyCircle.fillColor = Color.BLUE and -0x66000001
     }
 
@@ -276,7 +278,7 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
     ) {
         //if(finished){
         //    submitQuery(searchEdit.text.toString())
-       // }
+        // }
     }
 
     override fun onDrivingRoutes(p0: MutableList<DrivingRoute>) {

@@ -23,18 +23,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity3 extends AppCompatActivity {
 
@@ -43,9 +49,14 @@ public class MainActivity3 extends AppCompatActivity {
 
     TextView center_nameV;
     EditText editTextDate, editTextTime, editTextList, editTextFam;
+    private RecyclerView recyclerView, recyclerView2;
+
     FirebaseUser user;
     String userId = "", role = "", email = "", phone_number = "", fio = "", birth = "";
-    String center;
+    private ArrayList<Map<String, String>> listC;
+    private ListAdapter2 adapter1;
+    List<ListU2> listU;
+    private ListU2Adapter adapter2;
     private DatabaseReference mDatabase;
     ArrayAdapter<String> adapter;
 
@@ -67,15 +78,31 @@ public class MainActivity3 extends AppCompatActivity {
         editTextDate = findViewById(R.id.date);
         editTextTime = findViewById(R.id.time);
         editTextList = findViewById(R.id.list);
-        editTextFam = findViewById(R.id.fam);
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userId = user.getUid();
+
+        listC = new ArrayList<>();
+        adapter1 = new ListAdapter2(listC);
+        recyclerView = findViewById(R.id.recyclerView_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter1);
+
+        listU = new ArrayList<>();
+        adapter2 = new ListU2Adapter(listU);
+        recyclerView2 = findViewById(R.id.recyclerView_list2);
+        recyclerView2.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView2.setAdapter(adapter2);
+        recyclerView2.setNestedScrollingEnabled(false);
 
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
         String center_name = bundle.getString("center_name");
-
+        String center_id = bundle.getString("id");
         center_nameV.setText("Подача заявки в центр " + center_name);
+
+        loadListData(center_id);
+        loadListUData(center_id);
 
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +126,6 @@ public class MainActivity3 extends AppCompatActivity {
                 } else {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
-                        // Извлекаем роль
                         role = snapshot.child("role").getValue(String.class);
 
                         fio = snapshot.child("fio").getValue(String.class);
@@ -121,91 +147,66 @@ public class MainActivity3 extends AppCompatActivity {
         }
 
 
-        appl.setOnClickListener(new View.OnClickListener()
 
-        {
+        appl.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick (View view){
-                String fam, time, date, list;
-
-                fam = String.valueOf(editTextFam.getText());
-                time = String.valueOf(editTextTime.getText());
-                date = String.valueOf(editTextDate.getText());
-                list = String.valueOf(editTextList.getText());
+            public void onClick(View view) {
+                String time = editTextTime.getText().toString();
+                String date = editTextDate.getText().toString();
 
 
-                if (TextUtils.isEmpty(fam)) {
-                    Toast.makeText(MainActivity3.this, "Enter family information", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 if (TextUtils.isEmpty(time)) {
-                    Toast.makeText(MainActivity3.this, "Enter time", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity3.this, "Введите время", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (TextUtils.isEmpty(date)) {
-                    Toast.makeText(MainActivity3.this, "Enter date", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(list)) {
-                    Toast.makeText(MainActivity3.this, "Enter list", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (TextUtils.isEmpty(center)) {
-                    Toast.makeText(MainActivity3.this, "Enter center", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity3.this, "Введите дату", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                HashMap<String, String> applicationInfo = new HashMap<>();
+
+
+                HashMap<String, Object> applicationInfo = new HashMap<>();
                 applicationInfo.put("email", email);
                 applicationInfo.put("fio", fio);
                 applicationInfo.put("phone_number", phone_number);
                 applicationInfo.put("birth", birth);
-                applicationInfo.put("family_members", fam);
                 applicationInfo.put("date", date);
+
                 applicationInfo.put("time", time);
-                applicationInfo.put("list", list);
                 applicationInfo.put("center", center_name);
                 applicationInfo.put("id", userId);
                 applicationInfo.put("status", "Рассматривается");
                 applicationInfo.put("comment", "");
 
+                Map<String, Integer> selectedItems = adapter1.getSelectedQuantities();
+                applicationInfo.put("selected_items", selectedItems);
                 editTextDate.setText("");
                 editTextTime.setText("");
-                editTextList.setText("");
+
                 editTextFam.setText("");
 
-                DatabaseReference newApplicationRef = FirebaseDatabase.getInstance().getReference().child("Applications").push();
-// Получение уникального ключа (id) новой заявки
+                DatabaseReference newApplicationRef = FirebaseDatabase.getInstance()
+                        .getReference("Applications").push();
                 String applicationId = newApplicationRef.getKey();
                 applicationInfo.put("id_appl", applicationId);
 
-// Сохранение данных в Realtime Database
-                newApplicationRef.setValue(applicationInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // Заявка успешно добавлена
-                            Log.d("Firebase", "Application submitted with ID: " + applicationId);
-                        } else {
-                            // Ошибка при добавлении заявки
-                            Log.e("Firebase", "Failed to submit application", task.getException());
-                        }
+                newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("Firebase", "Заявка успешно подана: " + applicationId);
+                        Toast.makeText(MainActivity3.this, "Заявка подана", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(MainActivity3.this, MyApplications.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Log.e("Firebase", "Ошибка при подаче заявки", task.getException());
+                        Toast.makeText(MainActivity3.this, "Ошибка при подаче заявки", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
-
-                Toast.makeText(MainActivity3.this, "Заявка подана", Toast.LENGTH_SHORT).show();
-/*
-            FirebaseDatabase.getInstance().getReference().child("Applications")
-                .push()
-                .setValue(applicationInfo);
-*/
-                Intent intent = new Intent(MainActivity3.this, MyApplications.class);
-                startActivity(intent);
-                finish();
             }
         });
+
+
 
     }
 
@@ -241,6 +242,53 @@ public class MainActivity3 extends AppCompatActivity {
         }, hour, minute, true);
 
         timePickerDialog.show();
+    }
+
+    private void loadListData(String centerId) {
+        mDatabase.child("Users").child(centerId).child("list_c").addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listC.clear();
+                for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
+                    // Получаем каждый элемент как Map
+                    Map<String, String> item = (Map<String, String>) itemSnapshot.getValue();
+                    if (item != null && item.containsKey("name") && item.containsKey("quantity")) {
+                        listC.add(item);
+                    }
+                }
+                adapter1.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
+            }
+        });
+    }
+
+    private void loadListUData(String centerId){
+        mDatabase.child("Users").child(centerId).child("list_u").addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listU.clear();
+                for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
+                    String item = (String) itemSnapshot.getValue();
+                    if (item != null) {
+                        listU.add(new ListU2(item));
+                    }
+                }
+                adapter2.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
+            }
+        });
     }
 
 }

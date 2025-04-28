@@ -66,12 +66,6 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
 
     private lateinit var map: Map
     val LOCATION_REQUEST_CODE = 100
-    //private lateinit var fusedLocationClient: FusedLocationProviderClient
-
-    //private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
-    //private var currentLocation: Location? = null
-    //lateinit var locationManager: LocationManager
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
@@ -89,15 +83,15 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
     private var mapObjects:MapObjectCollection? = null
     private var drivingRouter: DrivingRouter? = null
     private var drivingSession:DrivingSession? = null
-        //private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    private var latitude: Double = 67.491552
-    private var longitude: Double = 64.012707
+    private var latitude: Double = 51.735475
+    private var longitude: Double = 36.190570
+
+
 
     private var latitudeM: Double = -1.0
     private var longitudeM: Double = -1.0
-    // This will store current location info
     lateinit var currentLocation: Location
 
 
@@ -124,18 +118,12 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
         }
         setContentView(R.layout.activity_map_c)
 
-        //MapKitFactory.initialize(this)
-
-
 
 
         mapview = findViewById(R.id.mapview)
         enableEdgeToEdge()
 
 
-        //locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        //val hasGps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        //val hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
         jambut = findViewById(R.id.jambut)
         contbut = findViewById(R.id.continueButton)
@@ -158,10 +146,6 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
 
         checkLocationPermission()
 
-        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        //requestLocationUpdates()
-        //getLastKnownLocation()
-        //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest().apply {
 
             interval = TimeUnit.SECONDS.toMillis(60)
@@ -195,8 +179,8 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
             }
             else{
                 val intent = Intent(this, CenterListActivity::class.java)
-                intent.putExtra("latitude", latitudeM) // Replace 123 with your integer value
-                intent.putExtra("longitude", longitudeM) // Replace with your string
+                intent.putExtra("latitude", latitudeM)
+                intent.putExtra("longitude", longitudeM)
                 startActivity(intent)
                 finish()
             }
@@ -242,11 +226,9 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
                 Log.d("MapTap", "Removed previous placemark")
             }
 
-            // Add a new placemark and set it as current
-            currentPlacemark = map.mapObjects.addPlacemark(point, ImageProvider.fromResource(applicationContext, R.drawable.search_result))
-            currentPlacemark?.setIcon(ImageProvider.fromResource(applicationContext, R.drawable.search_result))
+            currentPlacemark = map.mapObjects.addPlacemark(point, ImageProvider.fromResource(applicationContext, R.drawable.user_arrow))
+            currentPlacemark?.setIcon(ImageProvider.fromResource(applicationContext, R.drawable.user_arrow))
 
-            //getAddress(point)
             currentPlacemark?.let { showCoordinates(it.geometry) }
 
         }
@@ -257,11 +239,8 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
                 Log.d("MapTap", "Removed previous placemark")
             }
 
-            // Add a new placemark and set it as current
             currentPlacemark = map.mapObjects.addPlacemark(point, ImageProvider.fromResource(applicationContext, R.drawable.search_result))
             currentPlacemark?.setIcon(ImageProvider.fromResource(applicationContext, R.drawable.search_result))
-
-            //getAddress(point)
             currentPlacemark?.let { showCoordinates(it.geometry) }
 
         }
@@ -274,7 +253,6 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
                 val latitude = geometry.latitude
                 val longitude = geometry.longitude
                 Toast.makeText(applicationContext, "Latitude: $latitude, Longitude: $longitude", Toast.LENGTH_LONG).show()
-                //Do something with coordinates here. For example, log them.
                 latitudeM = latitude
                 longitudeM = longitude
                 Log.d("Coordinates", "Latitude: $latitude, Longitude: $longitude")
@@ -289,18 +267,16 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
 
     private fun placeUserMarker() {
         val userLocation = Point(latitude, longitude)
-        val userMarker = map.mapObjects.addPlacemark(userLocation, ImageProvider.fromResource(this, R.drawable.user_arrow)) // Replace your_marker_icon with your actual icon drawable resource.
+        //val userMarker = map.mapObjects.addPlacemark(userLocation, ImageProvider.fromResource(this, R.drawable.user_arrow)) // Replace your_marker_icon with your actual icon drawable resource.
         mapview.map.move(
             CameraPosition(Point(latitude, longitude), 11.0f, 0.0f, 0.0f),
             Animation(Animation.Type.SMOOTH, 10f), null
         )
 
-        userMarker.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
-        userMarker.isDraggable = false // prevent dragging of the marker
+        //userMarker.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
+        //userMarker.isDraggable = false // prevent dragging of the marker
 
     }
-
-    //////////////////////////
     private fun checkLocationPermission(): Boolean {
         return ActivityCompat.checkSelfPermission(
             this,
@@ -320,8 +296,6 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
         if (requestCode == MapActivityC.LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLastKnownLocation()
-            } else {
-                // Разрешение не предоставлено, обработайте этот случай
             }
         }
     }
@@ -360,14 +334,6 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
                         val location = task.result
                         latitude = location!!.latitude
                         longitude = location!!.longitude
-                            /*Toast.makeText(
-                            this@MapActivityC,
-                            longitude.toString(),
-                            Toast.LENGTH_SHORT
-                        ).show()*/
-                        // Используйте полученные координаты по необходимости
-                    } else {
-                        // Обработка случая, когда местоположение недоступно
                     }
                 }
         } catch (e: SecurityException) {
@@ -384,7 +350,6 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
             LOCATION_PERMISSION_REQUEST_CODE
         )
     }
-    ////
 
     override fun onStop() {
         mapview.onStop()
@@ -429,7 +394,6 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
 
     override fun onSearchResponse(response: Response) {
         val mapObjects: MapObjectCollection = mapview.map.mapObjects
-        //mapObjects.clear()
         for (searchResult in response.collection.children) {
             val resultLocation = searchResult.obj!!.geometry[0].point!!
             if (response != null) {

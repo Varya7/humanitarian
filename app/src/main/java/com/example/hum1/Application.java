@@ -1,9 +1,9 @@
 package com.example.hum1;
 
 public class Application {
-    private String id_appl, date, time, email, fio, phone_number, birth, family_members, list;
+    private String id_appl, date, time, email, fio, phone_number, birth, family_members, list, status;
 
-   public Application(String id_appl, String date, String time, String email, String fio, String phone_number, String birth, String family_members, String list){
+   public Application(String id_appl, String date, String time, String email, String fio, String phone_number, String birth, String family_members, String list, String status){
         this.id_appl = id_appl;
         this.date = date;
         this.time = time;
@@ -13,7 +13,7 @@ public class Application {
         this.birth = birth;
         this.family_members = family_members;
         this.list = list;
-
+        this.status = status;
     }
 
 
@@ -78,5 +78,6 @@ public class Application {
     public void setFamily_members(String family_members){
         this.family_members = family_members;
     }
-
+    public String getStatus(){ return this.status; }
+    public void setStatus(String status) {this.status = status;}
 }

@@ -29,8 +29,6 @@ public class ScanActivity extends AppCompatActivity {
         if (result.getContents() == null) {
             Toast.makeText(this, "Сканирование отменено", Toast.LENGTH_SHORT).show();
         } else {
-            // Обработка результата сканирования
-            //Toast.makeText(this, "Результат: " + result.getContents(), Toast.LENGTH_LONG).show();
             Intent intent = new Intent(getApplicationContext(), ViewApplicQR.class);
             intent.putExtra("id", result.getContents());
             startActivity(intent);
@@ -54,7 +52,6 @@ public class ScanActivity extends AppCompatActivity {
         options.setBeepEnabled(true);
         options.setBarcodeImageEnabled(true);
 
-        // Запуск сканера
         qrLauncher.launch(options);
 
     }

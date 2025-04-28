@@ -9,30 +9,60 @@
     android:paddingStart="40dp"
     android:paddingEnd="40dp">
 
-
-    <TextView
-        android:id="@+id/date"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:padding="8dp"
-        android:paddingTop="20dp"
-        android:text="Дата"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        tools:ignore="MissingConstraints" />
+        android:orientation="horizontal"
+        android:paddingTop="5dp">
 
-    <TextView
-        android:id="@+id/time"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Дата"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Дата"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="20sp"
+            android:padding="8dp" />
+    </LinearLayout>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:padding="8dp"
-        android:text="Время"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        tools:ignore="MissingConstraints" />
+        android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Время"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:padding="8dp" />
 
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Время"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="20sp"
+            android:padding="8dp" />
+    </LinearLayout>
 
 </LinearLayout>

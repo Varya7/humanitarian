@@ -55,6 +55,7 @@ public class MainActivity2 extends AppCompatActivity {
     FirebaseAuth auth;
     Spinner spinner;
     AppAdapter adapter;
+    BottomNavigationView bottomNavigationView;
     ImageButton scannerB;
     ArrayAdapter<String> adapter1;
     private String id_appl, userId, center, center_name, id, date, time, email, fio, phone_number, birth, family_members, list, status;
@@ -70,7 +71,7 @@ public class MainActivity2 extends AppCompatActivity {
         spinner = findViewById(R.id.spinner);
         scannerB = findViewById(R.id.scanner);
         spinner.setEnabled(true);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
 
 
@@ -90,25 +91,30 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
-
-        //setInitialData();
         RecyclerView recyclerView = findViewById(R.id.list);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
+
+
+
         AppAdapter.OnAppClickListener appClickListener = new AppAdapter.OnAppClickListener() {
             @Override
             public void onAppClick(Application app, int position) {
-                Intent intent = new Intent(getApplicationContext(), ViewApplicC.class);
-                intent.putExtra("id", app.getId_appl());
-                startActivity(intent);
-                //finish();
-                //Toast.makeText(getApplicationContext(), "Был выбран пункт " + app.getName(),
-                //Toast.LENGTH_SHORT).show();
+                if ("Выдано".equals(app.getStatus())) {
+                    Intent intent = new Intent(getApplicationContext(), ViewAppComplete.class);
+                    intent.putExtra("id", app.getId_appl());
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), ViewApplicC.class);
+                    intent.putExtra("id", app.getId_appl());
+                    startActivity(intent);
+                }
             }
         };
+
 
         mDatabase.child("Users").child(userId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -119,58 +125,14 @@ public class MainActivity2 extends AppCompatActivity {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         center_name = snapshot.child("center_name").getValue(String.class);
-                    } else {
-                        Log.e("firebase", "No data found");
                     }
                 }
             }
         });
 
 
-        // создаем адаптер
         adapter = new AppAdapter(this, applications, appClickListener);
-        // устанавливаем для списка адаптер
         recyclerView.setAdapter(adapter);
-
-        mDatabase.child("Applications").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
-                    DataSnapshot snapshot = task.getResult();
-                    //textView.setText(snapshot.toString());
-                    //заполнить лист, с помощью конструктора создать объекты и заполнить массив
-                    //
-                    if (snapshot.exists()) {
-                        for (DataSnapshot applicationSnapshot : snapshot.getChildren()) {
-
-                            center = applicationSnapshot.child("center").getValue(String.class);
-                            status = applicationSnapshot.child("status").getValue(String.class);
-                            if (center.equals(center_name) && status.equals("Рассматривается")) {
-                                // Извлекаем данные из snapshot
-                                //id = applicationSnapshot.child("id").getValue(String.class);
-                                date = applicationSnapshot.child("date").getValue(String.class);
-                                time = applicationSnapshot.child("time").getValue(String.class);
-                                email = applicationSnapshot.child("email").getValue(String.class);
-                                fio = applicationSnapshot.child("fio").getValue(String.class);
-
-                                phone_number = applicationSnapshot.child("phone_number").getValue(String.class);
-                                birth = applicationSnapshot.child("birth").getValue(String.class);
-                                family_members = applicationSnapshot.child("family_members").getValue(String.class);
-                                list = applicationSnapshot.child("list").getValue(String.class);//Application application = new Application(date, time, email, name, surname, phone_number, birth, family_members, list);
-                                id_appl = applicationSnapshot.child("id_appl").getValue(String.class);
-
-                                applications.add(new Application(id_appl, date, time, email, fio, phone_number, birth, family_members, list));
-                            }
-                            //    setInitialData();
-                            // Добавляем в список
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-            }
-        });
 
         a1 = new ArrayList<>();
         a1.add("Рассматривается");
@@ -196,17 +158,14 @@ public class MainActivity2 extends AppCompatActivity {
                             Log.e("firebase", "Error getting data", task.getException());
                         } else {
                             DataSnapshot snapshot = task.getResult();
-                            //textView.setText(snapshot.toString());
-                            //заполнить лист, с помощью конструктора создать объекты и заполнить массив
-                            //
+
                             if (snapshot.exists()) {
                                 for (DataSnapshot applicationSnapshot : snapshot.getChildren()) {
 
                                     center = applicationSnapshot.child("center").getValue(String.class);
                                     status = applicationSnapshot.child("status").getValue(String.class);
-                                    if (center.equals(center_name) && status.equals(item)) {
-                                        // Извлекаем данные из snapshot
-                                        //id = applicationSnapshot.child("id").getValue(String.class);
+                                    if (center != null && center_name != null && status != null && item != null &&
+                                            center.equals(center_name) && status.equals(item)) {
                                         date = applicationSnapshot.child("date").getValue(String.class);
                                         time = applicationSnapshot.child("time").getValue(String.class);
                                         email = applicationSnapshot.child("email").getValue(String.class);
@@ -218,10 +177,9 @@ public class MainActivity2 extends AppCompatActivity {
                                         list = applicationSnapshot.child("list").getValue(String.class);//Application application = new Application(date, time, email, name, surname, phone_number, birth, family_members, list);
                                         id_appl = applicationSnapshot.child("id_appl").getValue(String.class);
 
-                                        applications.add(new Application(id_appl, date, time, email, fio, phone_number, birth, family_members, list));
+                                        applications.add(new Application(id_appl, date, time, email, fio, phone_number, birth, family_members, list, status));
                                     }
-                                    //    setInitialData();
-                                    // Добавляем в список
+
                                 }
                                 adapter.notifyDataSetChanged();
                             }
@@ -230,6 +188,9 @@ public class MainActivity2 extends AppCompatActivity {
                 });
             }
 
+
+
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -237,7 +198,11 @@ public class MainActivity2 extends AppCompatActivity {
         spinner.setOnItemSelectedListener(itemSelectedListener);
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.navigation_see);
+    }
 
 
 
@@ -251,20 +216,14 @@ public class MainActivity2 extends AppCompatActivity {
                     else if (item.getItemId() == R.id.navigation_setting){
                         Intent intent = new Intent(MainActivity2.this, SettingCenter.class);
                         startActivity(intent);
+                        finish();
                         return true;
+
                     }
                     return false;
                 }
+
             };
-
-
-    private void setInitialData(){
-applications.add(new Application(id_appl, date, time, email, fio, phone_number, birth, family_members, list));
-
-
-    }
-
-
 }
 
 

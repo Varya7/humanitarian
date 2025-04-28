@@ -47,11 +47,6 @@ public class CenterAdapter extends RecyclerView.Adapter<CenterAdapter.ViewHolder
         Center center = centers.get(position);
         holder.center_name.setText(center.getCenter_name());
         holder.address.setText("Адрес: " + center.getAddress());
-        //holder.email.setText("Email: " +center.getEmail());
-        //holder.fio.setText("ФИО представителя: " + center.getName() + " " + center.getSurname());
-
-        //holder.phone_number.setText("Номер телефона: " + center.getPhone_number());
-        //holder.list.setText(center.getList());
         holder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)
@@ -72,11 +67,6 @@ public class CenterAdapter extends RecyclerView.Adapter<CenterAdapter.ViewHolder
             super(view);
             center_name = view.findViewById(R.id.center_name);
             address = view.findViewById(R.id.address);
-            //email = view.findViewById(R.id.email);
-            //fio = view.findViewById(R.id.fio);
-
-            //phone_number = view.findViewById(R.id.phone_number);
-            //list = view.findViewById(R.id.list);
         }
     }
 }

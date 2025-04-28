@@ -60,7 +60,13 @@ public class Login extends AppCompatActivity {
                                 Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
                                 startActivity(intent);
                                 finish();
-                            } else {
+                            }
+                            else if (role.equals("moderator")){
+                                Intent intent = new Intent(getApplicationContext(), ModeratorList.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                            else {
                                 Intent intent = new Intent(getApplicationContext(), MyApplications.class);
                                 startActivity(intent);
                                 finish();
@@ -139,7 +145,13 @@ public class Login extends AppCompatActivity {
                                                         Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
                                                         startActivity(intent);
                                                         finish();
-                                                    } else {
+                                                    }
+                                                    else if (role.equals("moderator")){
+                                                        Intent intent = new Intent(getApplicationContext(), ModeratorList.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                    else {
                                                         Intent intent = new Intent(getApplicationContext(), MyApplications.class);
                                                         startActivity(intent);
                                                         finish();
@@ -151,13 +163,13 @@ public class Login extends AppCompatActivity {
 
 
                                 } else {
-                                    //Log.w(TAG, "signInWithEmail:failure", task.getException());
                                     Toast.makeText(Login.this, "Ошибка авторизации",
                                             Toast.LENGTH_SHORT).show();
-                                    //updateUI(null);
+
                                 }
                             }
                         });
+
             }
         });
     }

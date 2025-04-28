@@ -18,6 +18,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,81 +27,75 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class ChangePasswordActivity extends AppCompatActivity {
+    private EditText old_passwordV, new_passwordV;
+    private FirebaseUser user;
+    private String role;
 
-    EditText old_passwordV, new_passwordV;
-    private DatabaseReference mDatabase;
-    String old_password="", userId="", role="";
-    Button saveB;
-    FirebaseUser user;
-    FirebaseAuth mAuth;
-    FirebaseAuth auth;
-
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
         setContentView(R.layout.activity_change_password);
+
+        // Инициализация View
         old_passwordV = findViewById(R.id.old_password);
         new_passwordV = findViewById(R.id.new_password);
-        saveB = findViewById(R.id.save);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
-        assert user != null;
-        userId = user.getUid();
+        Button saveB = findViewById(R.id.save);
 
-        saveB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDatabase.child("Users").child(userId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("firebase", "Error getting data", task.getException());
-                        } else {
-                            DataSnapshot snapshot = task.getResult();
-                            if (snapshot.exists()) {
-                                old_password = snapshot.child("password").getValue(String.class);
-                                role = snapshot.child("role").getValue(String.class);
-                                String new_password = String.valueOf(new_passwordV.getText());
+        // Получаем текущего пользователя
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
-                                String oldV = String.valueOf(old_passwordV.getText());
-                                if (old_password.equals(oldV)) {
-                                    FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                            .child("password").setValue(new_password);
-                                Toast.makeText(ChangePasswordActivity.this, "Пароль изменен", Toast.LENGTH_SHORT).show();
-                                if (role.equals("user")){
-                                    Intent intent = new Intent(ChangePasswordActivity.this, SettingUser.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                                else{
-                                    Intent intent = new Intent(ChangePasswordActivity.this, SettingCenter.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
+        // Получаем роль пользователя (из Intent или Firebase)
+        role = getIntent().getStringExtra("role");
 
+        saveB.setOnClickListener(v -> changePassword());
+    }
 
+    private void changePassword() {
+        String oldPassword = old_passwordV.getText().toString().trim();
+        String newPassword = new_passwordV.getText().toString().trim();
 
-                                //else
-                                }
-                                else{
-                                    Toast.makeText(ChangePasswordActivity.this, "Неправильный пароль", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                Log.e("firebase", "No data found");
-                            }
-                        }
+        if (newPassword.length() < 6) {
+            Toast.makeText(this, "Пароль должен содержать минимум 6 символов", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AuthCredential credential = EmailAuthProvider
+                .getCredential(user.getEmail(), oldPassword);
+
+        user.reauthenticate(credential)
+                .addOnCompleteListener(reauthTask -> {
+                    if (reauthTask.isSuccessful()) {
+                        updatePassword(newPassword);
+                    } else {
+                        Toast.makeText(this,
+                                "Ошибка аутентификации: " + reauthTask.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
-            }
+    }
 
+    private void updatePassword(String newPassword) {
+        user.updatePassword(newPassword)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, "Пароль успешно изменен", Toast.LENGTH_SHORT).show();
+                        redirectToSettings();
+                    } else {
+                        Toast.makeText(this,
+                                "Ошибка изменения пароля: " + task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
-        });
+    private void redirectToSettings() {
+        Class<?> targetClass = "user".equals(role) ?
+                SettingUser.class : SettingCenter.class;
 
+        startActivity(new Intent(this, targetClass));
+        finish();
     }
 }

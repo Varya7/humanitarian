@@ -6,54 +6,120 @@
     android:layout_height="wrap_content"
     android:background="#FBFBFB"
     android:orientation="vertical"
-    android:paddingStart="40dp"
+    android:paddingStart="20dp"
     android:paddingEnd="40dp">
 
-
-    <TextView
-        android:paddingTop="20dp"
-        android:id="@+id/date"
+    <!-- Дата -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Дата"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:padding="8dp"
-        android:fontFamily="sans-serif"
-        tools:ignore="MissingConstraints" />
+        android:orientation="horizontal"
+        android:paddingTop="5dp">
 
-    <TextView
-        android:id="@+id/time"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Дата"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Дата"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="20sp"
+            android:padding="8dp" />
+    </LinearLayout>
+
+    <!-- Время -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Время"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:fontFamily="sans-serif"
-        android:padding="8dp"
-        tools:ignore="MissingConstraints" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/center"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Время"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Время"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="20sp"
+            android:padding="8dp" />
+    </LinearLayout>
+
+    <!-- Центр -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:text="Центр"
-        android:padding="8dp"
-        android:fontFamily="sans-serif"
-        android:textSize="20sp"
-        tools:ignore="MissingConstraints" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/status"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Центр"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Центр"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="20sp"
+            android:padding="8dp" />
+    </LinearLayout>
+
+    <!-- Статус -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Статус"
-        android:textColor="@color/black"
-        android:padding="8dp"
-        android:fontFamily="sans-serif"
-        android:textSize="20sp"
-        tools:ignore="MissingConstraints"
-        />
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Статус"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Статус"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="20sp"
+            android:padding="8dp" />
+    </LinearLayout>
 
 </LinearLayout>

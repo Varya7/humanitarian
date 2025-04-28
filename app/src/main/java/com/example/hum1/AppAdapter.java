@@ -25,7 +25,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
     private final LayoutInflater inflater;
     private List<com.example.hum1.Application> applications;// = Collections.emptyList();
 
-    AppAdapter(Context context, List<Application> applications, OnAppClickListener onClickListener) {
+    public AppAdapter(Context context, List<Application> applications, OnAppClickListener onClickListener) {
         this.applications = applications;
         this.onClickListener = onClickListener;
         this.inflater = LayoutInflater.from(context);
@@ -39,19 +39,15 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
     }
 
 
+
+
     @Override
     public void onBindViewHolder(AppAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Application app = applications.get(position);
-        holder.date.setText("Дата: " + app.getDate());
-        holder.time.setText("Время: " + app.getTime());
+        holder.date.setText(app.getDate());
+        holder.time.setText(app.getTime());
 
-        //holder.email.setText(app.getEmail());
-        //holder.name.setText(app.getName());
-        //holder.surname.setText(app.getSurname());
-        //holder.phone_number.setText(app.getPhone_number());
-        //holder.birth.setText(app.getBirth());
-        //holder.family_members.setText(app.getFamily_members());
-        //holder.list.setText(app.getList());
+
         holder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)

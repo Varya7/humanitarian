@@ -18,22 +18,35 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ViewApplicC extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
 
+    private ArrayList<Map<String, String>> listC;
     Button statusT;
+    private RecyclerView recyclerView, recyclerView2;
+    ListU3Adapter adapter2;
+    private ArrayList<ListU3> listU3List;
     EditText comV;
-    TextView textView, statusF, dateV, timeV, emailV, fioV, phone_numberV, birthV, family_membersV, listV;
-    String date, time, email, fio, phone_number, birth, family_members, list, status;
+    private ListAdapter adapter;
+    TextView statusF, dateV, timeV, emailV, fioV, phone_numberV, birthV, listV;
+    String id, date, time, email, fio, phone_number, birth, status;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -53,17 +66,27 @@ public class ViewApplicC extends AppCompatActivity {
         fioV = findViewById(R.id.fio);
         phone_numberV = findViewById(R.id.phone_number);
         birthV = findViewById(R.id.birth);
-        family_membersV = findViewById(R.id.family_members);
         listV = findViewById(R.id.list);
         statusT = findViewById(R.id.statusT);
         statusF = findViewById(R.id.statusF);
         comV = findViewById(R.id.comm);
+
+        listC = new ArrayList<>();
+        adapter = new ListAdapter(listC);
+        recyclerView = findViewById(R.id.recyclerView_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+        recyclerView.setNestedScrollingEnabled(false);
+
+        listU3List = new ArrayList<>();
+        adapter2 = new ListU3Adapter(listU3List);
+        recyclerView2 = findViewById(R.id.recyclerView_list2);
+        recyclerView2.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView2.setAdapter(adapter2);
+
         Bundle bundle = getIntent().getExtras();
+        id = bundle.getString("id");
 
-       // assert bundle != null;
-        String id = bundle.getString("id");
-
-       // assert id != null;
         mDatabase.child("Applications").child(id).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -79,38 +102,24 @@ public class ViewApplicC extends AppCompatActivity {
                         birth = snapshot.child("birth").getValue(String.class);
                         date = snapshot.child("date").getValue(String.class);
                         time = snapshot.child("time").getValue(String.class);
-                        family_members = snapshot.child("family_members").getValue(String.class);
-                        list = snapshot.child("list").getValue(String.class);
                         status = snapshot.child("status").getValue(String.class);
-                        // Логируем полученные данные
-                        Log.d("firebase", "Email: " + email);
-
-                        Log.d("firebase", "Birth: " + birth);
-                        Log.d("firebase", "Date: " + date);
-                        Log.d("firebase", "Time: " + time);
-                        Log.d("firebase", "Family Members: " + family_members);
-                        Log.d("firebase", "List: " + list);
-                        Log.d("firebase", "Status:" + status);
-                        dateV.setText("Дата: "+ date);
-                        timeV.setText("Время: "+ time);
-                        emailV.setText("Email: " + email);
-                        fioV.setText("ФИО: "+ fio);
-
-                        phone_numberV.setText("Номер телефона: " + phone_number);
-                        birthV.setText("Дата рождения: " + birth);
-                        family_membersV.setText("Количество членов семьи: " +family_members);
-                        listV.setText("Список вещей: " +list);
+                        dateV.setText(date);
+                        timeV.setText(time);
+                        emailV.setText(email);
+                        fioV.setText(fio);
+                        phone_numberV.setText(phone_number);
+                        birthV.setText(birth);
                         if (status.equals("Одобрено")){
                             statusT.setText("Заявка одобрена!");
                         }
 
-                    } else {
-                        Log.d("firebase", "No data available");
                     }
                 }
             }
         });
 
+        loadListData();
+        loadListU3Data();
 
         statusT.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,17 +163,77 @@ public class ViewApplicC extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        //TextView headerView = findViewById(R.id.selectedMenuItem);
         if (id== R.id.action_logout){
-            //FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(this, SettingCenter.class);
-            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             return true;
         }
-
-        //headerView.setText(item.getTitle());
         return super.onOptionsItemSelected(item);
+    }
+
+    private void loadListData() {
+        mDatabase.child("Applications").child(id).child("selected_items").addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listC.clear();
+                for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
+                    String itemName = itemSnapshot.getKey();
+                    Object itemValue = itemSnapshot.getValue();
+
+                    // Пропускаем элементы с quantity = 0
+                    if (itemValue instanceof Long && (Long)itemValue == 0) {
+                        continue;
+                    }
+                    if (itemValue instanceof String && "0".equals(itemValue)) {
+                        continue;
+                    }
+
+                    Map<String, String> item = new HashMap<>();
+                    item.put("name", itemName);
+
+                    if (itemValue instanceof Long) {
+                        item.put("quantity", String.valueOf((Long) itemValue));
+                    } else if (itemValue instanceof String) {
+                        item.put("quantity", (String) itemValue);
+                    }
+
+                    listC.add(item);
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
+            }
+        });
+    }
+
+    private void loadListU3Data() {
+        mDatabase.child("Applications").child(id).child("list_u").addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listU3List.clear();
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    String label = childSnapshot.getKey();
+                    String value = childSnapshot.getValue(String.class);
+
+                    // Преобразуем данные и добавляем в список
+                    if (label != null && value != null) {
+                        listU3List.add(new ListU3(label, value));
+                    }
+                }
+                // Обновляем адаптер
+                adapter2.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("FirebaseError", "Ошибка чтения list_u", error.toException());
+            }
+        });
     }
 
 }

@@ -26,8 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class EditDataCenterActivity extends AppCompatActivity {
     FirebaseAuth auth;
-    EditText center_nameV, addressV, fioV, work_timeV, phone_numberV, emailV;
-    String userId="", center_name="", address="", email="", fio="", work_time="", phone_number="";
+    EditText center_nameV, addressV, fioV, work_timeV, phone_numberV;
+    String userId="", center_name="", address="", fio="", work_time="", phone_number="";
     Button saveB;
     private DatabaseReference mDatabase;
     FirebaseUser user;
@@ -46,7 +46,6 @@ public class EditDataCenterActivity extends AppCompatActivity {
         fioV = findViewById(R.id.fio);
         work_timeV = findViewById(R.id.work_time);
         phone_numberV = findViewById(R.id.phone_number);
-        emailV = findViewById(R.id.email);
         saveB = findViewById(R.id.save);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -66,20 +65,15 @@ public class EditDataCenterActivity extends AppCompatActivity {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         fio = snapshot.child("fio").getValue(String.class);
-                        email = snapshot.child("email").getValue(String.class);
                         work_time = snapshot.child("work_time").getValue(String.class);
                         phone_number = snapshot.child("phone_number").getValue(String.class);
                         address = snapshot.child("address").getValue(String.class);
                         center_name = snapshot.child("center_name").getValue(String.class);
-
                         center_nameV.setText(center_name);
                         addressV.setText(address);
                         fioV.setText(fio);
                         work_timeV.setText(work_time);
-                        emailV.setText(email);
                         phone_numberV.setText(phone_number);
-                    } else {
-                        Log.e("firebase", "No data found");
                     }
                 }
             }
@@ -89,7 +83,6 @@ public class EditDataCenterActivity extends AppCompatActivity {
         saveB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                email = String.valueOf(emailV.getText());
                 fio = String.valueOf(fioV.getText());
                 work_time = String.valueOf(work_timeV.getText());
                 phone_number = String.valueOf(phone_numberV.getText());
@@ -104,8 +97,6 @@ public class EditDataCenterActivity extends AppCompatActivity {
                         .child("fio").setValue(fio);
                 FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child("work_time").setValue(work_time);
-                FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child("email").setValue(email);
                 FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child("phone_number").setValue(phone_number);
 

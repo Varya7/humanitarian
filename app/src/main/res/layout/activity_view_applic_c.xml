@@ -1,148 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:paddingTop="?attr/actionBarSize"
     android:background="@drawable/background_b"
+    android:paddingTop="?attr/actionBarSize"
     android:paddingStart="40dp"
-    android:paddingEnd="40dp">
+    android:paddingEnd="40dp"
+    android:fillViewport="true">
 
-    <TextView
-        android:paddingTop="20dp"
-        android:id="@+id/date"
+    <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Дата"
-        android:textSize="20sp"
-        android:padding="8dp"
-        android:textColor="@color/black"
-        android:fontFamily="sans-serif"
-        tools:ignore="MissingConstraints" />
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Время"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:padding="8dp"
-        android:fontFamily="sans-serif"
-        tools:ignore="MissingConstraints" />
+        <!-- Дата -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="20dp">
 
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Почта"
-        android:padding="8dp"
-        android:textSize="20sp"
-        android:fontFamily="sans-serif"
-        android:textColor="@color/black"
-        tools:ignore="MissingConstraints" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Дата"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
 
-    <TextView
-        android:id="@+id/fio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="FIO"
-        android:fontFamily="sans-serif"
-        android:padding="8dp"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        tools:ignore="MissingConstraints" />
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Дата"
+                android:textSize="20sp"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif" />
+        </LinearLayout>
+
+        <!-- Время -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Время"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Время"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:padding="8dp"
+                android:fontFamily="sans-serif" />
+        </LinearLayout>
+
+        <!-- Email -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Email"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Почта"
+                android:padding="8dp"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <!-- ФИО -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ФИО"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/fio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="FIO"
+                android:fontFamily="sans-serif"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <!-- Телефон -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Телефон"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/phone_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Номер телефона"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:padding="8dp" />
+        </LinearLayout>
+
+        <!-- Дата рождения -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Дата рождения"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/birth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Дата рождения"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp" />
+        </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/phone_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Номер телефона"
-        android:fontFamily="sans-serif"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:padding="8dp"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:id="@+id/birth"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Дата рождения"
-        android:padding="8dp"
-        android:textColor="@color/black"
-        android:fontFamily="sans-serif"
-        tools:ignore="MissingConstraints"
-        android:textSize="20sp"/>
-    <TextView
-        android:id="@+id/family_members"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Количество членов семьи"
-        android:padding="8dp"
-        android:textColor="@color/black"
-        android:fontFamily="sans-serif"
-        tools:ignore="MissingConstraints"
-        android:textSize="20sp"/>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:maxHeight="50dp">
-    <TextView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Список вещей"
-        android:textColor="@color/black"
-        android:fontFamily="sans-serif"
-        tools:ignore="MissingConstraints"
-        android:padding="8dp"
-        android:textSize="20sp"/>
-    </ScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_list2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="16dp" />
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        <!-- Список товаров -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Выбранные товары"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:paddingLeft="8dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"/>
 
-        android:id="@+id/comm"
-        android:fontFamily="sans-serif"
-        android:hint="Комментарий"
-        android:layout_marginBottom="15dp"
-        android:padding="8dp"
-        android:maxLines="5"
-        android:scrollbars="vertical"
-        />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="16dp" />
 
-    <Button
-        android:id="@+id/statusT"
-        android:text="Принять заявку"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape"
-        android:textSize="15sp"
-        android:fontFamily="sans-serif"
-        android:paddingHorizontal="10dp"
-        android:textColor="@color/white"
-        />
+        <!-- Комментарий -->
+        <EditText
+            android:id="@+id/comm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:hint="Введите комментарий"
+            android:padding="8dp"
+            android:maxLines="5"
+            android:scrollbars="vertical"
+            android:layout_marginBottom="16dp"/>
 
-    <TextView
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:fontFamily="sans-serif"
-        android:id="@+id/statusF"
-        android:text="Отклонить заявку"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        <!-- Кнопки -->
+        <Button
+            android:id="@+id/statusT"
+            android:text="Принять заявку"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif"
+            android:paddingHorizontal="10dp"
+            android:textColor="@color/white"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center"/>
 
+        <TextView
+            android:id="@+id/statusF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Отклонить заявку"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="sans-serif" />
 
-
-
-
-</LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

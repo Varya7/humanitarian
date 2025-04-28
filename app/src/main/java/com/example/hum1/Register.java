@@ -41,17 +41,7 @@ public class Register extends AppCompatActivity {
     FirebaseAuth mAuth;
     ProgressBar progressBar;
 
-    /*@Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser!=null){
-            //reload();
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    } */
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -142,7 +132,6 @@ public class Register extends AppCompatActivity {
                         if (task.isSuccessful()){
                             HashMap<String, String> userInfo = new HashMap<>();
                             userInfo.put("email", email);
-                            userInfo.put("password", password);
                             userInfo.put("role", "user");
                             userInfo.put("fio", fio);
                             userInfo.put("birth", birth);
@@ -160,10 +149,9 @@ public class Register extends AppCompatActivity {
                             Toast.makeText(Register.this, "Аккаунт создан",
                                     Toast.LENGTH_SHORT).show();
                         } else{
-                            //Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(Register.this, "Authentication failed.",
+                            Toast.makeText(Register.this, "Ошибка авторизации.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+
                         }
                     }
                 });
@@ -180,7 +168,7 @@ public class Register extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {
 
-            String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; // Месяцы начинаются с 0
+            String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
             editTextBirth.setText(selectedDate);
         }, year, month, day);
 

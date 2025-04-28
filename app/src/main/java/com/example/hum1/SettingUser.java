@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class SettingUser extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser user;
+    private BottomNavigationView bottomNavigationView;
     String userId ="", email = "", fio = "", birth="", phone_number ="";
     private DatabaseReference mDatabase;
     TextView emailV, fioV, birthV, phone_numberV, logoutV, deleteV;
@@ -45,8 +46,10 @@ public class SettingUser extends AppCompatActivity {
         }
         setContentView(R.layout.activity_setting_user);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        setupBottomNavigation();
+
+        bottomNavigationView.setSelectedItemId(R.id.navigation_setting);
 
         emailV = findViewById(R.id.email);
         fioV = findViewById(R.id.fio);
@@ -75,10 +78,10 @@ public class SettingUser extends AppCompatActivity {
                         birth = snapshot.child("birth").getValue(String.class);
                         phone_number = snapshot.child("phone_number").getValue(String.class);
 
-                        fioV.setText("ФИО: " + fio);
-                        birthV.setText("Дата рождения: " + birth);
-                        emailV.setText("Email: " + email);
-                        phone_numberV.setText("Номер телефона: " + phone_number);
+                        fioV.setText(fio);
+                        birthV.setText(birth);
+                        emailV.setText(email);
+                        phone_numberV.setText(phone_number);
                     } else {
                         Log.e("firebase", "No data found");
                     }
@@ -106,25 +109,31 @@ public class SettingUser extends AppCompatActivity {
                         .setTitle("Подтверждение удаления")
                         .setMessage("Вы хотите удалить свой аккаунт?")
                         .setPositiveButton("Удалить", (dialog, which) -> {
-                            user.delete()
-                                    .addOnCompleteListener(task1 -> {
-                                        if (task1.isSuccessful()) {
-                                            Log.d("Firebase", "User account deleted successfully");
-                                            Toast.makeText(SettingUser.this, "Аккаунт удален", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(SettingUser.this, Login.class));
-                                            finish();
+                            mDatabase.child("Users").child(userId).removeValue()
+                                    .addOnCompleteListener(dbTask -> {
+                                        if (dbTask.isSuccessful()) {
+
+                                            user.delete()
+                                                    .addOnCompleteListener(authTask -> {
+                                                        if (authTask.isSuccessful()) {
+                                                            Toast.makeText(SettingUser.this, "Аккаунт удален", Toast.LENGTH_SHORT).show();
+                                                            startActivity(new Intent(SettingUser.this, Login.class));
+                                                            finish();
+                                                        } else {
+                                                            Toast.makeText(SettingUser.this, "Ошибка удаления аккаунта", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
                                         } else {
-                                            Log.w("Firebase", "Error deleting user account", task1.getException());
-                                            Toast.makeText(SettingUser.this, "Ошибка удаления аккаунта", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(SettingUser.this, "Ошибка удаления данных", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                         })
                         .setNegativeButton("Отмена", null)
                         .show();
-
             }
         });
-edit_dataB.setOnClickListener(new View.OnClickListener() {
+
+        edit_dataB.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(SettingUser.this, EditDataUserActivity.class);
@@ -141,28 +150,24 @@ edit_passwordB.setOnClickListener(new View.OnClickListener() {
 
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                    if (item.getItemId()==R.id.navigation_centers){
-                        Intent intent = new Intent(SettingUser.this, UserList.class);
-                        startActivity(intent);
-                        return true;
-                    }
-
-                    else if (item.getItemId()== R.id.navigation_see){
-                        Intent intent = new Intent(SettingUser.this, MyApplications.class);
-                        startActivity(intent);
-                        return true;
-                    }
-                    else if (item.getItemId() == R.id.navigation_setting){
-
-                        return true;
-                    }
-                    return false;
+    private void setupBottomNavigation() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.navigation_centers) {
+                    startActivity(new Intent(SettingUser.this, UserList.class));
+                    finish();
+                    return true;
+                } else if (item.getItemId() == R.id.navigation_see) {
+                    startActivity(new Intent(SettingUser.this, MyApplications.class));
+                    finish();
+                    return true;
+                } else if (item.getItemId() == R.id.navigation_setting) {
+                    return true;
                 }
-            };
+                return false;
+            }
+        });
+    }
 
 }

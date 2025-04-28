@@ -30,8 +30,8 @@ import java.util.Calendar;
 
 public class EditDataUserActivity extends AppCompatActivity {
     FirebaseAuth auth;
-EditText fioV, birthV, phone_numberV, emailV;
-String userId="", email="", fio="", birth="", phone_number="";
+EditText fioV, birthV, phone_numberV;
+String userId="", fio="", birth="", phone_number="";
 Button saveB;
     private DatabaseReference mDatabase;
     FirebaseUser user;
@@ -49,7 +49,6 @@ Button saveB;
         fioV = findViewById(R.id.fio);
         birthV = findViewById(R.id.birth);
         phone_numberV = findViewById(R.id.phone_number);
-        emailV = findViewById(R.id.email);
         saveB = findViewById(R.id.save);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -75,14 +74,11 @@ Button saveB;
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         fio = snapshot.child("fio").getValue(String.class);
-                        email = snapshot.child("email").getValue(String.class);
                         birth = snapshot.child("birth").getValue(String.class);
                         phone_number = snapshot.child("phone_number").getValue(String.class);
 
                         fioV.setText(fio);
-                        birthV.setText(birth);
-                        emailV.setText(email);
-                        phone_numberV.setText(phone_number);
+                        birthV.setText(birth);phone_numberV.setText(phone_number);
                     } else {
                         Log.e("firebase", "No data found");
                     }
@@ -96,7 +92,6 @@ Button saveB;
         saveB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                email = String.valueOf(emailV.getText());
                 fio = String.valueOf(fioV.getText());
                 birth = String.valueOf(birthV.getText());
                 phone_number = String.valueOf(phone_numberV.getText());
@@ -105,8 +100,6 @@ Button saveB;
                         .child("fio").setValue(fio);
                 FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child("birth").setValue(birth);
-                FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child("email").setValue(email);
                 FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child("phone_number").setValue(phone_number);
 
@@ -125,10 +118,9 @@ Button saveB;
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {
 
-            String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; // Месяцы начинаются с 0
+            String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
             birthV.setText(selectedDate);
         }, year, month, day);
 

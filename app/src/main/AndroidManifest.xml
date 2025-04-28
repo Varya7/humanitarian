@@ -22,13 +22,31 @@
         android:theme="@style/Theme.AppCompat.Light"
         tools:targetApi="31">
         <activity
+            android:name=".EditListUActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UserListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewCenterApp"
+            android:exported="false" />
+        <activity
+            android:name=".ModeratorList"
+            android:exported="false" />
+        <activity
+            android:name=".SettingModerator"
+            android:exported="false" />
+        <activity
+            android:name=".ViewAppComplete"
+            android:exported="false" />
+        <activity
             android:name=".ViewApplicQR"
             android:exported="false"
             android:label="@string/title_activity_view_applic_qr" />
         <activity
             android:name=".ScanActivity"
             android:exported="true"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".QRcodeActivity"
             android:exported="true" />
@@ -78,14 +96,6 @@
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".ui.CenterListActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
-            android:name=".AppFalse"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
-            android:name=".AppTrue"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
