@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_b"
+    android:paddingTop="50dp"
+    android:padding="15dp"
+    android:fillViewport="true"
+    tools:context=".ViewApplic">
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="20dp">
+
+        <!-- Дата -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Дата"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Дата"
+                android:textSize="20sp"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif" />
+        </LinearLayout>
+
+        <!-- Время -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Время"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Время"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:padding="8dp"
+                android:fontFamily="sans-serif" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Статус"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Статус"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:padding="8dp"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/commentLayout"
+            android:orientation="horizontal"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Комментарий"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="@drawable/comment_background"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/comm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Текст комментария"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Email -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Email"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Почта"
+                android:padding="8dp"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ФИО"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/fio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="FIO"
+                android:fontFamily="sans-serif"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <!-- Номер телефона -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Номер телефона"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/phone_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Номер телефона"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:padding="8dp" />
+        </LinearLayout>
+
+        <!-- Дата рождения -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Дата рождения"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/birth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Дата рождения"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <!-- Количество членов семьи -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Количество членов семьи"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/family_members"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Количество членов семьи"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_list2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Выбранные товары"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:paddingLeft="8dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="16dp" />
+
+
+
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

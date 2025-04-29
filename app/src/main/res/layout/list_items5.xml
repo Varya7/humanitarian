@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/margin"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Поле"
+    android:textColor="#838383"
+    android:fontFamily="sans-serif"
+    android:textSize="17sp"
+    android:textStyle="bold"
+    android:layout_marginStart="20dp"
+    android:padding="5dp" />
