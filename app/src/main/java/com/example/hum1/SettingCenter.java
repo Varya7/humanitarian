@@ -172,8 +172,7 @@ public class SettingCenter extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", "Ошибка загрузки данных пользователя", error.toException());
-            }
+             }
         });
     }
 
@@ -196,8 +195,7 @@ public class SettingCenter extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
-            }
+             }
         });
     }
 

@@ -132,9 +132,7 @@ public class MainActivity extends AppCompatActivity {
                         email = snapshot.child("email").getValue(String.class);
                         birth = snapshot.child("birth").getValue(String.class);
                         phone_number = snapshot.child("phone_number").getValue(String.class);
-                        Log.d("firebase", "Role: " + role);
-                    } else {
-                        Log.e("firebase", "No data found");
+
                     }
                 }
             }
@@ -144,27 +142,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
 
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
+                if (task.isSuccessful()) {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         for (DataSnapshot centerSnapshot : snapshot.getChildren()) {
                             String name = centerSnapshot.child("center_name").getValue(String.class);
-                            String id = centerSnapshot.child("id").getValue(String.class);
                             if (name != null) {
-
-                                centerNames.add(name);
-                                centersId.add(id);
+                                String status = centerSnapshot.child("status").getValue(String.class);
+                                if (status.equals("Одобрено")) {
+                                    String id = centerSnapshot.child("id").getValue(String.class);
+                                    centerNames.add(name);
+                                    centersId.add(id);
+                                }
                             }
                         }
                         adapter.notifyDataSetChanged();
 
 
-                        } else {
-                        Log.e("firebase", "No data found");
-
-                    }
+                        }
                 }
             }
         });
@@ -224,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Новый код считывания перед отправкой заявки
                 HashMap<String, String> listUData = new HashMap<>();
 
                 for (int i = 0; i < recyclerView2.getChildCount(); i++) {
@@ -252,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                 applicationInfo.put("id", userId);
                 applicationInfo.put("status", "Рассматривается");
                 applicationInfo.put("comment", "");
-                applicationInfo.put("list_u", listUData); // СЮДА КЛАДЕМ МАПУ
+                applicationInfo.put("list_u", listUData);
 
                 Map<String, Integer> selectedItems = adapter1.getSelectedQuantities();
                 applicationInfo.put("selected_items", selectedItems);
@@ -267,13 +261,11 @@ public class MainActivity extends AppCompatActivity {
 
                 newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("Firebase", "Заявка успешно подана: " + applicationId);
                         Toast.makeText(MainActivity.this, "Заявка подана", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(MainActivity.this, MyApplications.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        Log.e("Firebase", "Ошибка при подаче заявки", task.getException());
                         Toast.makeText(MainActivity.this, "Ошибка при подаче заявки", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -333,7 +325,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
             }
         });
     }
@@ -356,8 +347,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
-            }
+                }
         });
     }
 

@@ -180,8 +180,6 @@ public class ViewApplicC extends AppCompatActivity {
                 for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
                     String itemName = itemSnapshot.getKey();
                     Object itemValue = itemSnapshot.getValue();
-
-                    // Пропускаем элементы с quantity = 0
                     if (itemValue instanceof Long && (Long)itemValue == 0) {
                         continue;
                     }
@@ -205,8 +203,7 @@ public class ViewApplicC extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
-            }
+                  }
         });
     }
 
@@ -219,20 +216,16 @@ public class ViewApplicC extends AppCompatActivity {
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     String label = childSnapshot.getKey();
                     String value = childSnapshot.getValue(String.class);
-
-                    // Преобразуем данные и добавляем в список
                     if (label != null && value != null) {
                         listU3List.add(new ListU3(label, value));
                     }
                 }
-                // Обновляем адаптер
                 adapter2.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("FirebaseError", "Ошибка чтения list_u", error.toException());
-            }
+                  }
         });
     }
 

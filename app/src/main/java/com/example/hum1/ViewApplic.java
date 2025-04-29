@@ -94,9 +94,8 @@ public class ViewApplic extends AppCompatActivity {
         mDatabase.child("Applications").child(id).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
+                if (task.isSuccessful()) {
+
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         email = snapshot.child("email").getValue(String.class);
@@ -216,8 +215,7 @@ public class ViewApplic extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
-            }
+             }
         });
     }
 
@@ -231,19 +229,16 @@ public class ViewApplic extends AppCompatActivity {
                     String label = childSnapshot.getKey();
                     String value = childSnapshot.getValue(String.class);
 
-                    // Преобразуем данные и добавляем в список
                     if (label != null && value != null) {
                         listU3List.add(new ListU3(label, value));
                     }
                 }
-                // Обновляем адаптер
                 adapter2.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("FirebaseError", "Ошибка чтения list_u", error.toException());
-            }
+           }
         });
     }
 

@@ -111,6 +111,30 @@
             android:fontFamily="sans-serif"
             tools:ignore="MissingConstraints" />
 
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:paddingTop="10dp"
+            android:paddingLeft="8dp"
+            android:text="Документы, необходимые для подачи заявки">
+        </TextView>
+        <EditText
+            android:id="@+id/doc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:paddingLeft="8dp"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            tools:ignore="MissingConstraints" />
+
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -127,7 +127,6 @@ public class ViewCenter extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", "Ошибка чтения: " + error.getMessage());
                 Toast.makeText(ViewCenter.this, "Ошибка загрузки данных", Toast.LENGTH_SHORT).show();
             }
         });
@@ -184,8 +183,7 @@ public class ViewCenter extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
-            }
+                }
         });
     }
 }

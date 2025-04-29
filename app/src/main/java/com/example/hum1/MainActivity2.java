@@ -47,7 +47,6 @@ import java.util.Locale;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    //ArrayList<com.example.hum1.Application> applications = new ArrayList<>();
     ArrayList<Application> applications = new ArrayList<Application>();
     List<String> a1;
     private DatabaseReference mDatabase;
@@ -148,7 +147,6 @@ public class MainActivity2 extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                // Получаем выбранный объект
                 String item = (String) parent.getItemAtPosition(position);
                 applications.clear();
                 mDatabase.child("Applications").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {

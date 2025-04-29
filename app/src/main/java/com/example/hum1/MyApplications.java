@@ -58,7 +58,6 @@ public class MyApplications extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        //bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         setupBottomNavigation();
@@ -89,7 +88,7 @@ public class MyApplications extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), ViewApplic.class);
                 intent.putExtra("id", app.getId_appl());
                 startActivity(intent);
-                //finish();
+
             }
         };
 
@@ -120,9 +119,8 @@ public class MyApplications extends AppCompatActivity {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("firebase", "Error getting data", task.getException());
-                        } else {
+                        if (task.isSuccessful()) {
+
                             DataSnapshot snapshot = task.getResult();
 
                             if (snapshot.exists()) {

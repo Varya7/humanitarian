@@ -23,7 +23,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
     private final OnAppClickListener onClickListener;
 
     private final LayoutInflater inflater;
-    private List<com.example.hum1.Application> applications;// = Collections.emptyList();
+    private List<com.example.hum1.Application> applications;
 
     public AppAdapter(Context context, List<Application> applications, OnAppClickListener onClickListener) {
         this.applications = applications;

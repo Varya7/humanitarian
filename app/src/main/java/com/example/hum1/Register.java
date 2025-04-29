@@ -74,7 +74,6 @@ public class Register extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), Login.class);
                 startActivity(intent);
-                //finish();
             }
         });
 
@@ -83,7 +82,6 @@ public class Register extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), RegisterC.class);
                 startActivity(intent);
-                //finish();
             }
         });
         editTextBirth.setOnClickListener(new View.OnClickListener() {
@@ -136,16 +134,13 @@ public class Register extends AppCompatActivity {
                             userInfo.put("fio", fio);
                             userInfo.put("birth", birth);
                             userInfo.put("phone_number", phone_number);
-                            ///запись в Firebase
+
                             FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(userInfo);
 
                             Intent intent = new Intent(getApplicationContext(), MyApplications.class);
                             startActivity(intent);
                             finish();
-                            //Log.d(TAG, "createUserWithEmail:success");
-                            //FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
                             Toast.makeText(Register.this, "Аккаунт создан",
                                     Toast.LENGTH_SHORT).show();
                         } else{

@@ -38,16 +38,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
         setContentView(R.layout.activity_change_password);
-
-        // Инициализация View
         old_passwordV = findViewById(R.id.old_password);
         new_passwordV = findViewById(R.id.new_password);
         Button saveB = findViewById(R.id.save);
-
-        // Получаем текущего пользователя
         user = FirebaseAuth.getInstance().getCurrentUser();
-
-        // Получаем роль пользователя (из Intent или Firebase)
         role = getIntent().getStringExtra("role");
 
         saveB.setOnClickListener(v -> changePassword());

@@ -195,16 +195,13 @@ private CenterAdapter adapter;
                     }
                 }
 
-                Log.d("FirebaseData", "Список list_c: " + listC.toString());
-
 
             }
 
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения list_c", databaseError.toException());
-            }
+                 }
         });
     }
 

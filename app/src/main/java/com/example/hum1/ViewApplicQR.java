@@ -122,14 +122,10 @@ public class ViewApplicQR extends AppCompatActivity {
         mDatabase.child("Users").child(userId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
+                if (task.isSuccessful()) {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         center_name = snapshot.child("center_name").getValue(String.class);
-                    } else {
-                        Log.e("firebase", "No data found");
                     }
                 }
             }
@@ -138,9 +134,7 @@ public class ViewApplicQR extends AppCompatActivity {
         mDatabase.child("Applications").child(id).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
+                if (task.isSuccessful()) {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         String center = snapshot.child("center").getValue(String.class);
@@ -167,6 +161,7 @@ public class ViewApplicQR extends AppCompatActivity {
                         }
                         else {
                             errorV.setVisibility(View.GONE);
+                            linearLayoutError.setVisibility(View.GONE);
                             email = snapshot.child("email").getValue(String.class);
                             fio = snapshot.child("fio").getValue(String.class);
                             phone_number = snapshot.child("phone_number").getValue(String.class);
@@ -211,7 +206,6 @@ public class ViewApplicQR extends AppCompatActivity {
             return;
         }
 
-        // Получаем список товаров центра из Users/{userId}/list_c
         DatabaseReference centerItemsRef = mDatabase.child("Users").child(userId).child("list_c");
 
         centerItemsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -318,8 +312,7 @@ public class ViewApplicQR extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
-            }
+                  }
         });
     }
 
@@ -342,8 +335,7 @@ public class ViewApplicQR extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("FirebaseError", "Ошибка чтения list_u", error.toException());
-            }
+                  }
         });
     }
 

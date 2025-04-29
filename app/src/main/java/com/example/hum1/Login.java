@@ -46,12 +46,10 @@ public class Login extends AppCompatActivity {
             mDatabase = FirebaseDatabase.getInstance().getReference();
             String idU = currentUser.getUid();
 
-
             mDatabase.child("Users").child(idU).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                     if (!task.isSuccessful()) {
-                        Log.e("firebase", "Error getting data", task.getException());
                     } else {
                         DataSnapshot snapshot = task.getResult();
                         if (snapshot.exists()) {

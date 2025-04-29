@@ -82,7 +82,7 @@ public class EditListActivity extends AppCompatActivity {
         saveB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveAllAddedItems(); // Сохраняем все добавленные элементы перед переходом
+                saveAllAddedItems();
                 Intent intent = new Intent(EditListActivity.this, SettingCenter.class);
                 startActivity(intent);
                 finish();
@@ -220,8 +220,7 @@ public class EditListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка обновления элемента", databaseError.toException());
-            }
+                 }
         });
     }
 
@@ -241,8 +240,7 @@ public class EditListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка удаления элемента", databaseError.toException());
-            }
+                  }
         });
     }
 
@@ -263,7 +261,6 @@ public class EditListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
             }
         });
     }

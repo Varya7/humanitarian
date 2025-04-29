@@ -121,9 +121,8 @@ public class MainActivity3 extends AppCompatActivity {
         mDatabase.child("Users").child(userId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
+                if (task.isSuccessful()) {
+
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         role = snapshot.child("role").getValue(String.class);
@@ -132,9 +131,6 @@ public class MainActivity3 extends AppCompatActivity {
                         email = snapshot.child("email").getValue(String.class);
                         birth = snapshot.child("birth").getValue(String.class);
                         phone_number = snapshot.child("phone_number").getValue(String.class);
-                        Log.d("firebase", "Role: " + role);
-                    } else {
-                        Log.e("firebase", "No data found");
                     }
                 }
             }
@@ -193,13 +189,11 @@ public class MainActivity3 extends AppCompatActivity {
 
                 newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("Firebase", "Заявка успешно подана: " + applicationId);
                         Toast.makeText(MainActivity3.this, "Заявка подана", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(MainActivity3.this, MyApplications.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        Log.e("Firebase", "Ошибка при подаче заявки", task.getException());
                         Toast.makeText(MainActivity3.this, "Ошибка при подаче заявки", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -219,10 +213,7 @@ public class MainActivity3 extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Создаём DatePickerDialog
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {
-            // Устанавливаем выбранную дату в EditText
-            String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; // Месяцы начинаются с 0
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; // Месяцы начинаются с 0
             editTextDate.setText(selectedDate);
         }, year, month, day);
 
@@ -251,7 +242,6 @@ public class MainActivity3 extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 listC.clear();
                 for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
-                    // Получаем каждый элемент как Map
                     Map<String, String> item = (Map<String, String>) itemSnapshot.getValue();
                     if (item != null && item.containsKey("name") && item.containsKey("quantity")) {
                         listC.add(item);
@@ -263,8 +253,7 @@ public class MainActivity3 extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
-            }
+                }
         });
     }
 
@@ -286,8 +275,7 @@ public class MainActivity3 extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("FirebaseError", "Ошибка чтения списка", databaseError.toException());
-            }
+                }
         });
     }
 

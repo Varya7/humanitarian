@@ -45,7 +45,7 @@ public class QRcodeActivity extends AppCompatActivity {
         try {
 
             Bitmap bitmap = barcodeEncoder.encodeBitmap(text, BarcodeFormat.QR_CODE, 400, 400);
-            qrCodeIV.setImageBitmap(bitmap); // Sets the Bitmap to ImageView
+            qrCodeIV.setImageBitmap(bitmap);
         }
         catch (WriterException e) {
             e.printStackTrace();

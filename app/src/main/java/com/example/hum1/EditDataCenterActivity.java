@@ -26,8 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class EditDataCenterActivity extends AppCompatActivity {
     FirebaseAuth auth;
-    EditText center_nameV, addressV, fioV, work_timeV, phone_numberV;
-    String userId="", center_name="", address="", fio="", work_time="", phone_number="";
+    EditText center_nameV, addressV, fioV, work_timeV, phone_numberV, docV;
+    String userId="", center_name="", address="", fio="", work_time="", phone_number="", doc="";
     Button saveB;
     private DatabaseReference mDatabase;
     FirebaseUser user;
@@ -41,6 +41,7 @@ public class EditDataCenterActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
         setContentView(R.layout.activity_edit_data_center);
+        docV = findViewById(R.id.doc);
         center_nameV = findViewById(R.id.center_name);
         addressV = findViewById(R.id.address);
         fioV = findViewById(R.id.fio);
@@ -59,9 +60,7 @@ public class EditDataCenterActivity extends AppCompatActivity {
         mDatabase.child("Users").child(userId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
+                if (task.isSuccessful()) {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         fio = snapshot.child("fio").getValue(String.class);
@@ -69,11 +68,13 @@ public class EditDataCenterActivity extends AppCompatActivity {
                         phone_number = snapshot.child("phone_number").getValue(String.class);
                         address = snapshot.child("address").getValue(String.class);
                         center_name = snapshot.child("center_name").getValue(String.class);
+                        doc = snapshot.child("doc").getValue(String.class);
                         center_nameV.setText(center_name);
                         addressV.setText(address);
                         fioV.setText(fio);
                         work_timeV.setText(work_time);
                         phone_numberV.setText(phone_number);
+                        docV.setText(doc);
                     }
                 }
             }

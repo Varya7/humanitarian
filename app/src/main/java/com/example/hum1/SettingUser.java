@@ -68,9 +68,7 @@ public class SettingUser extends AppCompatActivity {
         mDatabase.child("Users").child(userId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
+                if (task.isSuccessful()) {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         fio = snapshot.child("fio").getValue(String.class);
@@ -82,8 +80,6 @@ public class SettingUser extends AppCompatActivity {
                         birthV.setText(birth);
                         emailV.setText(email);
                         phone_numberV.setText(phone_number);
-                    } else {
-                        Log.e("firebase", "No data found");
                     }
                 }
             }

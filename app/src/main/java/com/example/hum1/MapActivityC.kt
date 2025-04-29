@@ -215,7 +215,6 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
     val inputListener = object : InputListener {
 
         private var currentPlacemark: PlacemarkMapObject? = null
-        //private val mapObjects = map.mapObjects
         private lateinit var searchManager: SearchManager
 
 
@@ -223,7 +222,7 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
 
             currentPlacemark?.let {
                 map.mapObjects.remove(it)
-                Log.d("MapTap", "Removed previous placemark")
+
             }
 
             currentPlacemark = map.mapObjects.addPlacemark(point, ImageProvider.fromResource(applicationContext, R.drawable.user_arrow))
@@ -236,7 +235,7 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
         override fun onMapLongTap(map: Map, point: Point) {
             currentPlacemark?.let {
                 map.mapObjects.remove(it)
-                Log.d("MapTap", "Removed previous placemark")
+
             }
 
             currentPlacemark = map.mapObjects.addPlacemark(point, ImageProvider.fromResource(applicationContext, R.drawable.search_result))
@@ -255,10 +254,7 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
                 Toast.makeText(applicationContext, "Latitude: $latitude, Longitude: $longitude", Toast.LENGTH_LONG).show()
                 latitudeM = latitude
                 longitudeM = longitude
-                Log.d("Coordinates", "Latitude: $latitude, Longitude: $longitude")
 
-            } else {
-                Log.w("Coordinates", "Unexpected geometry type: ${geometry::class.java.simpleName}")
             }
         }
 
@@ -267,15 +263,10 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
 
     private fun placeUserMarker() {
         val userLocation = Point(latitude, longitude)
-        //val userMarker = map.mapObjects.addPlacemark(userLocation, ImageProvider.fromResource(this, R.drawable.user_arrow)) // Replace your_marker_icon with your actual icon drawable resource.
         mapview.map.move(
             CameraPosition(Point(latitude, longitude), 11.0f, 0.0f, 0.0f),
             Animation(Animation.Type.SMOOTH, 10f), null
         )
-
-        //userMarker.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
-        //userMarker.isDraggable = false // prevent dragging of the marker
-
     }
     private fun checkLocationPermission(): Boolean {
         return ActivityCompat.checkSelfPermission(
