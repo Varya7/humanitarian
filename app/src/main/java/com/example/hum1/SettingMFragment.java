@@ -3,18 +3,17 @@ package com.example.hum1;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,46 +24,41 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Map;
+public class SettingMFragment extends Fragment {
 
-public class SettingModerator extends AppCompatActivity {
-
-
-    FirebaseAuth auth;
-    FirebaseUser user;
+    private FirebaseAuth auth;
+    private FirebaseUser user;
     private DatabaseReference userRef;
-    String userId = "";
+    private String userId = "";
     private DatabaseReference mDatabase;
-    BottomNavigationView bottomNavigationView;
-    TextView emailV, logoutV, deleteV;
-    Button edit_passwordB;
 
+    private TextView emailV, logoutV, deleteV;
+    private Button edit_passwordB;
+    private BottomNavigationView bottomNavigationView;
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_setting_m, container, false);
 
-
-        setContentView(R.layout.activity_setting_moderator);
-        emailV = findViewById(R.id.email);
-        logoutV = findViewById(R.id.logout);
-        deleteV = findViewById(R.id.delete);
-
-        edit_passwordB = findViewById(R.id.edit_password);
+        emailV = view.findViewById(R.id.email);
+        logoutV = view.findViewById(R.id.logout);
+        deleteV = view.findViewById(R.id.delete);
+        edit_passwordB = view.findViewById(R.id.edit_password);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
-        assert user != null;
-        userId = user.getUid();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        userRef = mDatabase.child("Users").child(userId);
-        loadUserData();
-        setupButtons();
-        setupBottomNavigation();
+
+        if (user != null) {
+            userId = user.getUid();
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            userRef = mDatabase.child("Users").child(userId);
+            loadUserData();
+            setupButtons();
+        }
+
+
+        return view;
     }
 
     private void loadUserData() {
@@ -78,44 +72,28 @@ public class SettingModerator extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                }
+                Log.e("SettingModerator", "Database error", error.toException());
+            }
         });
     }
-
 
     private void setupButtons() {
         logoutV.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(this, Login.class)
+            startActivity(new Intent(getActivity(), AuthActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         });
 
         deleteV.setOnClickListener(v -> showDeleteConfirmationDialog());
 
         edit_passwordB.setOnClickListener(v ->
-                startActivity(new Intent(this, ChangePasswordActivity.class)));
-
+                startActivity(new Intent(getActivity(), ChangePasswordActivity.class)));
     }
 
-    private void setupBottomNavigation() {
 
-
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.navigation_setting);
-        bottomNavigationView.invalidate();
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.navigation_see) {
-                startActivity(new Intent(this, ModeratorList.class));
-                finish();
-                return true;
-            }
-            return false;
-        });
-
-    }
 
     private void showDeleteConfirmationDialog() {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(requireContext())
                 .setTitle("Подтверждение удаления")
                 .setMessage("Вы хотите удалить свой аккаунт?")
                 .setPositiveButton("Удалить", (dialog, which) -> deleteAccount())
@@ -130,17 +108,16 @@ public class SettingModerator extends AppCompatActivity {
                         user.delete()
                                 .addOnCompleteListener(task1 -> {
                                     if (task1.isSuccessful()) {
-                                        Toast.makeText(this, "Аккаунт удалён", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(this, Login.class));
-                                        finish();
+                                        Toast.makeText(getContext(), "Аккаунт удалён", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(getActivity(), AuthActivity.class));
+                                        requireActivity().finish();
                                     } else {
-                                        Toast.makeText(this, "Ошибка удаления аккаунта: " + task1.getException(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Ошибка удаления аккаунта: " + task1.getException(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     } else {
-                        Toast.makeText(this, "Ошибка удаления данных из базы: " + task.getException(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Ошибка удаления данных из базы: " + task.getException(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-
 }

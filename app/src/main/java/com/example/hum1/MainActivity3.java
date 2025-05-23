@@ -137,7 +137,7 @@ public class MainActivity3 extends AppCompatActivity {
         });
 
         if (user == null) {
-            Intent intent = new Intent(getApplicationContext(), Login.class);
+            Intent intent = new Intent(getApplicationContext(), AuthActivity.class);
             startActivity(intent);
             finish();
         }
@@ -190,7 +190,7 @@ public class MainActivity3 extends AppCompatActivity {
                 newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(MainActivity3.this, "Заявка подана", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainActivity3.this, MyApplications.class);
+                        Intent intent = new Intent(MainActivity3.this, UserActivity.class);
                         startActivity(intent);
                         finish();
                     } else {

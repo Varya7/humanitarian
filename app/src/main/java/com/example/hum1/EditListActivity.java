@@ -83,7 +83,7 @@ public class EditListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 saveAllAddedItems();
-                Intent intent = new Intent(EditListActivity.this, SettingCenter.class);
+                Intent intent = new Intent(EditListActivity.this, SettingCFragment.class);
                 startActivity(intent);
                 finish();
             }

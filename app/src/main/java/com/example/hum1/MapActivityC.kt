@@ -85,8 +85,8 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
     private var drivingSession:DrivingSession? = null
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    private var latitude: Double = 51.735475
-    private var longitude: Double = 36.190570
+    private var latitude: Double = 43.414663
+    private var longitude: Double = 39.950500
 
 
 
@@ -111,8 +111,13 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
     @SuppressLint("ServiceCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         MapKitFactory.setApiKey("3c89017d-c56c-4694-b14e-3085f7402ed4")
         MapKitFactory.initialize(this)
+
+        
+
         if (supportActionBar != null) {
             supportActionBar!!.hide()
         }

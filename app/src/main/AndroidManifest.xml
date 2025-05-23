@@ -22,6 +22,24 @@
         android:theme="@style/Theme.AppCompat.Light"
         tools:targetApi="31">
         <activity
+            android:name=".ModeratorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CenterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AuthActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".EditListUActivity"
             android:exported="false" />
         <activity
@@ -67,19 +85,11 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".UserList"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
             android:name=".EditListActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".EditDataCenterActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
-            android:name=".SettingCenter"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
@@ -91,10 +101,6 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".SettingUser"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
             android:name=".ui.CenterListActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
@@ -103,35 +109,9 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".MyApplications"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
             android:name=".ViewApplic"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
-        <activity
-            android:name=".MainActivity2"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
-            android:name=".RegisterC"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
-            android:name=".Register"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
-            android:name=".Login"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="false"

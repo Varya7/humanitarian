@@ -103,7 +103,7 @@ public class EditDataCenterActivity extends AppCompatActivity {
 
                 Toast.makeText(EditDataCenterActivity.this, "Изменения сохранены",
                         Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(EditDataCenterActivity.this, SettingCenter.class);
+                Intent intent = new Intent(EditDataCenterActivity.this, SettingCFragment.class);
                 startActivity(intent);
                 finish();
             }

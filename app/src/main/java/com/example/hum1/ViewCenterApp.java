@@ -120,7 +120,7 @@ public class ViewCenterApp extends AppCompatActivity {
                     mDatabase.child("Users").child(id).child("comment").setValue(String.valueOf(comV.getText()));
                 }
                 Toast.makeText(ViewCenterApp.this, "Статус заявки изменен на Одобрено", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ViewCenterApp.this, ModeratorList.class);
+                Intent intent = new Intent(ViewCenterApp.this, ModeratorListFragment.class);
                 startActivity(intent);
                 finish();
             }
@@ -135,7 +135,7 @@ public class ViewCenterApp extends AppCompatActivity {
                     mDatabase.child("Users").child(id).child("comment").setValue(String.valueOf(comV.getText()));
                 }
                 Toast.makeText(ViewCenterApp.this, "Статус заявки изменен на Отклонено", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ViewCenterApp.this, ModeratorList.class);
+                Intent intent = new Intent(ViewCenterApp.this, ModeratorListFragment.class);
                 startActivity(intent);
                 finish();
             }

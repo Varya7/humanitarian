@@ -129,7 +129,7 @@ public class ViewApplicC extends AppCompatActivity {
                     mDatabase.child("Applications").child(id).child("comment").setValue(String.valueOf(comV.getText()));
                 }
                 Toast.makeText(ViewApplicC.this, "Статус заявки изменен на Одобрено", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ViewApplicC.this, MainActivity2.class);
+                Intent intent = new Intent(ViewApplicC.this, CenterApplicationsFragment.class);
                 startActivity(intent);
                 finish();
             }
@@ -144,7 +144,7 @@ public class ViewApplicC extends AppCompatActivity {
                     mDatabase.child("Applications").child(id).child("comment").setValue(String.valueOf(comV.getText()));
                 }
                 Toast.makeText(ViewApplicC.this, "Статус заявки изменен на Отклонено", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ViewApplicC.this, MainActivity2.class);
+                Intent intent = new Intent(ViewApplicC.this, CenterApplicationsFragment.class);
                 startActivity(intent);
                 finish();
             }
@@ -164,7 +164,7 @@ public class ViewApplicC extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id== R.id.action_logout){
-            Intent intent = new Intent(this, SettingCenter.class);
+            Intent intent = new Intent(this, SettingCFragment.class);
             startActivity(intent);
             return true;
         }

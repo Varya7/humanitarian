@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/main"
@@ -202,13 +201,5 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Нижняя навигация -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/lower_menu_user" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

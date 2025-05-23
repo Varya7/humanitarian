@@ -100,7 +100,7 @@ Button saveB;
 
                 Toast.makeText(EditDataUserActivity.this, "Изменения сохранены",
                         Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(EditDataUserActivity.this, SettingUser.class);
+                Intent intent = new Intent(EditDataUserActivity.this, SettingFragment.class);
                 startActivity(intent);
                 finish();
             }

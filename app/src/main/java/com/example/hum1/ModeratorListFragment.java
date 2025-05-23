@@ -3,15 +3,17 @@ package com.example.hum1;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,30 +30,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModeratorList extends AppCompatActivity {
+public class ModeratorListFragment extends Fragment {
 
-    ArrayList<CenterApp> centers = new ArrayList<CenterApp>();
+    ArrayList<CenterApp> centers = new ArrayList<>();
     List<String> a1;
     private DatabaseReference mDatabase;
     FirebaseUser user;
     FirebaseAuth auth;
     Spinner spinner;
     CenterAppAdapter adapter;
-    BottomNavigationView bottomNavigationView;
     ArrayAdapter<String> adapter1;
-    private String id_appl, userId, center, role,  status;
+    private String id_appl, userId, center, role, status;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_moderator_list);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
-        spinner = findViewById(R.id.spinner);
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_moderator_list, container, false);
+
+        spinner = view.findViewById(R.id.spinner);
 
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -61,59 +57,50 @@ public class ModeratorList extends AppCompatActivity {
         assert user != null;
         userId = user.getUid();
 
-        RecyclerView recyclerView = findViewById(R.id.list);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                layoutManager.getOrientation());
+        RecyclerView recyclerView = view.findViewById(R.id.list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         CenterAppAdapter.OnCenterAppClickListener appClickListener = new CenterAppAdapter.OnCenterAppClickListener() {
             @Override
             public void onCenterAppClick(CenterApp centerApp, int position) {
-                Intent intent = new Intent(getApplicationContext(), ViewCenterApp.class);
+                Intent intent = new Intent(getActivity(), ViewCenterApp.class);
                 intent.putExtra("id", centerApp.getId_appl());
                 startActivity(intent);
             }
-
-
         };
 
-        adapter = new CenterAppAdapter(this, centers, appClickListener);
+        adapter = new CenterAppAdapter(getContext(), centers, appClickListener);
         recyclerView.setAdapter(adapter);
+
         a1 = new ArrayList<>();
         a1.add("Рассматривается");
         a1.add("Одобрено");
         a1.add("Отклонено");
-        adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, a1);
+        adapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, a1);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         spinner.setAdapter(adapter1);
 
-        AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
                 String item = (String) parent.getItemAtPosition(position);
                 centers.clear();
                 mDatabase.child("Users").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
                         if (task.isSuccessful()) {
-
                             DataSnapshot snapshot = task.getResult();
-
                             if (snapshot.exists()) {
                                 for (DataSnapshot applicationSnapshot : snapshot.getChildren()) {
                                     role = applicationSnapshot.child("role").getValue(String.class);
                                     status = applicationSnapshot.child("status").getValue(String.class);
-                                    if (role != null && status != null && item != null &&
-                                            status.equals(item)) {
+                                    if (role != null && status != null && item != null && status.equals(item)) {
                                         center = applicationSnapshot.child("center_name").getValue(String.class);
                                         id_appl = applicationSnapshot.getKey();
                                         centers.add(new CenterApp(center, id_appl));
                                     }
-
                                 }
                                 adapter.notifyDataSetChanged();
                             }
@@ -121,37 +108,13 @@ public class ModeratorList extends AppCompatActivity {
                     }
                 });
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        };
-        spinner.setOnItemSelectedListener(itemSelectedListener);
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        return view;
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bottomNavigationView.setSelectedItemId(R.id.navigation_see);
-    }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    if (item.getItemId()== R.id.navigation_see){
-                        return true;
-                    }
-                    else if (item.getItemId() == R.id.navigation_setting){
-                        Intent intent = new Intent(ModeratorList.this, SettingModerator.class);
-                        startActivity(intent);
-                        finish();
-                        return true;
-
-                    }
-                    return false;
-                }
-
-            };
 
 }

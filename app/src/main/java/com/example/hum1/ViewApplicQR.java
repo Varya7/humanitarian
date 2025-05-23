@@ -189,7 +189,7 @@ public class ViewApplicQR extends AppCompatActivity {
                     .addOnSuccessListener(aVoid -> updateItemQuantities())
                     .addOnFailureListener(e ->
                             Toast.makeText(this, "Ошибка обновления статуса", Toast.LENGTH_SHORT).show());
-            Intent intent = new Intent(ViewApplicQR.this, MainActivity2.class);
+            Intent intent = new Intent(ViewApplicQR.this, CenterApplicationsFragment.class);
             startActivity(intent);
             finish();
         });

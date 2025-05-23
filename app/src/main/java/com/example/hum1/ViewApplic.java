@@ -175,7 +175,7 @@ public class ViewApplic extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id== R.id.action_logout){
-            Intent intent = new Intent(this, SettingUser.class);
+            Intent intent = new Intent(this, SettingFragment.class);
             startActivity(intent);
             return true;
         }

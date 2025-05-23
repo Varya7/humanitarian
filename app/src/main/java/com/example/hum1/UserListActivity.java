@@ -111,7 +111,7 @@ public class UserListActivity extends AppCompatActivity {
         userRef.child("list_u").setValue(dataList);
 
         Toast.makeText(this, "Данные сохранены", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
+        Intent intent = new Intent(getApplicationContext(), CenterApplicationsFragment.class);
         startActivity(intent);
         finish();
     }

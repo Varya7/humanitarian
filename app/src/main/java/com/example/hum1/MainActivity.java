@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
 
         if (user == null) {
-            Intent intent = new Intent(getApplicationContext(), Login.class);
+            Intent intent = new Intent(getApplicationContext(), AuthActivity.class);
             startActivity(intent);
             finish();
         }
@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(MainActivity.this, "Заявка подана", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainActivity.this, MyApplications.class);
+                        Intent intent = new Intent(MainActivity.this, UserActivity.class);
                         startActivity(intent);
                         finish();
                     } else {

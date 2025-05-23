@@ -87,7 +87,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     private void redirectToSettings() {
         Class<?> targetClass = "user".equals(role) ?
-                SettingUser.class : SettingCenter.class;
+                SettingFragment.class : SettingCFragment.class;
 
         startActivity(new Intent(this, targetClass));
         finish();
