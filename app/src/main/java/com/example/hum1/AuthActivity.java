@@ -18,7 +18,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
+/**
+ * Активность аутентификации, которая служит точкой входа в приложение.
+ * Определяет роль авторизированного пользователя и перенаправляет на соответствующую активность.
+ */
 public class AuthActivity extends AppCompatActivity {
+
+    /**
+     * Инициализирует активность при создании.
+     * Проверяет текущего авторизованного пользователя и выполняет перенаправление
+     * или показывает фрагмент входа в зависимости от состояния аутентификации.
+     *
+     * @param savedInstanceState сохраненное состояние активности (может быть null)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +50,12 @@ public class AuthActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Проверяет роль пользователя в базе данных Firebase и перенаправляет
+     * на соответствующую активность в зависимости от роли.
+     *
+     * @param userId уникальный идентификатор пользователя в Firebase
+     */
     private void checkUserRoleAndRedirect(String userId) {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child(userId);
@@ -65,21 +84,37 @@ public class AuthActivity extends AppCompatActivity {
         });
     }
 
-
-    private void redirectToMyApplications() {
+    /**
+     * Перенаправляет пользователя на активность обычного пользователя.
+     * Завершает текущую активность после перенаправления.
+     */
+    void redirectToMyApplications() {
         startActivity(new Intent(this, UserActivity.class));
         finish();
     }
 
-    private void redirectToMainActivity2() {
+    /**
+     * Перенаправляет пользователя на активность центра.
+     * Завершает текущую активность после перенаправления.
+     */
+    void redirectToMainActivity2() {
         startActivity(new Intent(this, CenterActivity.class));
         finish();
     }
-    private void redirectToMainActivity3() {
+
+    /**
+     * Перенаправляет пользователя на активность модератора.
+     * Завершает текущую активность после перенаправления.
+     */
+    void redirectToMainActivity3() {
         startActivity(new Intent(this, ModeratorActivity.class));
         finish();
     }
 
+    /**
+     * Отображает фрагмент входа в систему.
+     * Заменяет текущий фрагмент в контейнере R.id.fragment_container.
+     */
     private void showLoginFragment() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new LoginFragment())

@@ -37,6 +37,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Активность для редактирования списка доступных вещей в центре.
+ * Позволяет добавлять, редактировать и удалять элементы из списка,
+ * хранящегося в Firebase Realtime Database.
+ */
 public class EditListActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser user;
@@ -45,13 +50,18 @@ public class EditListActivity extends AppCompatActivity {
     private LinearLayout containerFields;
     private Button saveB, btnAddRow;
     private DatabaseReference userRef;
-    private ArrayList<Map<String, String>> listC;
-    private ListAdapter adapter;
-    private RecyclerView recyclerView;
+    ArrayList<Map<String, String>> listC;
+    ListAdapter adapter;
+    RecyclerView recyclerView;
     private String userId;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    private List<View> addedRows = new ArrayList<>();
+    List<View> addedRows = new ArrayList<>();
+
+    /**
+     * Метод жизненного цикла активности. Инициализирует все компоненты UI,
+     * загружает существующие элементы из базы данных, задаёт обработчики на кнопки.
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +71,13 @@ public class EditListActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_edit_list);
 
+        // Инициализация компонентов
         saveB = findViewById(R.id.save);
         btnAddRow = findViewById(R.id.btn_add_row);
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         containerFields = findViewById(R.id.container_fields);
+
         assert user != null;
         userId = user.getUid();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -77,27 +89,25 @@ public class EditListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        // Загрузка существующих данных
         loadListData();
 
-        saveB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveAllAddedItems();
-                Intent intent = new Intent(EditListActivity.this, SettingCFragment.class);
-                startActivity(intent);
-                finish();
-            }
+        // Сохранение всех добавленных вручную строк
+        saveB.setOnClickListener(view -> {
+            saveAllAddedItems();
+
+            finish();
         });
 
-        btnAddRow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addRow();
-            }
-        });
+        // Добавление новой строки
+        btnAddRow.setOnClickListener(v -> addRow());
     }
 
-    private void addRow() {
+    /**
+     * Создаёт новую строку ввода для добавления элемента.
+     */
+    void addRow() {
         LinearLayout rowLayout = new LinearLayout(this);
         rowLayout.setOrientation(LinearLayout.HORIZONTAL);
         rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
@@ -142,7 +152,12 @@ public class EditListActivity extends AppCompatActivity {
         addedRows.add(rowLayout);
     }
 
-
+    /**
+     * Сохраняет новый элемент в Firebase.
+     *
+     * @param name     Название элемента.
+     * @param quantity Количество.
+     */
     private void saveNewItem(String name, String quantity) {
         Map<String, String> newItem = new HashMap<>();
         newItem.put("name", name);
@@ -155,6 +170,9 @@ public class EditListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Сохраняет все добавленные строки перед выходом из активности.
+     */
     private void saveAllAddedItems() {
         for (View row : addedRows) {
             LinearLayout rowLayout = (LinearLayout) row;
@@ -169,6 +187,11 @@ public class EditListActivity extends AppCompatActivity {
         addedRows.clear();
     }
 
+    /**
+     * Отображает диалог редактирования существующего элемента.
+     *
+     * @param position Позиция элемента в списке.
+     */
     private void showEditDialog(int position) {
         Map<String, String> item = listC.get(position);
 
@@ -176,8 +199,8 @@ public class EditListActivity extends AppCompatActivity {
         builder.setTitle("Редактировать пункт");
 
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_item, null);
-        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) EditText nameEditText = view.findViewById(R.id.edit_name);
-        @SuppressLint({"MissingInflatedId", "LocalSuppress"}) EditText quantityEditText = view.findViewById(R.id.edit_quantity);
+        EditText nameEditText = view.findViewById(R.id.edit_name);
+        EditText quantityEditText = view.findViewById(R.id.edit_quantity);
 
         nameEditText.setText(item.get("name"));
         quantityEditText.setText(item.get("quantity"));
@@ -199,8 +222,9 @@ public class EditListActivity extends AppCompatActivity {
         builder.show();
     }
 
-
-
+    /**
+     * Обновляет данные элемента в Firebase по его позиции.
+     */
     private void updateItem(int position, String newName, String newQuantity) {
         Map<String, String> updatedItem = new HashMap<>();
         updatedItem.put("name", newName);
@@ -220,10 +244,14 @@ public class EditListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                 }
+
+            }
         });
     }
 
+    /**
+     * Удаляет элемент из Firebase по его позиции в списке.
+     */
     private void deleteItem(int position) {
         userRef.child("list_c").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -240,10 +268,14 @@ public class EditListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                  }
+
+            }
         });
     }
 
+    /**
+     * Загружает список элементов из Firebase и отображает в RecyclerView.
+     */
     private void loadListData() {
         userRef.child("list_c").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -261,6 +293,7 @@ public class EditListActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

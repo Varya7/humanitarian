@@ -11,8 +11,21 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+
+/**
+ * Активность для модератора с нижней навигацией.
+ * Позволяет переключаться между фрагментами просмотра списка и настройками.
+ */
 public class ModeratorActivity extends AppCompatActivity {
 
+
+    /**
+     * Метод жизненного цикла onCreate.
+     * Выполняет инициализацию интерфейса, включая включение Edge-to-Edge отображения,
+     * скрытие ActionBar, настройку нижней навигации и установку начального фрагмента.
+     *
+     * @param savedInstanceState сохранённое состояние активности (если есть)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +47,12 @@ public class ModeratorActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Обработчик выбора элементов нижней навигации.
+     * В зависимости от выбранного пункта переключает отображаемый фрагмент:
+     * - Список модератора (ModeratorListFragment)
+     * - Настройки модератора (SettingMFragment)
+     */
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             item -> {
                 Fragment selectedFragment = null;

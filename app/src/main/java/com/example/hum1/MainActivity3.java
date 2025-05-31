@@ -42,6 +42,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Активность для подачи заявки в выбранный центр.
+ * Позволяет пользователю выбрать дату и время, заполнить необходимые поля
+ * и отправить заявку в Firebase Realtime Database.
+ */
 public class MainActivity3 extends AppCompatActivity {
 
     FirebaseAuth auth;
@@ -60,6 +66,12 @@ public class MainActivity3 extends AppCompatActivity {
     private DatabaseReference mDatabase;
     ArrayAdapter<String> adapter;
 
+    /**
+     * Инициализация активности: настройка интерфейса, получение данных пользователя,
+     * загрузка данных центра и установка обработчиков событий.
+     *
+     * @param savedInstanceState сохраненное состояние активности (если есть)
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +83,20 @@ public class MainActivity3 extends AppCompatActivity {
         setContentView(R.layout.activity_main3);
 
         auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            // Обработка отсутствия авторизации
+            Toast.makeText(this, "Пожалуйста, войдите в систему", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, AuthActivity.class)); // Предполагается, что есть LoginActivity
+            finish();
+            return;
+        }
+
+        String userId = user.getUid();
         appl = findViewById(R.id.appl);
+
+
+
 
         center_nameV = findViewById(R.id.center_name);
         user = auth.getCurrentUser();
@@ -143,7 +168,7 @@ public class MainActivity3 extends AppCompatActivity {
         }
 
 
-
+        String finalUserId = userId;
         appl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,7 +196,7 @@ public class MainActivity3 extends AppCompatActivity {
 
                 applicationInfo.put("time", time);
                 applicationInfo.put("center", center_name);
-                applicationInfo.put("id", userId);
+                applicationInfo.put("id", finalUserId);
                 applicationInfo.put("status", "Рассматривается");
                 applicationInfo.put("comment", "");
 
@@ -205,8 +230,10 @@ public class MainActivity3 extends AppCompatActivity {
     }
 
 
-
-
+    /**
+     * Отображает Dialog выбора даты.
+     * При выборе даты устанавливает выбранное значение в поле ввода даты.
+     */
     private void showDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -221,7 +248,10 @@ public class MainActivity3 extends AppCompatActivity {
     }
 
 
-
+    /**
+     * Отображает Dialog выбора времени.
+     * При выборе времени устанавливает выбранное значение в поле ввода времени.
+     */
     private void showTimePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -235,6 +265,13 @@ public class MainActivity3 extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+
+    /**
+     * Загружает данные списка "list_c" центра из Firebase по его ID.
+     * Обновляет адаптер RecyclerView после успешной загрузки данных.
+     *
+     * @param centerId уникальный идентификатор центра
+     */
     private void loadListData(String centerId) {
         mDatabase.child("Users").child(centerId).child("list_c").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -257,6 +294,12 @@ public class MainActivity3 extends AppCompatActivity {
         });
     }
 
+    /**
+     * Загружает данные списка "list_u" центра из Firebase по его ID.
+     * Обновляет адаптер RecyclerView после успешной загрузки данных.
+     *
+     * @param centerId уникальный идентификатор центра
+     */
     private void loadListUData(String centerId){
         mDatabase.child("Users").child(centerId).child("list_u").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")

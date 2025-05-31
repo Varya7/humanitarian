@@ -33,18 +33,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Активность для просмотра заявки на регистрацию центра.
+ * Загружает и отображает данные центра из Firebase:
+ * информация о центре, статус заявки, списки товаров и услуг.
+ * Позволяет изменить статус заявки на "Одобрено" или "Отклонено" с комментарием.
+ */
 public class ViewCenterApp extends AppCompatActivity {
-    private ArrayList<Map<String, String>> listC;
+    ArrayList<Map<String, String>> listC;
     public ArrayList<ListU> listU;
 
     Button statusT;
     String id, email, fio, phone_number, work_time, center_name, address, doc, status;
-    private DatabaseReference mDatabase;
-    private ListAdapter adapter;
-    private ListUAdapter adapter2;
-    private RecyclerView recyclerView, recyclerView2;
+    DatabaseReference mDatabase;
+    ListAdapter adapter;
+    ListUAdapter adapter2;
+    RecyclerView recyclerView;
+    RecyclerView recyclerView2;
     TextView statusF, emailV, fioV, work_timeV, phone_numberV, logoutV, deleteV, center_nameV, addressV, docV;
     EditText comV;
+
+    /**
+     * Инициализация активности.
+     * Подключение к Firebase, инициализация UI, загрузка данных центра и списков.
+     * Настройка кнопок изменения статуса заявки.
+     *
+     * @param savedInstanceState сохранённое состояние активности
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,8 +157,9 @@ public class ViewCenterApp extends AppCompatActivity {
         });
     }
 
-
-
+    /**
+     * Инициализация UI элементов, связывание с layout.
+     */
     private void initViews() {
         emailV = findViewById(R.id.email);
         fioV = findViewById(R.id.fio);
@@ -159,6 +175,9 @@ public class ViewCenterApp extends AppCompatActivity {
         docV = findViewById(R.id.doc);
     }
 
+    /**
+     * Загружает список товаров заявки из Firebase, обновляет адаптер и размер RecyclerView.
+     */
     private void loadListData() {
         mDatabase.child("Users").child(id).child("list_c").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -183,6 +202,9 @@ public class ViewCenterApp extends AppCompatActivity {
         });
     }
 
+    /**
+     * Загружает список услуг заявки из Firebase и обновляет адаптер.
+     */
     private void loadListUData() {
         mDatabase.child("Users").child(id).child("list_u").addValueEventListener(new ValueEventListener() {
             @Override
@@ -206,8 +228,13 @@ public class ViewCenterApp extends AppCompatActivity {
         });
     }
 
+    /**
+     * Обновляет данные списка вещей и адаптер, а также размер RecyclerView.
+     *
+     * @param newList новый список услуг
+     */
     @SuppressLint("NotifyDataSetChanged")
-    private void updateListUData(List<ListU> newList) {
+    void updateListUData(List<ListU> newList) {
         if (adapter2 == null) {
             adapter2 = new ListUAdapter(newList);
             recyclerView2.setAdapter(adapter2);
@@ -219,7 +246,11 @@ public class ViewCenterApp extends AppCompatActivity {
         }
     }
 
-    private void updateRecyclerViewHeight2() {
+    /**
+     * Обновляет высоту RecyclerView для списка полей,
+     * устанавливая высоту исходя из количества элементов.
+     */
+    void updateRecyclerViewHeight2() {
         if (adapter2.getItemCount() > 0) {
 
             int heightInDp = adapter2.getItemCount() * 56;
@@ -233,8 +264,11 @@ public class ViewCenterApp extends AppCompatActivity {
     }
 
 
-
-    private void updateRecyclerViewHeight() {
+    /**
+     * Обновляет высоту RecyclerView для списка вещей,
+     * устанавливая высоту исходя из количества элементов.
+     */
+    void updateRecyclerViewHeight() {
         if (adapter.getItemCount() > 0) {
 
             int heightInDp = adapter.getItemCount() * 56;

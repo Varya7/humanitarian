@@ -1,7 +1,26 @@
 package com.example.hum1;
 
+/**
+ * Класс, представляющий заявку пользователя для UserListFragment.
+ * Содержит информацию о заявке, включая персональные данные пользователя,
+ * временные метки и статус обработки.
+ */
 public class Application {
     private String id_appl, date, time, email, fio, phone_number, birth, family_members, list, status;
+    /**
+     * Конструктор для создания объекта заявки.
+     *
+     * @param id_appl уникальный идентификатор заявки
+     * @param date дата
+     * @param time время
+     * @param email email пользователя
+     * @param fio ФИО пользователя
+     * @param phone_number номер телефона пользователя
+     * @param birth дата рождения пользователя
+     * @param family_members количество членов семьи
+     * @param list список необходимых товаров/услуг
+     * @param status текущий статус заявки
+     */
 
    public Application(String id_appl, String date, String time, String email, String fio, String phone_number, String birth, String family_members, String list, String status){
         this.id_appl = id_appl;
@@ -15,7 +34,6 @@ public class Application {
         this.list = list;
         this.status = status;
     }
-
 
 
     public String getId_appl(){
@@ -72,12 +90,7 @@ public class Application {
     public void setList(String list){
         this.list = list;
     }
-    public String getFamily_members(){
-        return this.family_members;
-    }
-    public void setFamily_members(String family_members){
-        this.family_members = family_members;
-    }
+
     public String getStatus(){ return this.status; }
     public void setStatus(String status) {this.status = status;}
 }

@@ -34,21 +34,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Активность для отображения информации о выданной заявке.
+ * Показывает основную информацию о заявке, списки выбранных предметов и дополнительную информацию.
+ */
 public class ViewAppComplete extends AppCompatActivity {
 
-    private DatabaseReference mDatabase;
+    DatabaseReference mDatabase;
 
-    private ArrayList<Map<String, String>> listC;
+    ArrayList<Map<String, String>> listC;
     private RecyclerView recyclerView, recyclerView2;
     ListU3Adapter adapter2;
-    private ArrayList<ListU3> listU3List;
+    ArrayList<ListU3> listU3List;
     LinearLayout commentLayout;
-    EditText comV;
-    private ListAdapter adapter;
-    TextView dateV, timeV, emailV, fioV, phone_numberV, birthV;
+    //EditText comV;
+    ListAdapter adapter;
+    TextView dateV, timeV, emailV, fioV, phone_numberV, birthV, comV;
     String id, com, date, time, email, fio, phone_number, birth, status;
 
-
+    /**
+     * Метод вызывается при создании активности.
+     * Инициализирует интерфейс, подключение к Firebase и загружает данные о заявке.
+     *
+     * @param savedInstanceState Сохранённое состояние активности
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +72,7 @@ public class ViewAppComplete extends AppCompatActivity {
         timeV = findViewById(R.id.time);
         emailV = findViewById(R.id.email);
         fioV = findViewById(R.id.fio);
+        comV = findViewById(R.id.comm);
         phone_numberV = findViewById(R.id.phone_number);
         commentLayout = findViewById(R.id.commentLayout);
         birthV = findViewById(R.id.birth);
@@ -123,26 +133,12 @@ public class ViewAppComplete extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id== R.id.action_logout){
-            Intent intent = new Intent(this, SettingCFragment.class);
-            startActivity(intent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void loadListData() {
+    /**
+     * Загружает список выбранных пользователем предметов из узла "selected_items"
+     * и отображает их в RecyclerView.
+     */
+    void loadListData() {
         mDatabase.child("Applications").child(id).child("selected_items").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -180,8 +176,11 @@ public class ViewAppComplete extends AppCompatActivity {
     }
 
 
-
-    private void loadListU3Data() {
+    /**
+     * Загружает дополнительную информацию пользователя из узла "list_u"
+     * и отображает её в виде списка.
+     */
+    void loadListU3Data() {
         mDatabase.child("Applications").child(id).child("list_u").addListenerForSingleValueEvent(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override

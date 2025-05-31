@@ -9,21 +9,40 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.BreakIterator;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+/**
+ * Адаптер для отображения списка заявок в RecyclerView в активности MainActivity2.
+ * Обеспечивает привязку данных о заявках к элементам списка и обработку кликов.
+ */
 
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
 
+    /**
+     * Интерфейс для обработки кликов по элементам списка заявок.
+     */
     interface OnAppClickListener{
+        /**
+         * Вызывается при клике на элемент списка.
+         *
+         * @param app Заявка, по которой был выполнен клик
+         * @param position Позиция заявки в списке
+         */
         void onAppClick(Application app, int position);
     }
 
     private final OnAppClickListener onClickListener;
 
     private final LayoutInflater inflater;
-    private List<com.example.hum1.Application> applications;
+    List<com.example.hum1.Application> applications;
+
+    /**
+     * Конструктор адаптера.
+     *
+     * @param context Контекст приложения
+     * @param applications Список заявок для отображения
+     * @param onClickListener Обработчик кликов по элементам списка
+     */
 
     public AppAdapter(Context context, List<Application> applications, OnAppClickListener onClickListener) {
         this.applications = applications;
@@ -32,6 +51,14 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
     }
 
 
+    /**
+     * Создает новый объект ViewHolder при необходимости.
+     *
+     * @param parent Родительская ViewGroup
+     * @param viewType Тип View
+     * @return Новый экземпляр ViewHolder
+     */
+
     @Override
     public AppAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.list_items, parent, false);
@@ -39,7 +66,12 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
     }
 
 
-
+    /**
+     * Привязывает данные заявки к ViewHolder на указанной позиции.
+     *
+     * @param holder ViewHolder, к которому привязываются данные
+     * @param position Позиция данных в списке
+     */
 
     @Override
     public void onBindViewHolder(AppAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
@@ -58,14 +90,31 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
     }
 
 
+    /**
+     * Возвращает общее количество элементов в списке.
+     *
+     * @return Количество заявок в списке
+     */
+
     @Override
     public int getItemCount() {
         return applications.size();
     }
 
+
+    /**
+     * ViewHolder для кэширования View-компонентов элементов списка.
+     */
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView date, time, email, fio, phone_number, birth, family_members, list;;
 
+
+        /**
+         * Конструктор ViewHolder.
+         *
+         * @param view Корневое View элемента списка
+         */
 
         ViewHolder(View view){
             super(view);

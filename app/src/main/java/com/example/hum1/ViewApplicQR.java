@@ -45,10 +45,19 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
+/**
+ * Класс ViewApplicQR представляет активность для просмотра данных заявки по QR-коду.
+ * Показывает информацию о заявке, включая дату, время, контактные данные, список запрошенных товаров и дополнительную информацию.
+ * Позволяет изменить статус заявки на "Выдано" и обновить количество товаров в центре.
+ *
+ * Использует Firebase Realtime Database для загрузки и обновления данных.
+ *
+ **/
 public class ViewApplicQR extends AppCompatActivity {
-    private ArrayList<Map<String, String>> listC;
+    ArrayList<Map<String, String>> listC;
     private ArrayList<Map<String, String>> listC2;
-    private DatabaseReference mDatabase;
+    DatabaseReference mDatabase;
     private DatabaseReference userRef;
     private AlertDialog messageDialog;
     FirebaseAuth auth;
@@ -57,14 +66,22 @@ public class ViewApplicQR extends AppCompatActivity {
 
     FirebaseUser user;
     private AlertDialog loadingDialog;
-    private ListAdapter adapter;
-    private RecyclerView recyclerView, recyclerView2;
+    ListAdapter adapter;
+    RecyclerView recyclerView;
+    RecyclerView recyclerView2;
     ListU3Adapter adapter2;
     private ArrayList<ListU3> listU3List;
     Button StatusB;
     TextView dateV, timeV, emailV, fioV, phone_numberV, birthV, errorV;
     String id, userId, center_name, date, time, email, fio, phone_number, birth, status;
 
+    /**
+     * Метод onCreate вызывается при создании активности.
+     * Загружает данные из Firebase, проверяет центр и статус заявки, обновляет интерфейс.
+     * Инициализирует элементы интерфейса и задаёт обработчики событий.
+     *
+     * @param savedInstanceState Состояние активности, если оно ранее сохранялось.
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,12 +212,12 @@ public class ViewApplicQR extends AppCompatActivity {
         });
     }
 
-    interface UpdateCallback {
-        void onComplete();
-        void onError(String message);
-    }
-
-    private void updateItemQuantities() {
+    /**
+     * Обновляет количество товаров в центре после выдачи заявки.
+     * Сравнивает запрошенные товары с имеющимися и вычитает выданное количество.
+     * Сохраняет обновлённый список в Firebase.
+     */
+    void updateItemQuantities() {
         if (center_name == null || center_name.isEmpty()) {
             Toast.makeText(this, "Центр не определен", Toast.LENGTH_SHORT).show();
             return;
@@ -279,6 +296,11 @@ public class ViewApplicQR extends AppCompatActivity {
         });
     }
 
+    /**
+     * Загружает список выбранных пользователем товаров из Firebase.
+     * Отображает только те товары, у которых количество больше 0.
+     * Обновляет адаптер списка товаров.
+     */
     private void loadListData() {
         mDatabase.child("Applications").child(id).child("selected_items").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -316,6 +338,11 @@ public class ViewApplicQR extends AppCompatActivity {
         });
     }
 
+    /**
+     * Загружает дополнительную информацию из заявки.
+     * Используется для отображения меток и значений, переданных вместе с заявкой.
+     * Обновляет адаптер дополнительной информации.
+     */
     private void loadListU3Data() {
         mDatabase.child("Applications").child(id).child("list_u").addListenerForSingleValueEvent(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")

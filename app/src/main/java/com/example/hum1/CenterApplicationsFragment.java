@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +31,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Фрагмент, отображающий список заявок текущего центра.
+ * Пользователь может фильтровать заявки по их статусу с помощью выпадающего списка (Spinner).
+ * Также доступен переход к сканеру и детальный просмотр заявки.
+ */
 public class CenterApplicationsFragment extends Fragment {
 
     ArrayList<Application> applications = new ArrayList<>();
@@ -45,7 +49,14 @@ public class CenterApplicationsFragment extends Fragment {
     ArrayAdapter<String> adapter1;
     private String center_name;
 
-
+    /**
+     * Создает и инициализирует пользовательский интерфейс фрагмента.
+     *
+     * @param inflater           объект для создания представлений из XML
+     * @param container          родительский контейнер для фрагмента
+     * @param savedInstanceState сохраненное состояние
+     * @return корневое представление фрагмента
+     */
     @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
@@ -63,20 +74,21 @@ public class CenterApplicationsFragment extends Fragment {
 
         spinner.setEnabled(true);
 
+         //Проверка, авторизован ли пользователь
         if (user == null) {
-            // Пользователь не авторизован — можно отправить на вход
-            // Например:
-            requireActivity().finish();
+            requireActivity().finish(); // Завершение активности, если пользователь не авторизован
             return view;
         }
 
         String userId = user.getUid();
 
+        // Обработчик нажатия на кнопку сканера
         scannerB.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ScanActivity.class);
             startActivity(intent);
         });
 
+        // Настройка RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -84,6 +96,7 @@ public class CenterApplicationsFragment extends Fragment {
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
+        // Обработчик кликов по заявкам
         AppAdapter.OnAppClickListener appClickListener = (app, position) -> {
             Intent intent;
             if ("Выдано".equals(app.getStatus())) {
@@ -95,23 +108,26 @@ public class CenterApplicationsFragment extends Fragment {
             startActivity(intent);
         };
 
+        // Инициализация адаптера и установка в RecyclerView
         adapter = new AppAdapter(requireContext(), applications, appClickListener);
         recyclerView.setAdapter(adapter);
 
+        // Список доступных статусов заявок
         a1 = new ArrayList<>();
         a1.add("Рассматривается");
         a1.add("Одобрено");
         a1.add("Отклонено");
         a1.add("Выдано");
 
+        // Настройка адаптера для Spinner
         adapter1 = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, a1);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter1);
 
-        // Получаем имя центра текущего пользователя
+        // Получение информации о центре пользователя из базы данных
         mDatabase.child("Users").child(userId).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
-                Log.e("firebase", "Error getting data", task.getException());
+                Log.e("firebase", "Ошибка при получении данных", task.getException());
             } else {
                 DataSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
@@ -120,15 +136,17 @@ public class CenterApplicationsFragment extends Fragment {
             }
         });
 
+        // Обработчик выбора статуса в Spinner
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view1, int position, long id) {
                 String item = (String) parent.getItemAtPosition(position);
                 applications.clear();
 
+                // Загрузка и фильтрация заявок по статусу и центру
                 mDatabase.child("Applications").get().addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
-                        Log.e("firebase", "Error getting data", task.getException());
+                        Log.e("firebase", "Ошибка при получении данных", task.getException());
                     } else {
                         DataSnapshot snapshot = task.getResult();
 
@@ -152,7 +170,7 @@ public class CenterApplicationsFragment extends Fragment {
                                     applications.add(new Application(id_appl, date, time, email, fio, phone_number, birth, family_members, list, status));
                                 }
                             }
-                            adapter.notifyDataSetChanged();
+                            adapter.notifyDataSetChanged(); // Обновление списка после загрузки данных
                         }
                     }
                 });
@@ -164,13 +182,14 @@ public class CenterApplicationsFragment extends Fragment {
             }
         });
 
-
         return view;
     }
 
+    /**
+     * Метод вызывается при возвращении фрагмента на экран.
+     */
     @Override
     public void onResume() {
         super.onResume();
-
     }
 }

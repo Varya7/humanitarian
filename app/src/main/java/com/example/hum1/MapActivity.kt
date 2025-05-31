@@ -57,6 +57,11 @@ import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 
+/**
+ * Активити для отображения карты с использованием Yandex MapKit и получения маршрута между двумя точками.
+ * Поддерживает отображение пробок, определение текущего местоположения пользователя,
+ * поиск по карте и построение маршрутов для автомобиля.
+ */
 class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.SearchListener, CameraListener, DrivingSession.DrivingRouteListener {
     lateinit var mapview: MapView
 
@@ -71,22 +76,19 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
     private val SCREEN_CENTER = Point(
         (ROUTE_START_LOCATION.latitude+ROUTE_END_LOCATION.latitude)/2,
         (ROUTE_START_LOCATION.longitude+ROUTE_END_LOCATION.longitude)/2)
-    private var mapObjects:MapObjectCollection? = null
-    private var drivingRouter: DrivingRouter? = null
+    public var mapObjects:MapObjectCollection? = null
+    public var drivingRouter: DrivingRouter? = null
     private var drivingSession:DrivingSession? = null
     private var latitude: Double = -1.0
     private var longitude: Double = -1.0
     private var latitudeM: Double = -1.0
     private var longitudeM: Double = -1.0
 
-    private fun submitQuery(query: String) {
-        searchSession = searchManager.submit(
-            query,
-            VisibleRegionUtils.toPolygon(mapview.map.visibleRegion),
-            SearchOptions(),
-            this
-        )
-    }
+    /**
+     * Инициализация активити, установка ключа API, инициализация карты,
+     * запрос разрешений и инициализация компонентов для работы с картой и маршрутизацией
+     * @param savedInstanceState Состояние активити при создании
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey("3c89017d-c56c-4694-b14e-3085f7402ed4")
@@ -154,7 +156,10 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         submitRequest()
     }
 
-
+    /**
+     * Запрашивает разрешение на определение местоположения у пользователя,
+     * если оно еще не предоставлено.
+     */
     private fun requestLocationPermission() {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -169,19 +174,28 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         }
     }
 
+    /**
+     * Обрабатывает событие остановки активности — останавливает MapKit и MapView.
+     */
     override fun onStop() {
         mapview.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
     }
 
+    /**
+     * Обрабатывает событие старта активности — запускает MapKit и MapView.
+     */
     override fun onStart() {
         mapview.onStart()
         MapKitFactory.getInstance().onStart()
         super.onStart()
     }
 
-
+    /**
+     * Получает последнее известное местоположение устройства через FusedLocationProviderClient.
+     * Устанавливает начальную точку маршрута.
+     */
     private fun getLastKnownLocation() {
         try {
             fusedLocationClient.lastLocation
@@ -200,7 +214,13 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         }
     }
 
-
+    /**
+     * Обрабатывает результат запроса разрешений.
+     * При успешном предоставлении разрешения запрашивает последнее местоположение.
+     * @param requestCode Код запроса разрешения
+     * @param permissions Запрошенные разрешения
+     * @param grantResults Результаты разрешений
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>,
         grantResults: IntArray
@@ -213,7 +233,11 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         }
     }
 
-
+    /**
+     * Срабатывает при добавлении объекта текущего местоположения на карту.
+     * Настраивает иконки и стили отображения пользователя.
+     * @param userLocationView Вид текущего местоположения пользователя на карте
+     */
     override fun onObjectAdded(userLocationView: UserLocationView) {
         locationmapkit.
 
@@ -231,6 +255,7 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         userLocationView.accuracyCircle.fillColor = Color.BLUE and -0x66000001
     }
 
+
     override fun onObjectRemoved(p0: UserLocationView) {
 
     }
@@ -240,33 +265,12 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
     }
 
     override fun onSearchResponse(response: Response) {
-        /*
-        val mapObjects: MapObjectCollection = mapview.map.mapObjects
-        //mapObjects.clear()
-        for (searchResult in response.collection.children) {
-            val resultLocation = searchResult.obj!!.geometry[0].point!!
-            if (response != null) {
-                mapObjects.addPlacemark(
-                    resultLocation,
-                    ImageProvider.fromResource(this, R.drawable.search_result)
-                )
-            }
-        }
-        */
+
 
     }
 
     override fun onSearchError(error: Error) {
-        /*
-        var errorMessage = "Неизвестная Ошибка!"
-        if (error is RemoteError) {
-            errorMessage = "Беспроводная ошибка!"
-        } else if (error is NetworkError) {
-            errorMessage = "Проблема с интернетом!"
-            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
-        }
 
-         */
     }
 
 
@@ -276,24 +280,33 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         cameraUpdateReason: CameraUpdateReason,
         finished: Boolean
     ) {
-        //if(finished){
-        //    submitQuery(searchEdit.text.toString())
-        // }
+
     }
 
+    /**
+     * Обрабатывает получение маршрутов от роутера.
+     * Добавляет линии маршрута на карту.
+     * @param routes Список маршрутов для отображения
+     */
     override fun onDrivingRoutes(p0: MutableList<DrivingRoute>) {
         for(route in p0) {
             mapObjects!!.addPolyline(route.geometry)
         }
     }
 
+    /**
+     * Обрабатывает ошибки построения маршрутов.
+     * @param error Объект ошибки
+     */
     override fun onDrivingRoutesError(p0: Error) {
         var errorMessage = "Неизвестная ошибка!"
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT)
     }
 
-
-    private fun submitRequest() {
+    /**
+     * Отправляет запрос на построение маршрута между начальной и конечной точками.
+     */
+    public fun submitRequest() {
         val drivingOptions = DrivingOptions()
         val vehicleOptions = VehicleOptions()
         val requestPoints: ArrayList<RequestPoint> = ArrayList()

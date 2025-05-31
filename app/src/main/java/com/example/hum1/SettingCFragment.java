@@ -21,10 +21,18 @@ import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.Map;
 
+
+/**
+ * Фрагмент настроек для пользователя с ролью центра.
+ * Отображает информацию о центре, список заявок и предоставляет
+ * функционал редактирования данных, изменения пароля, управления списками,
+ * а также выхода из аккаунта и удаления аккаунта.
+ */
 public class SettingCFragment extends Fragment {
-    private FirebaseAuth auth;
+    FirebaseAuth auth;
     private FirebaseUser user;
-    private DatabaseReference userRef, mDatabase;
+    private DatabaseReference userRef;
+    DatabaseReference mDatabase;
     private ArrayList<Map<String, String>> listC;
     private RecyclerView recyclerView;
     private ListAdapter adapter;
@@ -35,6 +43,15 @@ public class SettingCFragment extends Fragment {
     private TextView commV, statusV, emailV, fioV, work_timeV, phone_numberV, logoutV, deleteV, center_nameV, addressV, docV;
     private Button edit_dataB, edit_passwordB, edit_listB, edit_listU;
 
+
+    /**
+     * Инициализация View-компонентов и адаптера списка при создании представления фрагмента.
+     *
+     * @param inflater           Инфлейтер для разметки
+     * @param container          Родительский контейнер
+     * @param savedInstanceState Сохранённое состояние
+     * @return Возвращает корневой View фрагмента
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -51,6 +68,11 @@ public class SettingCFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Инициализация всех элементов пользовательского интерфейса.
+     *
+     * @param view Корневой View фрагмента
+     */
     private void initViews(View view) {
         emailV = view.findViewById(R.id.email);
         fioV = view.findViewById(R.id.fio);
@@ -76,6 +98,9 @@ public class SettingCFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
+    /**
+     * Настройка подключения к Firebase и получение текущего пользователя.
+     */
     private void setupFirebase() {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -86,7 +111,11 @@ public class SettingCFragment extends Fragment {
         userRef = mDatabase.child("Users").child(userId);
     }
 
-    private void loadUserData() {
+    /**
+     * Загрузка и отображение данных пользователя из Firebase Realtime Database.
+     * Включает информацию о центре, статус заявки на регистрацию и комментарий.
+     */
+    void loadUserData() {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -122,6 +151,9 @@ public class SettingCFragment extends Fragment {
         });
     }
 
+    /**
+     * Загрузка списка заявок центра из базы данных и обновление адаптера RecyclerView.
+     */
     private void loadListData() {
         userRef.child("list_c").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -143,6 +175,10 @@ public class SettingCFragment extends Fragment {
         });
     }
 
+    /**
+     * Динамическое изменение высоты RecyclerView в зависимости от количества элементов списка.
+     * Позволяет избежать проблем с прокруткой внутри ограниченного пространства.
+     */
     private void updateRecyclerViewHeight() {
         if (adapter.getItemCount() > 0 && getContext() != null) {
             int heightInDp = adapter.getItemCount() * 56;
@@ -155,6 +191,9 @@ public class SettingCFragment extends Fragment {
         }
     }
 
+    /**
+     * Настройка обработчиков нажатий для кнопок редактирования, выхода и удаления аккаунта.
+     */
     private void setupButtons() {
         logoutV.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
@@ -177,6 +216,9 @@ public class SettingCFragment extends Fragment {
         deleteV.setOnClickListener(v -> showDeleteConfirmationDialog());
     }
 
+    /**
+     * Отображение диалогового окна с подтверждением удаления аккаунта пользователя.
+     */
     private void showDeleteConfirmationDialog() {
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Подтверждение удаления")
@@ -186,6 +228,10 @@ public class SettingCFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Удаление аккаунта пользователя и связанных с ним данных из базы Firebase.
+     * При успешном удалении перенаправляет на экран аутентификации.
+     */
     private void deleteAccount() {
         userRef.removeValue().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

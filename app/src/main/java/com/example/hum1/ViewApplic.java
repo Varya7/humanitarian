@@ -34,9 +34,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Активность ViewApplic отображает подробную информацию о заявке,
+ * включая данные пользователя, статус, выбранные элементы и возможность
+ * генерации QR-кода, если заявка одобрена.
+ *
+ * Использует Firebase Realtime Database для получения данных.
+ *
+ * Компоненты:
+ * - Текстовые поля для отображения email, ФИО, номера телефона, даты и времени, центра, комментария и т.д.
+ * - RecyclerView для отображения выбранных предметов и дополнительной информации.
+ * - Кнопка генерации QR-кода, доступная при одобренной заявке.
+ */
 public class ViewApplic extends AppCompatActivity {
 
-    private DatabaseReference mDatabase;
+    DatabaseReference mDatabase;
 
     TextView centerV, statusV, dateV, timeV, emailV, fioV, phone_numberV, birthV, family_membersV, comV;
     String id, date, time, email, fio, phone_number, birth, status, com;
@@ -47,6 +59,12 @@ public class ViewApplic extends AppCompatActivity {
     private ArrayList<ListU3> listU3List;
     private ArrayList<Map<String, String>> listC;
     private RecyclerView recyclerView, recyclerView2;
+
+    /**
+     * Инициализация активности, установка UI, загрузка данных заявки.
+     *
+     * @param savedInstanceState состояние активности, если она восстанавливается
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,25 +181,10 @@ public class ViewApplic extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id== R.id.action_logout){
-            Intent intent = new Intent(this, SettingFragment.class);
-            startActivity(intent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
+    /**
+     * Загрузка списка выбранных предметов из Firebase и обновление RecyclerView.
+     */
     private void loadListData() {
         mDatabase.child("Applications").child(id).child("selected_items").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -219,6 +222,9 @@ public class ViewApplic extends AppCompatActivity {
         });
     }
 
+    /**
+     * Загрузка дополнительной пользовательской информации из Firebase.
+     */
     private void loadListU3Data() {
         mDatabase.child("Applications").child(id).child("list_u").addListenerForSingleValueEvent(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")

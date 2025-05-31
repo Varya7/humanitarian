@@ -42,6 +42,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Активность подачи заявки.
+ * Отвечает за отображение интерфейса выбора центра, даты и времени,
+ * а также за создание и отправку заявки в Firebase Realtime Database.
+ */
 public class MainActivity extends AppCompatActivity {
 
 
@@ -65,6 +70,12 @@ public class MainActivity extends AppCompatActivity {
     View view;
     List<ListU2> listU;
 
+    /**
+     * Инициализация активности, установка обработчиков и загрузка данных.
+     * Выполняется при создании активности.
+     *
+     * @param savedInstanceState сохраненное состояние активности (если есть)
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                             String name = centerSnapshot.child("center_name").getValue(String.class);
                             if (name != null) {
                                 String status = centerSnapshot.child("status").getValue(String.class);
-                                if (status.equals("Одобрено")) {
+                                if (status != null && status.equals("Одобрено")) {
                                     String id = centerSnapshot.child("id").getValue(String.class);
                                     centerNames.add(name);
                                     centersId.add(id);
@@ -273,12 +284,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
     }
 
-
-    private void showDatePickerDialog() {
+    /**
+     * Отображает Dialog выбора даты.
+     * При выборе даты устанавливает значение в поле ввода даты.
+     */
+    void showDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -293,8 +305,11 @@ public class MainActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-
-    private void showTimePickerDialog() {
+    /**
+     * Отображает Dialog выбора времени.
+     * При выборе времени устанавливает значение в поле ввода времени.
+     */
+    void showTimePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
@@ -307,7 +322,14 @@ public class MainActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    /**
+     * Загружает список данных "list_c" с названиями и количествами вещей центра с заданным ID из базы данных Firebase.
+     * Обновляет адаптер RecyclerView после загрузки данных.
+     *
+     * @param centerId уникальный идентификатор центра
+     */
     private void loadListData(String centerId) {
+
         mDatabase.child("Users").child(centerId).child("list_c").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -329,6 +351,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * Загружает список данных "list_u" с полями, необходимыми для подачи заявки в конкретный центр центра  из базы данных Firebase.
+     * Обновляет адаптер RecyclerView после загрузки данных.
+     *
+     * @param centerId уникальный идентификатор центра
+     */
     private void loadListUData(String centerId){
         mDatabase.child("Users").child(centerId).child("list_u").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")

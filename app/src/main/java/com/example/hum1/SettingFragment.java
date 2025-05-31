@@ -21,17 +21,30 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+
+/**
+ * Фрагмент настроек пользователя.
+ * Отображает персональную информацию (ФИО, email, дата рождения, телефон),
+ * позволяет пользователю изменить данные, сменить пароль, выйти из аккаунта или удалить его.
+ */
 public class SettingFragment extends Fragment {
 
-    private FirebaseAuth auth;
+    FirebaseAuth auth;
     private FirebaseUser user;
-    private DatabaseReference mDatabase;
+    DatabaseReference mDatabase;
     private String userId, email, fio, birth, phone_number;
 
     private TextView emailV, fioV, birthV, phone_numberV, logoutV, deleteV;
     private Button edit_dataB, edit_passwordB;
 
-
+    /**
+     * Создание и инициализация интерфейса фрагмента.
+     *
+     * @param inflater           Инфлейтер для разметки XML
+     * @param container          Родительский контейнер
+     * @param savedInstanceState Сохранённое состояние, если есть
+     * @return View, представляющий интерфейс фрагмента
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,6 +90,9 @@ public class SettingFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Загружает данные пользователя из Firebase Realtime Database и отображает их на экране.
+     */
     private void loadUserData() {
         mDatabase.child("Users").child(userId).get().addOnCompleteListener((Task<DataSnapshot> task) -> {
             if (task.isSuccessful()) {
@@ -96,6 +112,11 @@ public class SettingFragment extends Fragment {
         });
     }
 
+    /**
+     * Удаляет аккаунт пользователя:
+     * сначала удаляются данные из базы данных, затем удаляется пользователь из FirebaseAuth.
+     * После успешного удаления осуществляется переход к экрану авторизации.
+     */
     private void deleteAccount() {
         mDatabase.child("Users").child(userId).removeValue().addOnCompleteListener(dbTask -> {
             if (dbTask.isSuccessful()) {

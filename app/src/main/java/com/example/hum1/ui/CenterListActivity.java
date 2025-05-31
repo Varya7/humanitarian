@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 
 
 import android.widget.LinearLayout;
@@ -25,6 +26,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Активность для создания и управления списком центров.
+ * Позволяет добавлять динамические строки с информацией о центрах,
+ * валидировать данные и сохранять их в Firebase.
+ */
 public class CenterListActivity extends AppCompatActivity {
 
     private FirebaseUser user;
@@ -32,8 +38,15 @@ public class CenterListActivity extends AppCompatActivity {
     private Button btnReg, btnAddRow;
     private LinearLayout containerFields;
     private Double latitude, longitude;
+    String centerName, address, email, password, fio, work_time, phone_number, doc;
     private List<Map<String, String>> dataList = new ArrayList<>();
 
+    /**
+     * Инициализирует активность, устанавливает обработчики событий
+     * и получает данные из предыдущей активности.
+     *
+     * @param savedInstanceState Сохраненное состояние активности
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +61,14 @@ public class CenterListActivity extends AppCompatActivity {
         btnAddRow = findViewById(R.id.btn_add_row);
         containerFields = findViewById(R.id.container_fields);
 
+        centerName = getIntent().getStringExtra("center_name");
+        address = getIntent().getStringExtra("address");
+        email = getIntent().getStringExtra("email");
+        password = getIntent().getStringExtra("password");
+        fio = getIntent().getStringExtra("fio");
+        work_time = getIntent().getStringExtra("work_time");
+        phone_number = getIntent().getStringExtra("phone_number");
+        doc = getIntent().getStringExtra("doc");
         latitude = getIntent().getDoubleExtra("latitude", 0.0);
         longitude = getIntent().getDoubleExtra("longitude", 0.0);
 
@@ -60,18 +81,22 @@ public class CenterListActivity extends AppCompatActivity {
             }
         });
 
-
         btnReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (validateAndCollectData()) {
-                    saveDataToFirebase();
+                    saveData();
                 }
             }
         });
     }
 
-
+    /**
+     * Добавляет новую строку с полями для ввода информации о центре.
+     * Каждая строка содержит:
+     * - Поле для названия
+     * - Поле для количества (только числа)
+     */
     private void addRow() {
         LinearLayout rowLayout = new LinearLayout(this);
         rowLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -96,6 +121,11 @@ public class CenterListActivity extends AppCompatActivity {
         containerFields.addView(rowLayout);
     }
 
+    /**
+     * Проверяет корректность введенных данных и собирает их в коллекцию.
+     *
+     * @return true если все данные валидны, false если есть ошибки
+     */
     private boolean validateAndCollectData() {
         dataList.clear();
         for (int i = 0; i < containerFields.getChildCount(); i++) {
@@ -122,19 +152,42 @@ public class CenterListActivity extends AppCompatActivity {
         return true;
     }
 
-
-    private void saveDataToFirebase() {
-        String idU = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(idU);
-
-        userRef.child("list_c").setValue(dataList);
-        userRef.child("id").setValue(idU);
-        userRef.child("latitude").setValue(latitude);
-        userRef.child("longitude").setValue(longitude);
+    /**
+     * Сохраняет собранные данные и передает их в следующую активность.
+     * Преобразует список данных в JSON-формат перед передачей.
+     * Передает следующие данные:
+     * - Название центра
+     * - Адрес
+     * - Электронную почту
+     * - Пароль
+     * - ФИО ответственного
+     * - Время работы
+     * - Номер телефона
+     * - Список документов
+     * - Координаты (широта и долгота)
+     * - Список данных в JSON-формате
+     */
+    private void saveData() {
+        Gson gson = new Gson();
+        String listCJson = gson.toJson(dataList);
+        //Map<String, Object> centerInfo = new HashMap<>();
+        Intent intent = new Intent(getApplicationContext(), UserListActivity.class);
+        intent.putExtra("center_name", centerName);
+        intent.putExtra("address", address);
+        intent.putExtra("email", email);
+        intent.putExtra("password", password);
+        intent.putExtra("fio", fio);
+        intent.putExtra("work_time", work_time);
+        intent.putExtra("phone_number", phone_number);
+        intent.putExtra("doc", doc);
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
+        intent.putExtra("list_c", listCJson);
 
         Toast.makeText(this, "Данные сохранены", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getApplicationContext(), UserListActivity.class);
+
         startActivity(intent);
         finish();
     }
+
 }

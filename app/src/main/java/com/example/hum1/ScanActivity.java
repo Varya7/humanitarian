@@ -23,8 +23,18 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+/**
+ * Активити для сканирования QR-кодов с помощью камеры устройства.
+ * Использует библиотеку JourneyApps для считывания QR-кода.
+ * После успешного сканирования запускает экран просмотра заявки с переданным идентификатором.
+ */
 public class ScanActivity extends AppCompatActivity {
 
+    /**
+     * Запускатель активности сканера QR-кодов.
+     * Обрабатывает результат сканирования: если сканирование отменено,
+     * показывает Toast с сообщением, иначе запускает активити просмотра заявки.
+     */
     private final ActivityResultLauncher<ScanOptions> qrLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() == null) {
             Toast.makeText(this, "Сканирование отменено", Toast.LENGTH_SHORT).show();
@@ -36,6 +46,12 @@ public class ScanActivity extends AppCompatActivity {
         }
     });
 
+    /**
+     * Создает активити, настраивает полноэкранный режим Edge-to-Edge,
+     * скрывает ActionBar и запускает сканирование QR-кода.
+     *
+     * @param savedInstanceState сохраненное состояние активности
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +69,5 @@ public class ScanActivity extends AppCompatActivity {
         options.setBarcodeImageEnabled(true);
 
         qrLauncher.launch(options);
-
     }
 }

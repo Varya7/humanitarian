@@ -28,12 +28,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Фрагмент для отображения списка центров.
+ * Пользователь может просматривать информацию о центрах,
+ * искать их по имени, адресу или ФИО представителя,
+ * а также переходить к подробному описанию центра.
+ */
 public class UserListFragment extends Fragment {
 
-    private ArrayList<Center> centers = new ArrayList<>();
-    private CenterAdapter adapter;
-    private DatabaseReference mDatabase, listCRef;
-    private FirebaseAuth auth;
+    ArrayList<Center> centers = new ArrayList<>();
+    CenterAdapter adapter;
+    DatabaseReference mDatabase;
+    private DatabaseReference listCRef;
+    FirebaseAuth auth;
     private FirebaseUser user;
     private String userId;
 
@@ -43,8 +50,18 @@ public class UserListFragment extends Fragment {
     private SearchView searchView;
     private RecyclerView recyclerView;
 
+    /** Конструктор по умолчанию (обязателен для фрагментов). */
     public UserListFragment() {}
 
+    /**
+     * Создаёт и инициализирует пользовательский интерфейс фрагмента.
+     * Выполняется при создании представления фрагмента.
+     *
+     * @param inflater объект LayoutInflater для расширения XML-разметки
+     * @param container родительский ViewGroup
+     * @param savedInstanceState сохранённое состояние (если есть)
+     * @return представление фрагмента
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -87,6 +104,9 @@ public class UserListFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Загружает список ID центров из узла `list_c` в Firebase.
+     */
     private void readListC() {
         listCRef.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
             @Override
@@ -99,14 +119,20 @@ public class UserListFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
         });
     }
 
-    private void loadCenters() {
+    /**
+     * Загружает данные о центрах из узла `Users`, фильтруя по роли "center"
+     * и статусу "Одобрено", затем добавляет объекты {@link Center} в список.
+     */
+    void loadCenters() {
         mDatabase.child("Users").get().addOnCompleteListener((Task<DataSnapshot> task) -> {
             if (!task.isSuccessful()) {
-                Log.e("firebase", "Error getting data", task.getException());
+                Log.e("firebase", "Ошибка загрузки данных", task.getException());
                 return;
             }
 
@@ -133,7 +159,13 @@ public class UserListFragment extends Fragment {
         });
     }
 
-    private void filterList(String text) {
+    /**
+     * Фильтрует список центров по ключевым словам, введённым в поисковую строку.
+     * Сравниваются поля: название центра, адрес и ФИО.
+     *
+     * @param text строка поиска
+     */
+    void filterList(String text) {
         ArrayList<Center> filteredList = new ArrayList<>();
         for (Center center : centers) {
             if (center.getCenter_name().toLowerCase().contains(text.toLowerCase()) ||

@@ -34,20 +34,36 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Класс {@code ViewApplicC} представляет экран просмотра и управления заявкой
+ * от имени сотрудника центра.
+ * Отображает данные заявки, список выбранных позиций, дополнительную информацию,
+ * а также предоставляет возможность одобрить или отклонить заявку с комментарием.
+ *
+ * Использует Firebase Realtime Database для получения и изменения данных заявки.
+ */
 public class ViewApplicC extends AppCompatActivity {
 
-    private DatabaseReference mDatabase;
+    DatabaseReference mDatabase;
 
     private ArrayList<Map<String, String>> listC;
     Button statusT;
-    private RecyclerView recyclerView, recyclerView2;
+    RecyclerView recyclerView;
+    RecyclerView recyclerView2;
     ListU3Adapter adapter2;
     private ArrayList<ListU3> listU3List;
     EditText comV;
-    private ListAdapter adapter;
+    ListAdapter adapter;
     TextView statusF, dateV, timeV, emailV, fioV, phone_numberV, birthV, listV;
     String id, date, time, email, fio, phone_number, birth, status;
 
+    /**
+     * Метод {@code onCreate} вызывается при создании Activity.
+     * Инициализирует компоненты интерфейса, загружает данные заявки из Firebase
+     * и настраивает обработчики кнопок изменения статуса заявки.
+     *
+     * @param savedInstanceState Состояние, сохраненное при предыдущем запуске (если есть).
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,25 +168,10 @@ public class ViewApplicC extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id== R.id.action_logout){
-            Intent intent = new Intent(this, SettingCFragment.class);
-            startActivity(intent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
+    /**
+     * Загружает список выбранных предметов из заявки (selected_items) из Firebase
+     * и отображает их в {@link RecyclerView}.
+     */
     private void loadListData() {
         mDatabase.child("Applications").child(id).child("selected_items").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -207,6 +208,10 @@ public class ViewApplicC extends AppCompatActivity {
         });
     }
 
+    /**
+     * Загружает дополнительную информацию о пользователе из заявки в Firebase
+     * и отображает её в {@link RecyclerView}.
+     */
     private void loadListU3Data() {
         mDatabase.child("Applications").child(id).child("list_u").addListenerForSingleValueEvent(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -228,5 +233,7 @@ public class ViewApplicC extends AppCompatActivity {
                   }
         });
     }
+
+
 
 }

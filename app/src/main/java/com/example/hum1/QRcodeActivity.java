@@ -21,8 +21,20 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * Активити для генерации и отображения QR-кода по переданному тексту.
+ * Получает строку из Intent и создает QR-код, который отображается в ImageView.
+ */
 public class QRcodeActivity extends AppCompatActivity {
-    private ImageView qrCodeIV;
+    ImageView qrCodeIV;
+
+    /**
+     * Вызывается при создании активности.
+     * Инициализирует интерфейс, получает строку из Intent и запускает генерацию QR-кода.
+     *
+     * @param savedInstanceState сохраненное состояние активности
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +50,13 @@ public class QRcodeActivity extends AppCompatActivity {
         String id = bundle.getString("id");
         generateQRCode(id);
     }
-    private void generateQRCode(String text)
+
+    /**
+     * Генерирует QR-код из переданного текста и отображает его в ImageView.
+     *
+     * @param text строка, которая будет закодирована в QR-код
+     */
+    void generateQRCode(String text)
     {
         BarcodeEncoder barcodeEncoder
                 = new BarcodeEncoder();

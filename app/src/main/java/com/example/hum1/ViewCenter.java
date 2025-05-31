@@ -35,18 +35,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Активность для отображения информации о выбранном центре.
+ * Загружает и показывает данные центра из Firebase Realtime Database:
+ * название, адрес, контакты, время работы, список товаров и др.
+ * Позволяет перейти к оформлению заявки на этот центр и посмотреть маршрут на карте.
+ */
 public class ViewCenter extends AppCompatActivity {
 
-    private TextView center_nameV, addressV, phone_numberV, emailV, fioV, work_timeV, docV;
+    TextView center_nameV;
+    TextView addressV;
+    private TextView phone_numberV;
+    private TextView emailV;
+    private TextView fioV;
+    private TextView work_timeV;
+    private TextView docV;
     private Button appl, mapB;
-    private String userId, centerId;
-    private ListAdapter adapter;
-    private ArrayList<Map<String, String>> listC;
+    private String userId;
+    String centerId;
+    ListAdapter adapter;
+    ArrayList<Map<String, String>> listC;
     private Double latitude, longitude;
-    private FirebaseAuth auth;
-    private RecyclerView recyclerView;
-    private DatabaseReference mDatabase;
+    FirebaseAuth auth;
+    RecyclerView recyclerView;
+    DatabaseReference mDatabase;
 
+    /**
+     * Метод вызывается при создании активности.
+     * Инициализирует UI элементы, получает id центра из Intent,
+     * загружает данные центра и списка товаров, настраивает обработчики кнопок.
+     *
+     * @param savedInstanceState сохранённое состояние активности
+     */
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +100,9 @@ public class ViewCenter extends AppCompatActivity {
         setupButtonListeners();
     }
 
+    /**
+     * Инициализация UI элементов, связывание с layout.
+     */
     private void initViews() {
         center_nameV = findViewById(R.id.center_name);
         addressV = findViewById(R.id.address);
@@ -92,6 +115,11 @@ public class ViewCenter extends AppCompatActivity {
         appl = findViewById(R.id.appl);
     }
 
+    /**
+     * Загружает данные центра из Firebase по его id и заполняет соответствующие поля UI.
+     *
+     * @param centerId идентификатор центра для загрузки
+     */
     private void loadCenterData(String centerId) {
         mDatabase.child("Users").child(centerId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -132,18 +160,33 @@ public class ViewCenter extends AppCompatActivity {
         });
     }
 
-    private String getStringValue(DataSnapshot snapshot, String key) {
+    /**
+     * Получает строковое значение из DataSnapshot по ключу, если существует.
+     *
+     * @param snapshot DataSnapshot для чтения
+     * @param key ключ значения
+     * @return значение в виде строки или пустая строка, если нет данных
+     */
+    String getStringValue(DataSnapshot snapshot, String key) {
         return snapshot.child(key).exists() ? snapshot.child(key).getValue(String.class) : "";
     }
 
-    private Double getDoubleValue(DataSnapshot snapshot, String key) {
+    /**
+     * Получает числовое значение типа Double из DataSnapshot по ключу, если существует.
+     *
+     * @param snapshot DataSnapshot для чтения
+     * @param key ключ значения
+     * @return значение Double или null, если данных нет
+     */
+    Double getDoubleValue(DataSnapshot snapshot, String key) {
         return snapshot.child(key).exists() ? snapshot.child(key).getValue(Double.class) : null;
     }
 
-    private String formatText(String label, String value) {
-        return value != null && !value.isEmpty() ? label + ": " + value : label + ": не указано";
-    }
-
+    /**
+     * Настраивает обработчики нажатия кнопок:
+     * - оформление заявки (переход в MainActivity3),
+     * - переход к карте с маршрутом (MapActivity).
+     */
     private void setupButtonListeners() {
         appl.setOnClickListener(v -> {
             String centerName = center_nameV.getText().toString();
@@ -165,6 +208,9 @@ public class ViewCenter extends AppCompatActivity {
         });
     }
 
+    /**
+     * Загружает список товаров центра из Firebase и обновляет адаптер RecyclerView.
+     */
     private void loadListData() {
         mDatabase.child("Users").child(centerId).child("list_c").addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")

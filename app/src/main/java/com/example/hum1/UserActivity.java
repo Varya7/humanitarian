@@ -11,17 +11,35 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ * Класс активности для пользователя (User).
+ * Отображает нижнюю навигационную панель и управляет переключением между фрагментами:
+ * списком центров, заявками пользователя и настройками.
+ */
 public class UserActivity extends AppCompatActivity {
 
+    /**
+     * Метод жизненного цикла активности, вызываемый при её создании.
+     * Настраивает интерфейс, скрывает ActionBar, включает режим от края до края (EdgeToEdge),
+     * устанавливает обработчик нижней панели навигации и отображает стартовый фрагмент.
+     *
+     * @param savedInstanceState Сохранённое состояние активности (если имеется).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Скрытие ActionBar, если он присутствует
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+
         EdgeToEdge.enable(this);
+
         setContentView(R.layout.activity_user);
+
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         getSupportFragmentManager().beginTransaction()
@@ -29,20 +47,26 @@ public class UserActivity extends AppCompatActivity {
                 .commit();
 
         bottomNav.setSelectedItemId(R.id.navigation_see);
-
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+    /**
+     * Слушатель выбора пунктов нижней навигационной панели.
+     * В зависимости от выбранного пункта отображает соответствующий фрагмент:
+     * <ul>
+     *     <li>{@link UserListFragment} – список центров</li>
+     *     <li>{@link MyApplicationsFragment} – заявки пользователя</li>
+     *     <li>{@link SettingFragment} – настройки пользователя</li>
+     * </ul>
+     */
+    private final BottomNavigationView.OnNavigationItemSelectedListener navListener =
             item -> {
                 Fragment selectedFragment = null;
 
                 if (item.getItemId() == R.id.navigation_centers) {
                     selectedFragment = new UserListFragment();
-                }
-                else if (item.getItemId() == R.id.navigation_see) {
+                } else if (item.getItemId() == R.id.navigation_see) {
                     selectedFragment = new MyApplicationsFragment();
-                }
-                else if (item.getItemId() == R.id.navigation_setting) {
+                } else if (item.getItemId() == R.id.navigation_setting) {
                     selectedFragment = new SettingFragment();
                 }
 

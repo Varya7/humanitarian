@@ -24,18 +24,32 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
+/**
+ * Фрагмент настроек модератора.
+ * Отображает информацию об учетной записи, предоставляет функции выхода,
+ * смены пароля и удаления аккаунта.
+ */
 public class SettingMFragment extends Fragment {
 
-    private FirebaseAuth auth;
+    FirebaseAuth auth;
     private FirebaseUser user;
     private DatabaseReference userRef;
     private String userId = "";
-    private DatabaseReference mDatabase;
+    DatabaseReference mDatabase;
 
     private TextView emailV, logoutV, deleteV;
     private Button edit_passwordB;
-    private BottomNavigationView bottomNavigationView;
 
+    /**
+     * Вызывается при создании интерфейса фрагмента.
+     * Инициализирует элементы интерфейса и загружает данные пользователя из Firebase.
+     *
+     * @param inflater           Инфлейтер для создания представлений из XML.
+     * @param container          Родительский контейнер для фрагмента.
+     * @param savedInstanceState Сохранённое состояние, если оно есть.
+     * @return View, соответствующий интерфейсу фрагмента.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,6 +75,9 @@ public class SettingMFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Загружает и отображает email текущего пользователя из базы данных Firebase.
+     */
     private void loadUserData() {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -77,6 +94,9 @@ public class SettingMFragment extends Fragment {
         });
     }
 
+    /**
+     * Устанавливает обработчики нажатий на кнопки: выход, изменение пароля и удаление аккаунта.
+     */
     private void setupButtons() {
         logoutV.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
@@ -91,8 +111,10 @@ public class SettingMFragment extends Fragment {
     }
 
 
-
-    private void showDeleteConfirmationDialog() {
+    /**
+     * Отображает диалог подтверждения перед удалением аккаунта.
+     */
+    void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Подтверждение удаления")
                 .setMessage("Вы хотите удалить свой аккаунт?")
@@ -101,6 +123,10 @@ public class SettingMFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Удаляет аккаунт пользователя из Firebase Authentication и Realtime Database.
+     * После успешного удаления перенаправляет пользователя на экран авторизации.
+     */
     private void deleteAccount() {
         userRef.removeValue()
                 .addOnCompleteListener(task -> {

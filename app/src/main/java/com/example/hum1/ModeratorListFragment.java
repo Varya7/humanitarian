@@ -30,11 +30,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Фрагмент для отображения списка заявок  на регистрацию центра у модератора с возможностью фильтрации по статусу.
+ * Позволяет выбирать статус заявки через Spinner и просматривать соответствующие заявки.
+ */
 public class ModeratorListFragment extends Fragment {
 
     ArrayList<CenterApp> centers = new ArrayList<>();
     List<String> a1;
-    private DatabaseReference mDatabase;
+    DatabaseReference mDatabase;
     FirebaseUser user;
     FirebaseAuth auth;
     Spinner spinner;
@@ -42,6 +46,16 @@ public class ModeratorListFragment extends Fragment {
     ArrayAdapter<String> adapter1;
     private String id_appl, userId, center, role, status;
 
+    /**
+     * Создает и инициализирует представление фрагмента.
+     * Настраивает Spinner для выбора статуса заявки, RecyclerView для отображения списка заявок,
+     * а также обрабатывает выбор заявки для перехода к подробному просмотру.
+     *
+     * @param inflater           объект для раздувания макета фрагмента
+     * @param container          родительская ViewGroup, к которой будет присоединён фрагмент
+     * @param savedInstanceState сохраненное состояние фрагмента (если есть)
+     * @return созданное View для данного фрагмента
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

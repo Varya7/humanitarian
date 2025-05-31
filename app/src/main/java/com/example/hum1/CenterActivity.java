@@ -11,8 +11,18 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ * Главная активность для центра (организации) в приложении.
+ * Предоставляет навигацию между разделами через нижнее меню и управление фрагментами.
+ */
 public class CenterActivity extends AppCompatActivity {
 
+    /**
+     * Инициализирует активность при создании.
+     * устанавливает нижнюю навигацию и начальный фрагмент.
+     *
+     * @param savedInstanceState сохраненное состояние активности (может быть null)
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +41,11 @@ public class CenterActivity extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.navigation_see);
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+    /**
+     * Слушатель выбора пунктов нижнего меню навигации.
+     * Определяет какой фрагмент нужно отобразить в зависимости от выбранного пункта меню.
+     */
+    BottomNavigationView.OnNavigationItemSelectedListener navListener =
             item -> {
                 Fragment selectedFragment = null;
 

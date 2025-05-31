@@ -33,14 +33,29 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.Calendar;
 import java.util.HashMap;
 
+/**
+ * Фрагмент для регистрации нового пользователя.
+ * Содержит поля для ввода email, пароля, ФИО, даты рождения и телефона.
+ * Позволяет зарегистрировать пользователя через Firebase Authentication
+ * и сохранить информацию о нем в базе данных Firebase Realtime Database.
+ */
 public class RegisterFragment extends Fragment {
 
     private EditText editTextEmail, editTextPassword, editTextFIO, editTextBirth, editTextPhoneNumber;
     private Button buttonReg;
     private TextView textViewLogin, textViewC;
     private ProgressBar progressBar;
-    private FirebaseAuth mAuth;
+    FirebaseAuth mAuth;
 
+
+    /**
+     * Создает и инициализирует представление фрагмента, настраивает обработчики событий.
+     *
+     * @param inflater           объект LayoutInflater для раздувания макета
+     * @param container          контейнер для размещения фрагмента
+     * @param savedInstanceState сохраненное состояние фрагмента
+     * @return корневое View для данного фрагмента
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,12 +73,15 @@ public class RegisterFragment extends Fragment {
         textViewLogin = view.findViewById(R.id.loginNow);
         textViewC = view.findViewById(R.id.reg_c);
 
-        // Установка обработчиков событий
         setupListeners();
 
         return view;
     }
 
+    /**
+     * Устанавливает обработчики кликов для элементов интерфейса:
+     * кнопок регистрации, выбора даты рождения и перехода к логину и дополнительной регистрации.
+     */
     private void setupListeners() {
         textViewLogin.setOnClickListener(v ->
                 requireActivity().getSupportFragmentManager().beginTransaction()
@@ -83,6 +101,10 @@ public class RegisterFragment extends Fragment {
         buttonReg.setOnClickListener(v -> registerUser());
     }
 
+    /**
+     * Выполняет регистрацию пользователя.
+     * Проверяет корректность введенных данных, запускает процесс создания пользователя в Firebase.
+     */
     private void registerUser() {
         progressBar.setVisibility(View.VISIBLE);
 
@@ -103,7 +125,18 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    private boolean validateInputs(String email, String password, String fio, String birth, String phoneNumber) {
+
+    /**
+     * Проверяет корректность введенных пользователем данных.
+     *
+     * @param email       email пользователя
+     * @param password    пароль пользователя
+     * @param fio         ФИО пользователя
+     * @param birth       дата рождения пользователя
+     * @param phoneNumber номер телефона пользователя
+     * @return true, если все данные заполнены корректно, иначе false
+     */
+    boolean validateInputs(String email, String password, String fio, String birth, String phoneNumber) {
         if (TextUtils.isEmpty(email)) {
             showToast("Введите почту");
             return false;
@@ -127,6 +160,17 @@ public class RegisterFragment extends Fragment {
         return true;
     }
 
+    /**
+     * Обрабатывает результат регистрации в Firebase.
+     * Если регистрация успешна — сохраняет данные пользователя и переходит к следующему экрану,
+     * иначе выводит сообщение об ошибке.
+     *
+     * @param task     результат задачи регистрации Firebase
+     * @param email    email пользователя
+     * @param fio      ФИО пользователя
+     * @param birth    дата рождения пользователя
+     * @param phoneNumber номер телефона пользователя
+     */
     private void handleRegistrationResult(@NonNull Task<AuthResult> task, String email, String fio, String birth, String phoneNumber) {
         if (task.isSuccessful()) {
             saveUserInfoToDatabase(email, fio, birth, phoneNumber);
@@ -137,6 +181,14 @@ public class RegisterFragment extends Fragment {
         }
     }
 
+    /**
+     * Сохраняет информацию о зарегистрированном пользователе в базе Firebase Realtime Database.
+     *
+     * @param email       email пользователя
+     * @param fio         ФИО пользователя
+     * @param birth       дата рождения пользователя
+     * @param phoneNumber номер телефона пользователя
+     */
     private void saveUserInfoToDatabase(String email, String fio, String birth, String phoneNumber) {
         HashMap<String, String> userInfo = new HashMap<>();
         userInfo.put("email", email);
@@ -151,12 +203,19 @@ public class RegisterFragment extends Fragment {
                 .setValue(userInfo);
     }
 
+    /**
+     * Переходит к экрану с пользовательскими заявками и завершает текущую активность.
+     */
     private void navigateToMyApplications() {
         startActivity(new Intent(getActivity(), UserActivity.class));
         requireActivity().finish();
 
     }
 
+    /**
+     * Показывает диалог выбора даты для поля даты рождения.
+     * После выбора даты обновляет текстовое поле с выбранной датой.
+     */
     private void showBirthPickerDialog() {
         Calendar calendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -172,7 +231,12 @@ public class RegisterFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    private void showToast(String message) {
+    /**
+     * Отображает Toast-сообщение с переданным текстом.
+     *
+     * @param message текст сообщения для отображения
+     */
+    void showToast(String message) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

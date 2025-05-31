@@ -28,24 +28,40 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Фрагмент для отображения списка заявок пользователя с возможностью фильтрации по статусу.
+ * Позволяет просматривать заявки текущего пользователя и фильтровать их по статусу через Spinner.
+ */
 public class MyApplicationsFragment extends Fragment {
 
     private ArrayList<ApplicationU> applications = new ArrayList<>();
-    private DatabaseReference mDatabase;
+    DatabaseReference mDatabase;
     private FirebaseUser user;
-    private FirebaseAuth auth;
+    FirebaseAuth auth;
 
     private Spinner spinner;
     private Button appl;
 
-    private List<String> a1;
-    private ArrayAdapter<String> adapter1;
-    private AppAdapterU adapter;
+    List<String> a1;
+    ArrayAdapter<String> adapter1;
+    AppAdapterU adapter;
 
     private String id_appl, userId, status, center, date, time, email, fio, phone_number, birth, family_members, list;
 
     public MyApplicationsFragment() {}
 
+
+    /**
+     * Создает и инициализирует представление фрагмента.
+     * Настраивает RecyclerView для отображения списка заявок,
+     * Spinner для выбора статуса заявки,
+     * а также кнопку для перехода к созданию новой заявки.
+     *
+     * @param inflater           объект для раздувания макета фрагмента
+     * @param container          родительская ViewGroup, к которой будет присоединён фрагмент
+     * @param savedInstanceState сохраненное состояние фрагмента (если есть)
+     * @return созданное View для данного фрагмента
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -101,7 +117,14 @@ public class MyApplicationsFragment extends Fragment {
         return view;
     }
 
-    private void loadApplicationsByStatus(String selectedStatus) {
+    /**
+     * Загружает заявки пользователя из базы данных Firebase по выбранному статусу.
+     * Очищает текущий список и обновляет его согласно полученным данным,
+     * затем обновляет адаптер RecyclerView.
+     *
+     * @param selectedStatus статус заявки для фильтрации ("Рассматривается", "Одобрено" и т.д.)
+     */
+    void loadApplicationsByStatus(String selectedStatus) {
         applications.clear();
         mDatabase.child("Applications").get().addOnCompleteListener((Task<DataSnapshot> task) -> {
             if (task.isSuccessful() && task.getResult().exists()) {

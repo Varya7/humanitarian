@@ -25,14 +25,34 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Активность для редактирования списка полей для подачи заявки на получение помощи в Firebase Realtime Database.
+ *
+ * Позволяет пользователю:
+ * - загружать текущие данные из базы данных;
+ * - добавлять новые строки;
+ * - редактировать и удалять существующие строки;
+ * - сохранять изменения обратно в базу данных.
+ *
+ * Использует RecyclerView для отображения данных и AlertDialog для взаимодействия с пользователем.
+ */
 public class EditListUActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private List3Adapter adapter;
-    private List<String> listU;
+    /**
+     * Компоненты пользовательского интерфейса.
+     */
+    RecyclerView recyclerView;
+    static List3Adapter adapter;
+    static List<String> listU;
     private Button btnAddRow, btnSave;
     private DatabaseReference userRef;
 
+    /**
+     * Метод вызывается при создании активности.
+     * Инициализирует компоненты интерфейса, настраивает RecyclerView и загружает данные из Firebase.
+     *
+     * @param savedInstanceState Сохранённое состояние активности (если есть).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +79,9 @@ public class EditListUActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveChanges());
     }
 
+    /**
+     * Загружает список строк с полями из Firebase и обновляет RecyclerView.
+     */
     private void loadDataFromFirebase() {
         userRef.child("list_u").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -80,11 +103,20 @@ public class EditListUActivity extends AppCompatActivity {
         });
     }
 
-    private void addNewField() {
+    /**
+     * Добавляет новое пустое поле в список через диалоговое окно.
+     */
+    void addNewField() {
         showEditDialog("", -1);
     }
 
-    private void showEditDialog(String currentValue, int position) {
+    /**
+     * Показывает диалог для добавления или редактирования элемента списка.
+     *
+     * @param currentValue Текущее значение элемента
+     * @param position     Позиция элемента в списке
+     */
+    void showEditDialog(String currentValue, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(position >= 0 ? "Редактировать поле" : "Добавить поле");
 
@@ -115,6 +147,10 @@ public class EditListUActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Сохраняет изменения в список полей для подачи заявки в Firebase.
+     * Завершает активность при успешном сохранении.
+     */
     private void saveChanges() {
         userRef.child("list_u").setValue(listU)
                 .addOnCompleteListener(task -> {
@@ -126,10 +162,19 @@ public class EditListUActivity extends AppCompatActivity {
                     }
                 });
     }
-    private class List3Adapter extends RecyclerView.Adapter<List3Adapter.ViewHolder> {
+
+    /**
+     * Адаптер для отображения списка строк в RecyclerView.
+     */
+    class List3Adapter extends RecyclerView.Adapter<List3Adapter.ViewHolder> {
 
         private List<String> items;
 
+        /**
+         * Конструктор адаптера.
+         *
+         * @param items Список строк для отображения.
+         */
         public List3Adapter(List<String> items) {
             this.items = items;
         }
@@ -154,6 +199,9 @@ public class EditListUActivity extends AppCompatActivity {
             return items.size();
         }
 
+        /**
+         * ViewHolder для отображения одного элемента списка.
+         */
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView textView;
 
