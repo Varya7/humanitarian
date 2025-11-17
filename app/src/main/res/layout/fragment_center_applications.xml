@@ -8,22 +8,46 @@
     android:orientation="vertical"
     android:background="@drawable/background_b">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="20dp">
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            tools:ignore="MissingConstraints" />
+            android:layout_marginEnd="16dp"
+            android:gravity="center" />
+
+        <EditText
+            android:id="@+id/etSearchFio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Поиск по ФИО"
+            android:padding="8dp"
+            android:background="@android:drawable/edit_text"
+            android:singleLine="true" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:gravity="end">
+
+        <Spinner
+            android:id="@+id/spinnerSort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/sort_options" />
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
