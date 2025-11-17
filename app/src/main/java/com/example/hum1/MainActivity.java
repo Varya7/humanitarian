@@ -2,7 +2,11 @@ package com.example.hum1;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,6 +29,7 @@ import com.google.android.gms.tasks.Task;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -111,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView2.setLayoutManager(new LinearLayoutManager(this));
         recyclerView2.setAdapter(adapter2);
         recyclerView2.setNestedScrollingEnabled(false);
+
 
 
         editTextDate.setOnClickListener(new View.OnClickListener() {
@@ -379,6 +385,8 @@ public class MainActivity extends AppCompatActivity {
                 }
         });
     }
+
+
 
 
 }

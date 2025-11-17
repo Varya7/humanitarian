@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_b">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp"
+        android:gravity="center">
+
+        <!-- Центр -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Центр"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:padding="8dp"
+                android:fontFamily="sans-serif"/>
+
+            <TextView
+                android:id="@+id/tvCenterName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:padding="8dp"
+                android:fontFamily="sans-serif"/>
+        </LinearLayout>
+
+        <!-- Адрес -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Адрес"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:padding="8dp"
+                android:fontFamily="sans-serif"/>
+
+            <TextView
+                android:id="@+id/tvAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:padding="8dp"
+                android:fontFamily="sans-serif"/>
+        </LinearLayout>
+
+        <!-- Список вещей -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Список имеющихся вещей"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif"
+            android:textSize="16sp"
+            android:paddingLeft="8dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"/>
+
+        <ScrollView
+            android:layout_height="250dp"
+            android:layout_width="match_parent"
+            android:maxHeight="250dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_list"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"/>
+
+        </ScrollView>
+
+        <Space
+            android:layout_height="10dp"
+            android:layout_width="match_parent"/>
+
+        <!-- Кнопки -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btnRoute"
+                android:text="Маршрут"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape"
+                android:textSize="13sp"
+                android:fontFamily="sans-serif"
+                android:layout_weight="1"
+                android:paddingHorizontal="8dp"
+                android:singleLine="true"
+                android:layout_marginEnd="8dp"
+                android:textColor="@color/white"/>
+
+            <Button
+                android:id="@+id/btnDetails"
+                android:text="Подробнее"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape"
+                android:textSize="13sp"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif"
+                android:paddingHorizontal="8dp"
+                android:textColor="@color/white"
+                android:singleLine="true"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btnClose"
+                android:text="Закрыть"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape"
+                android:textSize="13sp"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif"
+                android:paddingHorizontal="8dp"
+                android:textColor="@color/white"
+                android:singleLine="true"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

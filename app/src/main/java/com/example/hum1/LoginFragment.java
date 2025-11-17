@@ -178,7 +178,7 @@ public class LoginFragment extends Fragment {
 
         switch (role) {
             case "center":
-                intent = new Intent(getActivity(), CenterApplicationsFragment.class);
+                intent = new Intent(getActivity(), CenterActivity.class);
                 break;
             case "moderator":
                 intent = new Intent(getActivity(), ModeratorActivity.class);

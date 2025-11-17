@@ -65,6 +65,7 @@ public class MainActivity3 extends AppCompatActivity {
     private ListU2Adapter adapter2;
     private DatabaseReference mDatabase;
     ArrayAdapter<String> adapter;
+    String centerId;
 
     /**
      * Инициализация активности: настройка интерфейса, получение данных пользователя,
@@ -85,7 +86,7 @@ public class MainActivity3 extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            // Обработка отсутствия авторизации
+
             Toast.makeText(this, "Пожалуйста, войдите в систему", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, AuthActivity.class)); // Предполагается, что есть LoginActivity
             finish();
@@ -94,9 +95,6 @@ public class MainActivity3 extends AppCompatActivity {
 
         String userId = user.getUid();
         appl = findViewById(R.id.appl);
-
-
-
 
         center_nameV = findViewById(R.id.center_name);
         user = auth.getCurrentUser();
@@ -123,11 +121,11 @@ public class MainActivity3 extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         assert bundle != null;
         String center_name = bundle.getString("center_name");
-        String center_id = bundle.getString("id");
+        centerId = bundle.getString("id");
         center_nameV.setText("Подача заявки в центр " + center_name);
 
-        loadListData(center_id);
-        loadListUData(center_id);
+        loadListData(centerId);
+        loadListUData(centerId);
 
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,14 +165,12 @@ public class MainActivity3 extends AppCompatActivity {
             finish();
         }
 
-
         String finalUserId = userId;
         appl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String time = editTextTime.getText().toString();
                 String date = editTextDate.getText().toString();
-
 
                 if (TextUtils.isEmpty(time)) {
                     Toast.makeText(MainActivity3.this, "Введите время", Toast.LENGTH_SHORT).show();
@@ -185,7 +181,21 @@ public class MainActivity3 extends AppCompatActivity {
                     return;
                 }
 
-
+                // Собираем данные из дополнительных полей list_u
+                HashMap<String, String> listUData = new HashMap<>();
+                for (int i = 0; i < recyclerView2.getChildCount(); i++) {
+                    View itemView = recyclerView2.getChildAt(i);
+                    EditText editText = itemView.findViewById(R.id.margin);
+                    if (editText != null) {
+                        String text = editText.getText().toString().trim();
+                        if (text.isEmpty()) {
+                            Toast.makeText(MainActivity3.this, "Заполните все поля!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String fieldName = listU.get(i).getMargin();
+                        listUData.put(fieldName, text);
+                    }
+                }
 
                 HashMap<String, Object> applicationInfo = new HashMap<>();
                 applicationInfo.put("email", email);
@@ -193,19 +203,18 @@ public class MainActivity3 extends AppCompatActivity {
                 applicationInfo.put("phone_number", phone_number);
                 applicationInfo.put("birth", birth);
                 applicationInfo.put("date", date);
-
                 applicationInfo.put("time", time);
                 applicationInfo.put("center", center_name);
                 applicationInfo.put("id", finalUserId);
                 applicationInfo.put("status", "Рассматривается");
                 applicationInfo.put("comment", "");
+                applicationInfo.put("list_u", listUData); // Добавляем данные из list_u
 
                 Map<String, Integer> selectedItems = adapter1.getSelectedQuantities();
                 applicationInfo.put("selected_items", selectedItems);
+
                 editTextDate.setText("");
                 editTextTime.setText("");
-
-                editTextFam.setText("");
 
                 DatabaseReference newApplicationRef = FirebaseDatabase.getInstance()
                         .getReference("Applications").push();
@@ -224,11 +233,7 @@ public class MainActivity3 extends AppCompatActivity {
                 });
             }
         });
-
-
-
     }
-
 
     /**
      * Отображает Dialog выбора даты.
@@ -240,13 +245,13 @@ public class MainActivity3 extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; // Месяцы начинаются с 0
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {
+            String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; // Месяцы начинаются с 0
             editTextDate.setText(selectedDate);
         }, year, month, day);
 
         datePickerDialog.show();
     }
-
 
     /**
      * Отображает Dialog выбора времени.
@@ -264,7 +269,6 @@ public class MainActivity3 extends AppCompatActivity {
 
         timePickerDialog.show();
     }
-
 
     /**
      * Загружает данные списка "list_c" центра из Firebase по его ID.
@@ -285,12 +289,12 @@ public class MainActivity3 extends AppCompatActivity {
                     }
                 }
                 adapter1.notifyDataSetChanged();
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
+                Log.e("MainActivity3", "Ошибка загрузки list_c: " + databaseError.getMessage());
+            }
         });
     }
 
@@ -313,13 +317,12 @@ public class MainActivity3 extends AppCompatActivity {
                     }
                 }
                 adapter2.notifyDataSetChanged();
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
+                Log.e("MainActivity3", "Ошибка загрузки list_u: " + databaseError.getMessage());
+            }
         });
     }
-
 }

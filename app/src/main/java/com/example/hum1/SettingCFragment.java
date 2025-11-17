@@ -42,6 +42,7 @@ public class SettingCFragment extends Fragment {
     private LinearLayout commentLayout;
     private TextView commV, statusV, emailV, fioV, work_timeV, phone_numberV, logoutV, deleteV, center_nameV, addressV, docV;
     private Button edit_dataB, edit_passwordB, edit_listB, edit_listU;
+    private ImageButton statB;
 
 
     /**
@@ -91,6 +92,7 @@ public class SettingCFragment extends Fragment {
         statusV = view.findViewById(R.id.status);
         commentLayout = view.findViewById(R.id.commentLayout);
         recyclerView = view.findViewById(R.id.recyclerView_list);
+        statB = view.findViewById(R.id.statButton);
 
         listC = new ArrayList<>();
         adapter = new ListAdapter(listC);
@@ -214,6 +216,9 @@ public class SettingCFragment extends Fragment {
                 startActivity(new Intent(getActivity(), EditListUActivity.class)));
 
         deleteV.setOnClickListener(v -> showDeleteConfirmationDialog());
+
+        statB.setOnClickListener(v ->
+                startActivity(new Intent(getActivity(), StatisticPage.class)));
     }
 
     /**

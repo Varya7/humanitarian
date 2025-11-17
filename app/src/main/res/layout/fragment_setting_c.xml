@@ -403,8 +403,23 @@
                 android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+
         </LinearLayout>
+
+
     </ScrollView>
 
+    <ImageButton
+        android:id="@+id/statButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/shape"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_trending_up"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

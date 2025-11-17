@@ -2,6 +2,8 @@ package com.example.hum1;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -17,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 
 /**
@@ -45,6 +48,7 @@ public class AuthActivity extends AppCompatActivity {
 
         if (currentUser != null) {
             checkUserRoleAndRedirect(currentUser.getUid());
+            forceGetFCMToken();
         } else {
             showLoginFragment();
         }
@@ -119,5 +123,39 @@ public class AuthActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new LoginFragment())
                 .commit();
+    }
+
+    private void forceGetFCMToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        //Log.w("FCM_TOKEN", "Ошибка получения токена", task.getException());
+                        return;
+                    }
+
+                    String token = task.getResult();
+                    //Log.d("FCM_TOKEN", "Токен принудительно получен: " + token);
+
+                    saveTokenToDatabase(token);
+                });
+    }
+
+    private void saveTokenToDatabase(String token) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            FirebaseDatabase.getInstance().getReference("Users")
+                    .child(userId)
+                    .child("fcmToken")
+                    .setValue(token)
+                    .addOnSuccessListener(aVoid -> {
+                        //Log.d("FCM_TOKEN", "Токен сохранен для пользователя: " + userId);
+                        //Toast.makeText(AuthActivity.this, "Токен обновлен", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        //Log.e("FCM_TOKEN", "Ошибка сохранения токена", e);
+                    });
+        }
     }
 }

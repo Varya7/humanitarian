@@ -96,7 +96,7 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.5.0")
     
 
-    androidTestImplementation("com.google.firebase:firebase-auth:21.0.1")
+    //androidTestImplementation("com.google.firebase:firebase-auth:21.0.1")
     androidTestImplementation("com.google.firebase:firebase-database:20.0.0")
     androidTestImplementation("androidx.test:core:1.5.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -105,6 +105,20 @@ dependencies {
     androidTestImplementation("org.mockito:mockito-android:3.12.4")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+
+
+
+    implementation("com.google.firebase:firebase-messaging:24.0.0")
+    implementation("com.google.firebase:firebase-database:21.0.0")
+    implementation("com.google.firebase:firebase-auth:23.0.0")
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.google.firebase:firebase-database:20.3.0")
+    implementation("com.google.firebase:firebase-auth:22.3.0")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.google.android.material:material:1.11.0")
+
+
 
 
 }

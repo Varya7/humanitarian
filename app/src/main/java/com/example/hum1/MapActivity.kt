@@ -71,7 +71,7 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
 
     lateinit var searchManager: SearchManager
     lateinit var searchSession: Session
-    private var ROUTE_START_LOCATION = Point(43.414663, 39.950500)
+    private var ROUTE_START_LOCATION = Point(55.700581, 37.520630)
     private var ROUTE_END_LOCATION = Point(47.214004, 39.794605)
     private val SCREEN_CENTER = Point(
         (ROUTE_START_LOCATION.latitude+ROUTE_END_LOCATION.latitude)/2,

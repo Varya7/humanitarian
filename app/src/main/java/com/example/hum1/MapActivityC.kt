@@ -92,8 +92,8 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
     private var drivingSession:DrivingSession? = null
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    private var latitude: Double = 43.414663
-    private var longitude: Double = 39.950500
+    private var latitude: Double = 55.700581
+    private var longitude: Double = 37.520630
 
 
 

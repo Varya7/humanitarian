@@ -4,14 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.appcompat.widget.SearchView;
-
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,6 +48,7 @@ public class UserListFragment extends Fragment {
 
     private SearchView searchView;
     private RecyclerView recyclerView;
+    private ImageButton mapButton;
 
     /** Конструктор по умолчанию (обязателен для фрагментов). */
     public UserListFragment() {}
@@ -77,6 +77,7 @@ public class UserListFragment extends Fragment {
 
         searchView = view.findViewById(R.id.searchView);
         recyclerView = view.findViewById(R.id.list);
+        mapButton = view.findViewById(R.id.mapButton);
 
         adapter = new CenterAdapter(getContext(), centers, (center, position) -> {
             Intent intent = new Intent(getContext(), ViewCenter.class);
@@ -88,6 +89,14 @@ public class UserListFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), layoutManager.getOrientation()));
+
+        // Обработчик нажатия на кнопку карты
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMapActivity();
+            }
+        });
 
         readListC();
         loadCenters();
@@ -102,6 +111,14 @@ public class UserListFragment extends Fragment {
         });
 
         return view;
+    }
+
+    /**
+     * Открывает активность с картой центров
+     */
+    private void openMapActivity() {
+        Intent intent = new Intent(getContext(), MapActivityU.class);
+        startActivity(intent);
     }
 
     /**
@@ -120,7 +137,7 @@ public class UserListFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.e("UserListFragment", "Ошибка загрузки list_c: " + error.getMessage());
             }
         });
     }
@@ -138,6 +155,7 @@ public class UserListFragment extends Fragment {
 
             DataSnapshot snapshot = task.getResult();
             if (snapshot.exists()) {
+                centers.clear(); // Очищаем список перед загрузкой новых данных
                 for (DataSnapshot applicationSnapshot : snapshot.getChildren()) {
                     String role = applicationSnapshot.child("role").getValue(String.class);
                     if ("center".equals(role)) {
@@ -150,7 +168,11 @@ public class UserListFragment extends Fragment {
                             work_time = applicationSnapshot.child("work_time").getValue(String.class);
                             phone_number = applicationSnapshot.child("phone_number").getValue(String.class);
                             id = applicationSnapshot.child("id").getValue(String.class);
-                            centers.add(new Center(id, center_name, address, email, fio, work_time, phone_number, list));
+
+                            // Добавляем центр только если все обязательные поля не null
+                            if (center_name != null && address != null && fio != null) {
+                                centers.add(new Center(id, center_name, address, email, fio, work_time, phone_number, list));
+                            }
                         }
                     }
                 }
