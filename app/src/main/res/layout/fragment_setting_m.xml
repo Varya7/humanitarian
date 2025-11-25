@@ -11,93 +11,107 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        tools:ignore="NotSibling">
 
         <LinearLayout
             android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="40dp"
-            android:paddingEnd="40dp"
-            android:paddingTop="40dp"
-            android:paddingBottom="20dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="32dp"
+            android:paddingBottom="24dp"
+            android:gravity="center_horizontal"
             android:background="@drawable/background_b">
 
-            <!-- Email -->
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardUseCompatPadding="true"
+                android:layout_marginBottom="24dp">
 
-                <TextView
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"
-                    android:text="Email"
-                    />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/email"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"
-                    />
-            </LinearLayout>
+                    <!-- Email row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Email"
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:paddingEnd="8dp" />
+
+                        <TextView
+                            android:id="@+id/email"
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif"
+                            android:textSize="20sp"
+                            android:paddingStart="8dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <Button
                 android:id="@+id/edit_password"
                 android:text="Изменить пароль"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/shape"
                 android:textSize="15sp"
                 android:layout_gravity="center"
-                android:paddingHorizontal="15dp"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="12dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/white" />
 
             <Space
-                android:layout_height="10dp"
-                android:layout_width="match_parent"/>
+                android:layout_height="16dp"
+                android:layout_width="match_parent" />
 
             <TextView
+                android:id="@+id/logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Выйти из аккаунта"
                 android:textSize="15sp"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
-                android:id="@+id/logout"
-                android:gravity="center"
-                android:layout_marginBottom="20dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
 
             <TextView
-                android:text="Удалить аккаунт"
                 android:id="@+id/delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Удалить аккаунт"
                 android:textSize="15sp"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
-                android:gravity="center"
-                android:layout_marginBottom="20dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
         </LinearLayout>
     </ScrollView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,68 +5,39 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
-import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.runner.lifecycle.Stage.RESUMED;
 
 import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static androidx.test.espresso.Espresso.onData;
 
-import android.app.Activity;
 import android.content.Context;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.Lifecycle;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
-import androidx.test.espresso.NoMatchingViewException;
-import androidx.test.espresso.Root;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.ViewAssertion;
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.contrib.NavigationViewActions;
 import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.matcher.BoundedMatcher;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import android.content.Intent;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import org.hamcrest.Description;
-import com.google.firebase.auth.AuthResult;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
+import com.example.hum1.adapters.AppAdapter;
+
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,12 +51,29 @@ import static org.junit.Assert.*;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 
 
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.hum1.adapters.AppAdapterU;
+import com.example.hum1.adapters.CenterAppAdapter;
+import com.example.hum1.adapters.ListAdapter;
+import com.example.hum1.adapters.ListAdapter2;
+import com.example.hum1.adapters.ListU2Adapter;
+import com.example.hum1.adapters.ListU3Adapter;
+import com.example.hum1.adapters.ListUAdapter;
+import com.example.hum1.classes.Application;
+import com.example.hum1.classes.ApplicationU;
+import com.example.hum1.classes.CenterApp;
+import com.example.hum1.classes.ListU;
+import com.example.hum1.classes.ListU2;
+import com.example.hum1.classes.ListU3;
+import com.example.hum1.editdata.EditDataCenterActivity;
+import com.example.hum1.editdata.EditDataUserActivity;
+import com.example.hum1.editdata.EditListActivity;
+import com.example.hum1.editdata.EditListUActivity;
+import com.example.hum1.views.ViewAppComplete;
+import com.example.hum1.views.ViewApplic;
+import com.example.hum1.views.ViewApplicC;
+import com.example.hum1.views.ViewCenter;
+import com.example.hum1.views.ViewCenterApp;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -99,20 +87,13 @@ import static org.junit.Assert.assertEquals;
 
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static org.junit.Assert.*;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
 
 // Импорты для Firebase Auth
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ValueEventListener;
 
 

@@ -60,7 +60,7 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String message) {
-        // Ваш существующий код показа уведомлений
+
         String channelId = "status_updates_channel";
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 

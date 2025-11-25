@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hum1.adapters.AppAdapterU;
+import com.example.hum1.classes.ApplicationU;
+import com.example.hum1.views.ViewApplic;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,7 +37,7 @@ import java.util.List;
  */
 public class MyApplicationsFragment extends Fragment {
 
-    private ArrayList<ApplicationU> applications = new ArrayList<>();
+    public ArrayList<ApplicationU> applications = new ArrayList<>();
     DatabaseReference mDatabase;
     private FirebaseUser user;
     FirebaseAuth auth;
@@ -44,7 +47,7 @@ public class MyApplicationsFragment extends Fragment {
 
     List<String> a1;
     ArrayAdapter<String> adapter1;
-    AppAdapterU adapter;
+    public AppAdapterU adapter;
 
     private String id_appl, userId, status, center, date, time, email, fio, phone_number, birth, family_members, list;
 

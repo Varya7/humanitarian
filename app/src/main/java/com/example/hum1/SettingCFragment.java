@@ -14,6 +14,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hum1.adapters.ListAdapter;
+import com.example.hum1.auth.ChangePasswordActivity;
+import com.example.hum1.editdata.EditDataCenterActivity;
+import com.example.hum1.editdata.EditListActivity;
+import com.example.hum1.editdata.EditListUActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
@@ -35,7 +40,7 @@ public class SettingCFragment extends Fragment {
     DatabaseReference mDatabase;
     private ArrayList<Map<String, String>> listC;
     private RecyclerView recyclerView;
-    private ListAdapter adapter;
+    private com.example.hum1.adapters.ListAdapter adapter;
 
     private String userId = "";
 

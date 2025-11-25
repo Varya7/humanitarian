@@ -2,43 +2,48 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/background_b">
+    android:background="@drawable/background_b"
+    android:paddingTop="?attr/actionBarSize"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
+    <!-- Верхняя панель: фильтр + поиск -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
         android:gravity="center_vertical">
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:gravity="center" />
+            android:layout_marginEnd="12dp" />
 
         <EditText
             android:id="@+id/etSearchFio"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:hint="Поиск по ФИО"
-            android:padding="8dp"
-            android:background="@android:drawable/edit_text"
-            android:singleLine="true" />
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:background="@drawable/bg_white_card"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:fontFamily="sans-serif" />
     </LinearLayout>
 
+    <!-- Дополнительная сортировка -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
         android:paddingBottom="8dp"
         android:gravity="end">
 
@@ -49,6 +54,7 @@
             android:entries="@array/sort_options" />
     </LinearLayout>
 
+    <!-- Список + плавающая кнопка сканера -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -58,9 +64,7 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="0dp"
+            android:paddingTop="4dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <ImageButton
@@ -71,7 +75,7 @@
             android:scaleType="centerInside"
             android:background="@drawable/shape"
             android:layout_gravity="end|bottom"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp" />
     </FrameLayout>
 

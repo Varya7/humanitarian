@@ -26,7 +26,7 @@
             android:name=".StatisticPage"
             android:theme="@style/Theme.Hum1.Material" />
         <activity
-            android:name=".MapActivityU"
+            android:name=".maps.MapActivityU"
             android:exported="false" />
 
         <service
@@ -57,13 +57,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EditListUActivity"
+            android:name=".editdata.EditListUActivity"
             android:exported="false" />
         <activity
             android:name=".UserListActivity"
             android:exported="false" />
         <activity
-            android:name=".ViewCenterApp"
+            android:name=".views.ViewCenterApp"
             android:exported="false" />
         <activity
             android:name=".ModeratorListFragment"
@@ -72,10 +72,10 @@
             android:name=".SettingMFragment"
             android:exported="false" />
         <activity
-            android:name=".ViewAppComplete"
+            android:name=".views.ViewAppComplete"
             android:exported="false" />
         <activity
-            android:name=".ViewApplicQR"
+            android:name=".views.ViewApplicQR"
             android:exported="false"
             android:label="@string/title_activity_view_applic_qr" />
         <activity
@@ -86,11 +86,11 @@
             android:name=".QRcodeActivity"
             android:exported="true" />
         <activity
-            android:name=".MapActivityC"
+            android:name=".maps.MapActivityC"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".MapActivity"
+            android:name=".maps.MapActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
@@ -98,23 +98,23 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".ViewCenter"
+            android:name=".views.ViewCenter"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".EditListActivity"
+            android:name=".editdata.EditListActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".EditDataCenterActivity"
+            android:name=".editdata.EditDataCenterActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".ChangePasswordActivity"
+            android:name=".auth.ChangePasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".EditDataUserActivity"
+            android:name=".editdata.EditDataUserActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
@@ -122,11 +122,11 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".ViewApplicC"
+            android:name=".views.ViewApplicC"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
-            android:name=".ViewApplic"
+            android:name=".views.ViewApplic"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
         <activity

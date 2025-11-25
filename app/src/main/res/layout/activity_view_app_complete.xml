@@ -9,7 +9,7 @@
     android:paddingTop="50dp"
     android:padding="15dp"
     android:fillViewport="true"
-    tools:context=".ViewApplic">
+    tools:context=".views.ViewApplic">
 
     <LinearLayout
         android:id="@+id/container"

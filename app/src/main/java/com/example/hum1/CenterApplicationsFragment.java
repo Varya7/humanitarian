@@ -21,6 +21,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.hum1.adapters.AppAdapter;
+import com.example.hum1.classes.Application;
+import com.example.hum1.views.ViewAppComplete;
+import com.example.hum1.views.ViewApplicC;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;

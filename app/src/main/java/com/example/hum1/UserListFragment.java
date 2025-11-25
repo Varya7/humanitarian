@@ -16,6 +16,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hum1.adapters.CenterAdapter;
+import com.example.hum1.maps.MapActivityU;
+import com.example.hum1.classes.Center;
+import com.example.hum1.views.ViewCenter;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

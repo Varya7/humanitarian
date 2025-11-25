@@ -1,11 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/margin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/margin"
-    android:autofillHints=""
     android:fontFamily="sans-serif"
+    android:padding="10dp"
+    android:textColor="#212121"
+    android:textSize="16sp"
+    android:background="@drawable/edittext_background"
+    android:hint=""
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:hint=""
-    android:padding="8dp"/>
+    android:inputType="text"
+    android:autofillHints=""
+    android:layout_marginBottom="8dp"
+    />

@@ -7,32 +7,35 @@
     android:layout_height="match_parent">
 
     <ScrollView
-        android:layout_width="match_parent"
+        android:id="@+id/scroll"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent">
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="?attr/actionBarSize"
+        android:background="@drawable/background_b">
 
         <LinearLayout
             android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="15dp"
-            android:paddingStart="40dp"
-            android:paddingEnd="40dp"
-            android:gravity="center"
-            android:background="@drawable/background_b">
+            android:gravity="center_horizontal"
+            android:paddingTop="32dp"
+            android:paddingBottom="24dp">
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
-
+            <!-- Статус блока -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/comment_background"
-                android:padding="12dp">
+                android:padding="16dp"
+                android:layout_marginBottom="24dp">
 
                 <TextView
                     android:id="@+id/status"
@@ -44,372 +47,381 @@
                     android:textSize="16sp" />
             </LinearLayout>
 
-            <!-- Название центра -->
-            <LinearLayout
+            <!-- Карточка с основными данными центра -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Центр"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-
-                <TextView
-                    android:id="@+id/center_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-            </LinearLayout>
-
-            <!-- Адрес -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:text="Адрес"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-
-                <TextView
-                    android:id="@+id/address"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-            </LinearLayout>
-
-            <!-- Время работы -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Время работы"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-
-                <TextView
-                    android:id="@+id/work_time"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-            </LinearLayout>
-
-            <!-- Почта -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Почта"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-
-                <TextView
-                    android:id="@+id/email"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-            </LinearLayout>
-
-            <!-- ФИО -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="ФИО"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-
-                <TextView
-                    android:id="@+id/fio"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Документы, необходимые для получения заявки"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-
-                <TextView
-                    android:id="@+id/doc"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-            </LinearLayout>
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Телефон"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-
-                <TextView
-                    android:id="@+id/phone_number"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text=""
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:padding="8dp"
-                    android:fontFamily="sans-serif"/>
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/commentLayout"
-                android:orientation="horizontal"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Комментарий"
-                    android:textColor="@color/black"
-                    android:fontFamily="sans-serif"
-                    android:textSize="16sp"
-                    android:padding="8dp"/>
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardUseCompatPadding="true"
+                android:layout_marginBottom="24dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:background="@drawable/comment_background"
-                    android:padding="12dp">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/comm"
+                    <!-- Центр -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Текст комментария"
-                        android:textColor="@color/black"
-                        android:fontFamily="sans-serif"
-                        android:textSize="16sp" />
+                        android:orientation="horizontal"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Центр"
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:paddingEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/center_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif"
+                            android:textSize="20sp"
+                            android:paddingStart="8dp"/>
+                    </LinearLayout>
+
+                    <!-- Адрес -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Адрес"
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:paddingEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/address"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif"
+                            android:textSize="20sp"
+                            android:paddingStart="8dp"/>
+                    </LinearLayout>
+
+                    <!-- Время работы -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Время работы"
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:paddingEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/work_time"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif"
+                            android:textSize="20sp"
+                            android:paddingStart="8dp"/>
+                    </LinearLayout>
+
+                    <!-- Почта -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Почта"
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:paddingEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/email"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif"
+                            android:textSize="20sp"
+                            android:paddingStart="8dp"/>
+                    </LinearLayout>
+
+                    <!-- ФИО -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="ФИО"
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:paddingEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/fio"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif"
+                            android:textSize="20sp"
+                            android:paddingStart="8dp"/>
+                    </LinearLayout>
+
+                    <!-- Документы -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Документы, необходимые для получения заявки"
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:paddingEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/doc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif"
+                            android:textSize="20sp"
+                            android:paddingStart="8dp"/>
+                    </LinearLayout>
+
+                    <!-- Телефон -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Телефон"
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:paddingEnd="8dp"/>
+
+                        <TextView
+                            android:id="@+id/phone_number"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif"
+                            android:textSize="20sp"
+                            android:paddingStart="8dp"/>
+                    </LinearLayout>
+
+                    <!-- Комментарий -->
+                    <LinearLayout
+                        android:id="@+id/commentLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Комментарий"
+                            android:textColor="@color/black"
+                            android:fontFamily="sans-serif-medium"
+                            android:textSize="16sp"
+                            android:paddingEnd="8dp"/>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:background="@drawable/comment_background"
+                            android:padding="12dp">
+
+                            <TextView
+                                android:id="@+id/comm"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Текст комментария"
+                                android:textColor="@color/black"
+                                android:fontFamily="sans-serif"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-
-
-            <Space
-                android:layout_height="10dp"
-                android:layout_width="match_parent"/>
-
+            <!-- Кнопка: изменить данные -->
             <Button
                 android:id="@+id/btn_edit_data"
                 android:text="Изменить данные"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape"
-                android:textSize="12sp"
-                android:padding="10dp"
-                android:paddingHorizontal="9dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:textSize="15sp"
+                android:layout_gravity="center_horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/white" />
 
 
-
             <Space
-                android:layout_height="5dp"
-                android:layout_width="match_parent"/>
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <!-- Заголовок списка вещей -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Список имеющихся вещей"
                 android:textColor="@color/black"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:textSize="16sp"
-                android:paddingLeft="8dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="8dp"/>
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
 
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <!-- RecyclerView списка вещей -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
 
-            <Space
-                android:layout_height="10dp"
-                android:layout_width="match_parent"/>
-
+            <!-- Кнопка: редактировать список -->
             <Button
                 android:id="@+id/btn_edit_list"
                 android:text="Редактировать список"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/shape"
-                android:textSize="12sp"
-                android:paddingHorizontal="9dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:padding="10dp"
+                android:textSize="15sp"
+                android:layout_gravity="center_horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/white" />
 
-
-            <Space
-                android:layout_height="10dp"
-                android:layout_width="match_parent"/>
-
-
+            <!-- Кнопка: редактировать перечень данных -->
             <Button
                 android:id="@+id/btn_edit_list_user"
                 android:text="Редактировать перечень данных для подачи заявки"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/shape"
-                android:textSize="12sp"
-                android:paddingHorizontal="9dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:padding="10dp"
+                android:textSize="15sp"
+                android:layout_gravity="center_horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/white" />
 
-            <Space
-                android:layout_height="10dp"
-                android:layout_width="match_parent"/>
-
+            <!-- Кнопка: изменить пароль -->
             <Button
                 android:id="@+id/btn_edit_password"
                 android:text="Изменить пароль"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/shape"
-                android:textSize="12sp"
-                android:padding="10dp"
-                android:paddingHorizontal="9dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:textSize="15sp"
+                android:layout_gravity="center_horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/white" />
 
             <Space
-                android:layout_height="10dp"
-                android:layout_width="match_parent"/>
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
 
+            <!-- Выход и удаление аккаунта -->
             <TextView
+                android:id="@+id/logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Выйти из аккаунта"
                 android:textSize="15sp"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
-                android:id="@+id/logout"
-                android:gravity="center"
-                android:layout_marginBottom="20dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
 
             <TextView
-                android:text="Удалить аккаунт"
                 android:id="@+id/delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Удалить аккаунт"
                 android:textSize="15sp"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
-                android:gravity="center"
-                android:layout_marginBottom="20dp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
 
         </LinearLayout>
-
-
     </ScrollView>
 
+    <!-- Плавающая кнопка статистики -->
     <ImageButton
         android:id="@+id/statButton"
         android:layout_width="60dp"

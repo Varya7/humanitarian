@@ -4,13 +4,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import com.example.hum1.classes.Application;
+import com.example.hum1.classes.ApplicationU;
+import com.example.hum1.classes.Center;
+import com.example.hum1.classes.CenterApp;
+import com.example.hum1.classes.ListU;
+import com.example.hum1.classes.ListU2;
+import com.example.hum1.classes.ListU3;
 
 @RunWith(JUnit4.class)
 public class ExampleUnitTest {

@@ -1,25 +1,23 @@
+<!-- layout одного элемента списка -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:paddingEnd="16dp"
-    android:paddingStart="8dp">
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:background="@drawable/bg_section"
+    android:padding="2dp"
+    android:orientation="horizontal">
 
-    <TextView
+<TextView
         android:id="@+id/label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Название"
-        android:textColor="@color/black"
-        android:fontFamily="sans-serif"
-        android:textSize="16sp"
-        android:paddingStart="0dp"
-    android:paddingEnd="8dp"
-        android:paddingTop="8dp"
-    android:paddingBottom="8dp"/>
+        android:textColor="#A5A5A5"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="13sp"
+        android:paddingEnd="8dp" />
 
     <TextView
         android:id="@+id/value"
@@ -27,8 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="2"
         android:text="Значение"
-        android:textSize="20sp"
-        android:padding="8dp"
-        android:textColor="@color/black"
-        android:fontFamily="sans-serif" />
+        android:textSize="16sp"
+        android:textColor="#2A4D8F"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif"
+        android:paddingStart="8dp" />
 </LinearLayout>
