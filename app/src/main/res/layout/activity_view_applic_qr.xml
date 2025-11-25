@@ -317,21 +317,23 @@
                     android:paddingTop="4dp"
                     android:paddingBottom="8dp"/>
 
-                <Button
-                    android:id="@+id/status"
-                    android:text="Выдано"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/shape"
-                    android:textSize="15sp"
-                    android:fontFamily="sans-serif"
-                    android:paddingHorizontal="20dp"
-                    android:paddingVertical="10dp"
-                    android:textColor="@color/white"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="8dp"/>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+
+        <Button
+            android:id="@+id/status"
+            android:text="Выдано"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            android:textColor="@color/white"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"/>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

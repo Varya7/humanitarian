@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/bg_white_card">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="QR‑код"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:fontFamily="sans-serif-medium"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Выберите способ ввода кода"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:fontFamily="sans-serif"
+        android:paddingBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnScan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Отсканировать"
+        android:background="@drawable/shape"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif"
+        android:paddingVertical="10dp"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btnManual"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ввести вручную"
+        android:background="@drawable/bg_white_card"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:fontFamily="sans-serif"
+        android:paddingVertical="10dp" />
+</LinearLayout>

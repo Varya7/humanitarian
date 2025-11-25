@@ -1,6 +1,7 @@
 package com.example.hum1;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -26,6 +28,7 @@ import com.example.hum1.adapters.AppAdapter;
 import com.example.hum1.classes.Application;
 import com.example.hum1.views.ViewAppComplete;
 import com.example.hum1.views.ViewApplicC;
+import com.example.hum1.views.ViewApplicQR;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
@@ -84,10 +87,15 @@ public class CenterApplicationsFragment extends Fragment {
 
         String userId = user.getUid();
 
-        scannerB.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ScanActivity.class);
-            startActivity(intent);
-        });
+        //scannerB.setOnClickListener(v -> {
+        //    Intent intent = new Intent(getActivity(), ScanActivity.class);
+        //    startActivity(intent);
+        //});
+
+
+        scannerB.setOnClickListener(v -> showQrChoiceDialog());
+
+
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
@@ -283,4 +291,60 @@ public class CenterApplicationsFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
+
+    private void showQrChoiceDialog() {
+        View dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_qr_choice, null, false);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create();
+
+        Button btnScan = dialogView.findViewById(R.id.btnScan);
+        Button btnManual = dialogView.findViewById(R.id.btnManual);
+
+        btnScan.setOnClickListener(v -> {
+            dialog.dismiss();
+            Intent intent = new Intent(getActivity(), ScanActivity.class);
+            startActivity(intent);
+        });
+
+        btnManual.setOnClickListener(v -> {
+            dialog.dismiss();
+            showManualCodeDialog(); // второй диалог
+        });
+
+        dialog.show();
+    }
+
+
+    private void showManualCodeDialog() {
+        View dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_manual_code, null, false);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create();
+
+        EditText etCode = dialogView.findViewById(R.id.etCode);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+        Button btnOk = dialogView.findViewById(R.id.btnOk);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnOk.setOnClickListener(v -> {
+            String code = etCode.getText().toString().trim();
+            if (!code.isEmpty()) {
+                dialog.dismiss();
+                Intent intent = new Intent(getActivity(), ViewApplicQR.class);
+                intent.putExtra("id", code);
+                startActivity(intent);
+            } else {
+                etCode.setError("Введите код");
+            }
+        });
+
+        dialog.show();
+    }
+
 }

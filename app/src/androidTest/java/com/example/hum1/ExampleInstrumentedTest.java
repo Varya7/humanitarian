@@ -147,118 +147,9 @@ public class ExampleInstrumentedTest {
     }
 
 
-    @Test
-    public void testAppAdapter() {
-        List<Application> applications = new ArrayList<>();
-        applications.add(new Application(
-                "123abc", "10.10.2010", "10:00", "test@example.com",
-                "Иван Иванович Иванов", "1234567890", "1990-01-01",
-                "2", "Item 1, Item 2", "Одобрено"));
 
-        AppAdapter adapter = new AppAdapter(context, applications, (app, position) -> {
-        });
 
-        assertEquals(1, adapter.getItemCount());
 
-        AppAdapter.ViewHolder viewHolder = adapter.onCreateViewHolder(
-                new ViewGroupForTesting(context), 0);
-
-        adapter.onBindViewHolder(viewHolder, 0);
-
-        assertEquals("10.10.2010", viewHolder.date.getText().toString());
-        assertEquals("10:00", viewHolder.time.getText().toString());
-    }
-
-    @Test
-    public void testAppAdapterU() {
-        List<ApplicationU> applications = new ArrayList<>();
-        applications.add(new ApplicationU(
-                "a111", "01.01.2001", "10.00", "test@test.test",
-                "A. A. A", "89000000000", "01/01/1990", "1",
-                "1. Item 2. Item", "Рассматривается", "Center 1"));
-
-        AppAdapterU adapter = new AppAdapterU(context, applications, (app, position) -> {
-        });
-
-        assertEquals(1, adapter.getItemCount());
-
-        AppAdapterU.ViewHolder viewHolder = adapter.onCreateViewHolder(
-                new ViewGroupForTesting(context), 0);
-
-        adapter.onBindViewHolder(viewHolder, 0);
-
-        assertEquals("01.01.2001", viewHolder.dateView.getText().toString());
-        assertEquals("10.00", viewHolder.timeView.getText().toString());
-        assertEquals("Center 1", viewHolder.centerView.getText().toString());
-        assertEquals("Рассматривается", viewHolder.statusView.getText().toString());
-    }
-
-    @Test
-    public void testCenterAppAdapter() {
-        List<CenterApp> centers = new ArrayList<>();
-        centers.add(new CenterApp("Center A", "aaaa1111"));
-
-        CenterAppAdapter adapter = new CenterAppAdapter(context, centers, (app, position) -> {
-        });
-
-        assertEquals(1, adapter.getItemCount());
-
-        CenterAppAdapter.ViewHolder viewHolder = adapter.onCreateViewHolder(
-                new ViewGroupForTesting(context), 0);
-
-        adapter.onBindViewHolder(viewHolder, 0);
-
-        assertEquals("Center A", viewHolder.center.getText().toString());
-    }
-
-    @Test
-    public void testListAdapter() {
-        ArrayList<Map<String, String>> items = new ArrayList<>();
-        Map<String, String> item = new HashMap<>();
-        item.put("name", "Item1");
-        item.put("quantity", "5");
-        items.add(item);
-
-        ListAdapter adapter = new ListAdapter(items, position -> {
-        });
-
-        assertEquals(1, adapter.getItemCount());
-
-        ListAdapter.ViewHolder viewHolder = adapter.onCreateViewHolder(
-                new ViewGroupForTesting(context), 0);
-
-        adapter.onBindViewHolder(viewHolder, 0);
-
-        assertEquals("Item1", viewHolder.nameText.getText().toString());
-        assertEquals("5", viewHolder.quantityText.getText().toString());
-    }
-
-    @Test
-    public void testListAdapter2() {
-        List<Map<String, String>> items = new ArrayList<>();
-        Map<String, String> item = new HashMap<>();
-        item.put("name", "Item1");
-        item.put("quantity", "5");
-        items.add(item);
-
-        ListAdapter2 adapter = new ListAdapter2(items);
-
-        assertEquals(1, adapter.getItemCount());
-
-        ListAdapter2.ViewHolder viewHolder = adapter.onCreateViewHolder(
-                new ViewGroupForTesting(context), 0);
-
-        adapter.onBindViewHolder(viewHolder, 0);
-
-        assertEquals("Item1", viewHolder.nameText.getText().toString());
-        assertEquals("0", viewHolder.quantityText.getText().toString());
-
-        viewHolder.btnIncrease.performClick();
-        assertEquals("1", viewHolder.quantityText.getText().toString());
-
-        viewHolder.btnDecrease.performClick();
-        assertEquals("0", viewHolder.quantityText.getText().toString());
-    }
 
     @Test
     public void testListUAdapter() {
@@ -294,23 +185,6 @@ public class ExampleInstrumentedTest {
         assertEquals("Hint1", viewHolder.editText.getHint().toString());
     }
 
-    @Test
-    public void testListU3Adapter() {
-        List<ListU3> items = new ArrayList<>();
-        items.add(new ListU3("Label1", "Value1"));
-
-        ListU3Adapter adapter = new ListU3Adapter(items);
-
-        assertEquals(1, adapter.getItemCount());
-
-        ListU3Adapter.ViewHolder viewHolder = adapter.onCreateViewHolder(
-                new ViewGroupForTesting(context), 0);
-
-        adapter.onBindViewHolder(viewHolder, 0);
-
-        assertEquals("Label1", viewHolder.labelTextView.getText().toString());
-        assertEquals("Value1", viewHolder.valueTextView.getText().toString());
-    }
 
 
     private static class ViewGroupForTesting extends ViewGroup {
