@@ -27,6 +27,7 @@ public class UserActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
 
         // Скрытие ActionBar, если он присутствует

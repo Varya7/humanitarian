@@ -73,6 +73,7 @@ public class MainActivity3 extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         if (getSupportActionBar() != null) {
@@ -83,12 +84,12 @@ public class MainActivity3 extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-
-            Toast.makeText(this, "Пожалуйста, войдите в систему", Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this, AuthActivity.class)); // Предполагается, что есть LoginActivity
+            Toast.makeText(this, getString(R.string.error_login_required), Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, AuthActivity.class));
             finish();
             return;
         }
+
 
         String userId = user.getUid();
         appl = findViewById(R.id.appl);
@@ -170,11 +171,15 @@ public class MainActivity3 extends AppCompatActivity {
                 String date = editTextDate.getText().toString();
 
                 if (TextUtils.isEmpty(time)) {
-                    Toast.makeText(MainActivity3.this, "Введите время", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity3.this,
+                            getString(R.string.error_enter_time),
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (TextUtils.isEmpty(date)) {
-                    Toast.makeText(MainActivity3.this, "Введите дату", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity3.this,
+                            getString(R.string.error_enter_date),
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -186,7 +191,9 @@ public class MainActivity3 extends AppCompatActivity {
                     if (editText != null) {
                         String text = editText.getText().toString().trim();
                         if (text.isEmpty()) {
-                            Toast.makeText(MainActivity3.this, "Заполните все поля!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity3.this,
+                                    getString(R.string.error_fill_all_fields),
+                                    Toast.LENGTH_SHORT).show();
                             return;
                         }
                         String fieldName = listU.get(i).getMargin();
@@ -220,12 +227,16 @@ public class MainActivity3 extends AppCompatActivity {
 
                 newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(MainActivity3.this, "Заявка подана", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity3.this,
+                                getString(R.string.msg_application_sent),
+                                Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(MainActivity3.this, UserActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(MainActivity3.this, "Ошибка при подаче заявки", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity3.this,
+                                getString(R.string.error_application_submit),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -290,8 +301,7 @@ public class MainActivity3 extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("MainActivity3", "Ошибка загрузки list_c: " + databaseError.getMessage());
-            }
+             }
         });
     }
 
@@ -318,7 +328,6 @@ public class MainActivity3 extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("MainActivity3", "Ошибка загрузки list_u: " + databaseError.getMessage());
             }
         });
     }

@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.ModeratorListFragment;
 import com.example.hum1.R;
 import com.example.hum1.adapters.ListAdapter;
@@ -65,6 +66,7 @@ public class ViewCenterApp extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         if (getSupportActionBar() != null) {
@@ -132,31 +134,47 @@ public class ViewCenterApp extends AppCompatActivity {
         statusT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDatabase.child("Users").child(id).child("status").setValue("Одобрено");
-                if (! String.valueOf(comV.getText()).equals("")){
-                    mDatabase.child("Users").child(id).child("comment").setValue(String.valueOf(comV.getText()));
+                mDatabase.child("Users").child(id).child("status")
+                        .setValue(getString(R.string.status_approved));
+                String commentText = String.valueOf(comV.getText());
+                if (!commentText.isEmpty()) {
+                    mDatabase.child("Users").child(id).child("comment")
+                            .setValue(commentText);
                 }
-                Toast.makeText(ViewCenterApp.this, "Статус заявки изменен на Одобрено", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        ViewCenterApp.this,
+                        getString(R.string.status_changed_to_approved),
+                        Toast.LENGTH_SHORT
+                ).show();
                 Intent intent = new Intent(ViewCenterApp.this, ModeratorListFragment.class);
                 startActivity(intent);
                 finish();
             }
         });
+
 
 
         statusF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mDatabase.child("Users").child(id).child("status").setValue("Отклонено");
-                if (! String.valueOf(comV.getText()).equals("")){
-                    mDatabase.child("Users").child(id).child("comment").setValue(String.valueOf(comV.getText()));
+                mDatabase.child("Users").child(id).child("status")
+                        .setValue(getString(R.string.status_rejected));
+                String commentText = String.valueOf(comV.getText());
+                if (!commentText.isEmpty()) {
+                    mDatabase.child("Users").child(id).child("comment")
+                            .setValue(commentText);
                 }
-                Toast.makeText(ViewCenterApp.this, "Статус заявки изменен на Отклонено", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        ViewCenterApp.this,
+                        getString(R.string.status_changed_to_rejected),
+                        Toast.LENGTH_SHORT
+                ).show();
                 Intent intent = new Intent(ViewCenterApp.this, ModeratorListFragment.class);
                 startActivity(intent);
                 finish();
             }
         });
+
     }
 
     /**

@@ -11,6 +11,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -44,6 +45,7 @@ public class EditDataCenterActivity extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         if (getSupportActionBar() != null) {
@@ -116,11 +118,12 @@ public class EditDataCenterActivity extends AppCompatActivity {
                 db.getReference().child("Users").child(uid).child("work_time").setValue(work_time);
                 db.getReference().child("Users").child(uid).child("phone_number").setValue(phone_number);
                 db.getReference().child("Users").child(uid).child("doc").setValue(doc);
-                // Уведомление и переход назад
-                Toast.makeText(EditDataCenterActivity.this, "Изменения сохранены",
-                        Toast.LENGTH_SHORT).show();
-                //Intent intent = new Intent(EditDataCenterActivity.this, SettingCFragment.class);
-                //startActivity(intent);
+                Toast.makeText(
+                        EditDataCenterActivity.this,
+                        getString(R.string.changes_saved),
+                        Toast.LENGTH_SHORT
+                ).show();
+
                 finish();
             }
         });

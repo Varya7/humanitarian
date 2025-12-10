@@ -272,6 +272,7 @@
                   <entry key="Genymobile Galaxy Note 2" value="120" />
                   <entry key="Genymobile Galaxy S4" value="120" />
                   <entry key="Tests" value="360" />
+                  <entry key="Xiaomi M2004J19C" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

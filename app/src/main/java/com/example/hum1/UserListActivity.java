@@ -47,6 +47,7 @@ public class UserListActivity extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list2);
 
@@ -123,9 +124,14 @@ public class UserListActivity extends AppCompatActivity {
 
                 String margin = etMargin.getText().toString().trim();
                 if (margin.isEmpty()) {
-                    Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                            this,
+                            getString(R.string.error_fill_all_fields_short),
+                            Toast.LENGTH_SHORT
+                    ).show();
                     return false;
                 }
+
                 dataList.add(margin);
             }
         }
@@ -145,10 +151,13 @@ public class UserListActivity extends AppCompatActivity {
                             saveDataToDatabase(firebaseUser.getUid());
                         }
                     } else {
-                        Toast.makeText(this, "Ошибка регистрации: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        String msg = getString(R.string.error_registration_prefix)
+                                + ": " + task.getException().getMessage();
+                        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
                     }
                 });
     }
+
 
     /**
      * Сохраняет все данные центра в Firebase Realtime Database.
@@ -185,12 +194,19 @@ public class UserListActivity extends AppCompatActivity {
         userRef.setValue(userData)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(this, "Центр успешно зарегистрирован", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(
+                                this,
+                                getString(R.string.center_registered_success),
+                                Toast.LENGTH_SHORT
+                        ).show();
                         startActivity(new Intent(this, CenterActivity.class));
                         finish();
                     } else {
-                        Toast.makeText(this, "Ошибка сохранения: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        String msg = getString(R.string.error_save_prefix)
+                                + ": " + task.getException().getMessage();
+                        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
                     }
                 });
+
     }
 }

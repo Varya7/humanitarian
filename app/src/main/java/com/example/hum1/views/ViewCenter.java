@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.MainActivity3;
 import com.example.hum1.R;
 import com.example.hum1.adapters.ListAdapter;
@@ -61,6 +62,7 @@ public class ViewCenter extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -75,10 +77,13 @@ public class ViewCenter extends AppCompatActivity {
 
         centerId = getIntent().getStringExtra("id");
         if (centerId == null || centerId.isEmpty()) {
-            Toast.makeText(this, "Ошибка: ID центра не получен", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    getString(R.string.error_center_id_missing),
+                    Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
+
 
         listC = new ArrayList<>();
         adapter = new ListAdapter(listC);
@@ -116,7 +121,9 @@ public class ViewCenter extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
-                    Toast.makeText(ViewCenter.this, "Центр не найден", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ViewCenter.this,
+                            getString(R.string.error_center_not_found),
+                            Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
@@ -139,15 +146,20 @@ public class ViewCenter extends AppCompatActivity {
                     latitude = getDoubleValue(snapshot, "latitude");
                     longitude = getDoubleValue(snapshot, "longitude");
 
-                } catch (Exception e) {
-                    Toast.makeText(ViewCenter.this, "Ошибка загрузки данных", Toast.LENGTH_SHORT).show();
-                }
+                }  catch (Exception e) {
+                Toast.makeText(ViewCenter.this,
+                        getString(R.string.error_load_data),
+                        Toast.LENGTH_SHORT).show();
+            }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ViewCenter.this, "Ошибка загрузки данных", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ViewCenter.this,
+                        getString(R.string.error_load_data),
+                        Toast.LENGTH_SHORT).show();
             }
+
         });
     }
 
@@ -194,9 +206,12 @@ public class ViewCenter extends AppCompatActivity {
                 intent.putExtra("longitude", longitude);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "Координаты не доступны", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,
+                        getString(R.string.error_coordinates_unavailable),
+                        Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     /**

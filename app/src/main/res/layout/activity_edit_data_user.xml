@@ -38,7 +38,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ФИО"
+                    android:text="@string/fio"
                     android:textColor="#A5A5A5"
                     android:fontFamily="sans-serif-medium"
                     android:textSize="13sp"
@@ -59,7 +59,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Дата рождения"
+                    android:text="@string/birthdate"
                     android:textColor="#A5A5A5"
                     android:fontFamily="sans-serif-medium"
                     android:textSize="13sp"
@@ -81,7 +81,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Номер телефона"
+                    android:text="@string/phonenumber"
                     android:textColor="#A5A5A5"
                     android:fontFamily="sans-serif-medium"
                     android:textSize="13sp"
@@ -104,7 +104,7 @@
 
         <Button
             android:id="@+id/save"
-            android:text="Сохранить изменения"
+            android:text="@string/savechanges"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/shape"

@@ -16,6 +16,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.hum1.LocaleUtil
 import com.example.hum1.R
 import com.example.hum1.ui.CenterListActivity
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -122,6 +123,7 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
      */
     @SuppressLint("ServiceCast")
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleUtil.initAppLocale(this)
         super.onCreate(savedInstanceState)
 
 
@@ -200,7 +202,8 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
 
         contbut.setOnClickListener{
             if (latitudeM==-1.0 || longitudeM==-1.0){
-                Toast.makeText(this, "Выберите локацию", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_select_location), Toast.LENGTH_SHORT).show()
+
             }
             else{
                 val intent = Intent(this, CenterListActivity::class.java)
@@ -299,7 +302,7 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
             if (geometry is Point) {
                 val latitude = geometry.latitude
                 val longitude = geometry.longitude
-                Toast.makeText(applicationContext, "Latitude: $latitude, Longitude: $longitude", Toast.LENGTH_LONG).show()
+                    //Toast.makeText(applicationContext, "Latitude: $latitude, Longitude: $longitude", Toast.LENGTH_LONG).show()
                 latitudeM = latitude
                 longitudeM = longitude
 
@@ -481,8 +484,8 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
      * Обрабатывает ошибку при построении маршрута.
      */
     override fun onDrivingRoutesError(p0: Error) {
-        var errorMessage = "Неизвестная ошибка!"
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT)
+        Toast.makeText(this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show()
+
     }
 
     companion object {

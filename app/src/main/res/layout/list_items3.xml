@@ -28,11 +28,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Центр: "
+                android:text="@string/center"
                 android:textColor="#A5A5A5"
                 android:fontFamily="sans-serif-medium"
                 android:textSize="13sp" />
 
+            <Space
+                android:layout_height="match_parent"
+                android:layout_width="6dp">
+
+            </Space>
             <TextView
                 android:id="@+id/center_name"
                 android:layout_width="wrap_content"
@@ -55,10 +60,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Адрес: "
+                android:text="@string/address"
                 android:textColor="#A5A5A5"
                 android:fontFamily="sans-serif-medium"
                 android:textSize="13sp" />
+
+            <Space
+                android:layout_height="match_parent"
+                android:layout_width="6dp">
+
+            </Space>
 
             <TextView
                 android:id="@+id/address"

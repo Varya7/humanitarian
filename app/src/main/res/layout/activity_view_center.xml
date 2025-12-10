@@ -48,7 +48,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Центр"
+                        android:text="@string/center"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp"/>
@@ -80,7 +80,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Адрес"
+                        android:text="@string/address"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp"/>
@@ -112,7 +112,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Время работы"
+                        android:text="@string/worktime"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp"/>
@@ -144,7 +144,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Почта"
+                        android:text="@string/email"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp"/>
@@ -176,7 +176,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="ФИО"
+                        android:text="@string/agentfio"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp"/>
@@ -208,7 +208,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Документы, необходимые для получения заявки"
+                        android:text="@string/documentstoapp"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp"/>
@@ -239,7 +239,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Телефон"
+                        android:text="@string/phonenumber"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp"/>
@@ -279,7 +279,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Список имеющихся вещей"
+                    android:text="@string/availablethingslist"
                     android:textColor="@color/black"
                     android:fontFamily="sans-serif-medium"
                     android:textSize="15sp"
@@ -310,7 +310,7 @@
 
             <Button
                 android:id="@+id/appl"
-                android:text="Отправить заявку"
+                android:text="@string/apply"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -323,7 +323,7 @@
 
             <Button
                 android:id="@+id/route"
-                android:text="Построить маршрут"
+                android:text="@string/buildaroute"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

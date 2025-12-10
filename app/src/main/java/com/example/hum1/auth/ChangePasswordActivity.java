@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.example.hum1.SettingCFragment;
 import com.example.hum1.SettingFragment;
@@ -36,6 +37,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -62,7 +64,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
         String newPassword = new_passwordV.getText().toString().trim();
 
         if (newPassword.length() < 6) {
-            Toast.makeText(this, "Пароль должен содержать минимум 6 символов", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    getString(R.string.error_password_too_short),
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -74,12 +78,15 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     if (reauthTask.isSuccessful()) {
                         updatePassword(newPassword);
                     } else {
-                        Toast.makeText(this,
-                                "Ошибка аутентификации: " + reauthTask.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        String msg = getString(R.string.error_auth_prefix)
+                                + ": " + reauthTask.getException().getMessage();
+                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
+
+
 
     /**
      * Обновляет пароль пользователя в Firebase Authentication.
@@ -90,12 +97,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
         user.updatePassword(newPassword)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(this, "Пароль успешно изменен", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,
+                                getString(R.string.password_changed_success),
+                                Toast.LENGTH_SHORT).show();
                         redirectToSettings();
                     } else {
-                        Toast.makeText(this,
-                                "Ошибка изменения пароля: " + task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        String msg = getString(R.string.error_change_password_prefix)
+                                + ": " + task.getException().getMessage();
+                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
                     }
                 });
     }

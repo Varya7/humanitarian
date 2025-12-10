@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hum1.CenterApplicationsFragment;
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.example.hum1.adapters.ListAdapter;
 import com.example.hum1.adapters.ListU3Adapter;
@@ -79,6 +80,7 @@ public class ViewApplicQR extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
 
         EdgeToEdge.enable(this);
@@ -151,7 +153,7 @@ public class ViewApplicQR extends AppCompatActivity {
                         String center = snapshot.child("center").getValue(String.class);
                         status = snapshot.child("status").getValue(String.class);
                         if (!center_name.equals(center)) {
-                            errorV.setText("Заявка отправлена в другой центр");
+                            errorV.setText(getString(R.string.error_application_other_center));
                             linearLayoutDate.setVisibility(View.GONE);
                             linearLayoutTime.setVisibility(View.GONE);
                             linearLayoutEmail.setVisibility(View.GONE);
@@ -160,8 +162,8 @@ public class ViewApplicQR extends AppCompatActivity {
                             linearLayoutBirth.setVisibility(View.GONE);
                             StatusB.setVisibility(View.GONE);
                         }
-                        else if (!"Одобрено".equals(status)){
-                            errorV.setText("Заявка уже выдана");
+                        else if (!("Одобрено").equals(status)) {
+                            errorV.setText(getString(R.string.error_application_already_issued));
                             linearLayoutDate.setVisibility(View.GONE);
                             linearLayoutTime.setVisibility(View.GONE);
                             linearLayoutEmail.setVisibility(View.GONE);
@@ -170,6 +172,7 @@ public class ViewApplicQR extends AppCompatActivity {
                             linearLayoutBirth.setVisibility(View.GONE);
                             StatusB.setVisibility(View.GONE);
                         }
+
                         else {
                             errorV.setVisibility(View.GONE);
                             linearLayoutError.setVisibility(View.GONE);
@@ -196,14 +199,20 @@ public class ViewApplicQR extends AppCompatActivity {
 
 
         StatusB.setOnClickListener(v -> {
-            mDatabase.child("Applications").child(id).child("status").setValue("Выдано")
+            mDatabase.child("Applications").child(id).child("status")
+                    .setValue("Выдано")
                     .addOnSuccessListener(aVoid -> updateItemQuantities())
                     .addOnFailureListener(e ->
-                            Toast.makeText(this, "Ошибка обновления статуса", Toast.LENGTH_SHORT).show());
+                            Toast.makeText(
+                                    this,
+                                    getString(R.string.error_update_status),
+                                    Toast.LENGTH_SHORT
+                            ).show());
             Intent intent = new Intent(ViewApplicQR.this, CenterApplicationsFragment.class);
             startActivity(intent);
             finish();
         });
+
     }
 
     /**
@@ -213,17 +222,22 @@ public class ViewApplicQR extends AppCompatActivity {
      */
     void updateItemQuantities() {
         if (center_name == null || center_name.isEmpty()) {
-            Toast.makeText(this, "Центр не определен", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    getString(R.string.error_center_not_defined),
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
-        DatabaseReference centerItemsRef = mDatabase.child("Users").child(userId).child("list_c");
+        DatabaseReference centerItemsRef = mDatabase.child("Users")
+                .child(userId).child("list_c");
 
         centerItemsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
-                    Toast.makeText(ViewApplicQR.this, "Товары центра не найдены", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ViewApplicQR.this,
+                            getString(R.string.error_center_items_not_found),
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -240,7 +254,6 @@ public class ViewApplicQR extends AppCompatActivity {
                     String centerItemName = centerItem.get("name");
                     String centerItemQtyStr = centerItem.get("quantity");
 
-
                     for (Map<String, String> applicationItem : listC) {
                         String applicationItemName = applicationItem.get("name");
 
@@ -255,11 +268,14 @@ public class ViewApplicQR extends AppCompatActivity {
                                 centerItem.put("quantity", String.valueOf(newQty));
                                 changesMade = true;
 
-                                Log.d("UPDATE", "Обновлено: " + centerItemName +
+                                Log.d("UPDATE", getString(R.string.error_quantity_format) +
+                                        " " + centerItemName +
                                         " Было: " + centerQty +
                                         " Стало: " + newQty);
                             } catch (NumberFormatException e) {
-                                Log.e("UPDATE", "Ошибка формата количества", e);
+                                Log.e("UPDATE",
+                                        getString(R.string.error_quantity_format),
+                                        e);
                             }
                             break;
                         }
@@ -270,25 +286,31 @@ public class ViewApplicQR extends AppCompatActivity {
                 if (changesMade) {
                     centerItemsRef.setValue(updatedItems)
                             .addOnSuccessListener(aVoid -> {
-                                Toast.makeText(ViewApplicQR.this, "Статус заявки изменен на Выдано", Toast.LENGTH_SHORT).show();
-
+                                Toast.makeText(ViewApplicQR.this,
+                                        getString(R.string.status_changed_to_issued),
+                                        Toast.LENGTH_SHORT).show();
                             })
                             .addOnFailureListener(e -> {
-                                Toast.makeText(ViewApplicQR.this, "Ошибка при сохранении", Toast.LENGTH_SHORT).show();
-
+                                Toast.makeText(ViewApplicQR.this,
+                                        getString(R.string.error_save_data),
+                                        Toast.LENGTH_SHORT).show();
                             });
                 } else {
-                    Toast.makeText(ViewApplicQR.this, "Нет товаров для списания", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ViewApplicQR.this,
+                            getString(R.string.no_items_to_write_off),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ViewApplicQR.this, "Ошибка загрузки данных", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(ViewApplicQR.this,
+                        getString(R.string.error_load_data),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     /**
      * Загружает список выбранных пользователем товаров из Firebase.

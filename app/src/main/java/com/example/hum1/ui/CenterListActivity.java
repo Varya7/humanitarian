@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.example.hum1.UserListActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,6 +50,7 @@ public class CenterListActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -105,13 +107,13 @@ public class CenterListActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
         EditText etName = new EditText(this);
-        etName.setHint("Название");
+        etName.setHint(getString(R.string.hint_center_item_name));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         etName.setLayoutParams(params);
 
         EditText etQuantity = new EditText(this);
-        etQuantity.setHint("Количество");
+        etQuantity.setHint(getString(R.string.hint_center_item_quantity));
         etQuantity.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         etQuantity.setLayoutParams(params);
 
@@ -139,9 +141,12 @@ public class CenterListActivity extends AppCompatActivity {
                 String quantity = etQuantity.getText().toString().trim();
 
                 if (name.isEmpty() || quantity.isEmpty()) {
-                    Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,
+                            getString(R.string.msg_fill_all_fields_short),
+                            Toast.LENGTH_SHORT).show();
                     return false;
                 }
+
 
                 Map<String, String> data = new HashMap<>();
                 data.put("name", name);
@@ -184,7 +189,9 @@ public class CenterListActivity extends AppCompatActivity {
         intent.putExtra("longitude", longitude);
         intent.putExtra("list_c", listCJson);
 
-        Toast.makeText(this, "Данные сохранены", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,
+                getString(R.string.data_saved),
+                Toast.LENGTH_SHORT).show();
 
         startActivity(intent);
         finish();

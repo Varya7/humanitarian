@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.hum1.LocaleUtil
 import com.example.hum1.R
 import com.example.hum1.views.ViewCenter
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -101,6 +102,7 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleUtil.initAppLocale(this)
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey("3c89017d-c56c-4694-b14e-3085f7402ed4")
         MapKitFactory.initialize(this)
@@ -198,19 +200,32 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
                 println("Total centers: $totalCenters, Approved: $approvedCenters, Added to map: ${centers.size}")
 
                 if (centers.isEmpty()) {
-                    Toast.makeText(this@MapActivityU, "Нет одобренных центров помощи", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this@MapActivityU,
+                        getString(R.string.no_approved_centers),
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
-                    Toast.makeText(this@MapActivityU, "Загружено ${centers.size} центров", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@MapActivityU,
+                        getString(R.string.centers_loaded, centers.size),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
+
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Toast.makeText(this@MapActivityU, "Ошибка загрузки центров: ${databaseError.message}", Toast.LENGTH_LONG).show()
-                // Повторяем попытку через 2 секунды
+                Toast.makeText(
+                    this@MapActivityU,
+                    getString(R.string.error_loading_centers, databaseError.message),
+                    Toast.LENGTH_LONG
+                ).show()
                 mapview.postDelayed({
                     loadCentersFromFirebase()
                 }, 2000)
             }
+
         })
     }
 
@@ -319,10 +334,15 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
      */
     private fun buildRouteToCenter(center: CenterInfo) {
         if (latitude == -1.0 || longitude == -1.0) {
-            Toast.makeText(this, "Не удалось определить ваше местоположение", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                getString(R.string.error_get_location),
+                Toast.LENGTH_SHORT
+            ).show()
             getLastKnownLocation()
             return
         }
+
 
         ROUTE_START_LOCATION = Point(latitude, longitude)
         val routeEndLocation = Point(center.latitude, center.longitude)
@@ -354,13 +374,23 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
         }
 
         selectedCenter?.let { center ->
-            Toast.makeText(this, "Маршрут до ${center.name} построен", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                getString(R.string.route_built_to_center, center.name),
+                Toast.LENGTH_SHORT
+            ).show()
         }
+
     }
 
     override fun onDrivingRoutesError(error: Error) {
-        Toast.makeText(this, "Ошибка построения маршрута", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            this,
+            getString(R.string.error_build_route),
+            Toast.LENGTH_SHORT
+        ).show()
     }
+
 
     /**
      * Получает последнее известное местоположение

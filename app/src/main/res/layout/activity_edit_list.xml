@@ -37,7 +37,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Укажите, за какими вещами можно обратиться в центр"
+                    android:text="@string/editlist1"
                     android:textSize="15sp"
                     android:textColor="@color/black"
                     android:fontFamily="sans-serif-medium"
@@ -58,7 +58,7 @@
         <!-- Кнопки -->
         <Button
             android:id="@+id/btn_add_row"
-            android:text="Добавить вещи"
+            android:text="@string/addrows"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/shape"
@@ -71,7 +71,7 @@
 
         <Button
             android:id="@+id/save"
-            android:text="Сохранить изменения"
+            android:text="@string/savechanges"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/shape"

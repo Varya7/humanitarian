@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.example.hum1.adapters.ListAdapter;
 import com.example.hum1.adapters.ListU3Adapter;
@@ -42,7 +43,7 @@ public class ViewAppComplete extends AppCompatActivity {
     LinearLayout commentLayout;
     //EditText comV;
     ListAdapter adapter;
-    TextView dateV, timeV, emailV, fioV, phone_numberV, birthV, comV;
+    TextView dateV, timeV, emailV, fioV, phone_numberV, birthV, comV, statusV;
     String id, com, date, time, email, fio, phone_number, birth, status;
 
     /**
@@ -54,6 +55,7 @@ public class ViewAppComplete extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
 
         if (getSupportActionBar() != null) {
@@ -69,6 +71,7 @@ public class ViewAppComplete extends AppCompatActivity {
         phone_numberV = findViewById(R.id.phone_number);
         commentLayout = findViewById(R.id.commentLayout);
         birthV = findViewById(R.id.birth);
+        statusV = findViewById(R.id.status);
         listC = new ArrayList<>();
         adapter = new ListAdapter(listC);
         recyclerView = findViewById(R.id.recyclerView_list);
@@ -115,6 +118,19 @@ public class ViewAppComplete extends AppCompatActivity {
                         else{
                             comV.setText(com);
                         }
+
+                        if ("Рассматривается".equals(status)) {
+                            statusV.setText(getString(R.string.status_pending));
+                        } else if ("Одобрено".equals(status)) {
+                            statusV.setText(getString(R.string.status_approved));
+                        } else if ("Отклонено".equals(status)) {
+                            statusV.setText(getString(R.string.status_rejected));
+                        } else if ("Выдано".equals(status)) {
+                            statusV.setText(getString(R.string.status_issued));
+                        } else {
+                            statusV.setText(status != null ? status : "");
+                        }
+
                     }
                 }
             }

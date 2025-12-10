@@ -26,4 +26,201 @@
     <string name="title_activity_view_applic_qr">ViewApplicQR</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="applic">Заявки</string>
+    <string name="account">Аккаунт</string>
+    <string name="activity_center_list1">Укажите, за какими вещами можно обратиться в центр</string>
+    <string name="addthings">Добавить вещи</string>
+    <string name="next">Далее</string>
+    <string name="changepasswor">Изменение пароля</string>
+    <string name="oldpassword">Старый пароль</string>
+    <string name="newpassword">Новый пароль</string>
+    <string name="to_change_password">Изменить пароль</string>
+    <string name="centername">Название центра</string>
+    <string name="worktimme">Время работы</string>
+    <string name="agentfio">ФИО представителя</string>
+    <string name="documentstoapp">Документы, необходимые для подачи заявки</string>
+    <string name="phonenumber">Номер телефона</string>
+    <string name="savechanges">Сохранить изменения</string>
+    <string name="fio">ФИО</string>
+    <string name="birthdate">Дата рождения</string>
+    <string name="editlist1">Укажите, за какими вещами можно обратиться в центр</string>
+    <string name="addrows">Добавить вещи</string>
+    <string name="editlistu1">Вам будут видны ФИО, номер телефона, дата рождения и электронная почта пользователя. Если нужны ещё другие данные, пожалуйста, укажите их здесь.</string>
+    <string name="editlistu">Укажите, какие данные нужны для подачи заявки в центр</string>
+    <string name="addrow">Добавить поле</string>
+    <string name="date">Дата</string>
+    <string name="time">Время</string>
+    <string name="appreceive">Подать заявку</string>
+
+    <string name="search">Поиск</string>
+    <string name="centers">Центры</string>
+    <string name="statistic">Статистика</string>
+    <string name="period">Период отображения</string>
+    <string name="allapplics">Всего заявок</string>
+    <string name="considerate">Рассматривается</string>
+    <string name="approve">Одобрено</string>
+    <string name="rejected">Отклонено</string>
+    <string name="done">Выдано</string>
+    <string name="graphics">Графики</string>
+    <string name="statusesdistribution">Распределение по статусам</string>
+    <string name="persentsappl">Процентное соотношение заявок</string>
+    <string name="monthdinamic">Динамика по месяцам</string>
+    <string name="appsofthisperiod">Заявки за выбранный период</string>
+    <string name="nodata">Нет данных для отображения</string>
+    <string name="myapps">Мои заявки</string>
+    <string name="status">Статус</string>
+    <string name="comment">Комментарий</string>
+    <string name="commtext">Текст комментария</string>
+    <string name="shoosethings">Выбранные товары</string>
+    <string name="center">Центр</string>
+    <string name="qrcodeforeceiving">QR-код для получения</string>
+    <string name="declaredthings">Заявленные вещи</string>
+    <string name="issuedthings">Выданные товары</string>
+    <string name="issued">Выдано</string>
+    <string name="worktime">Время работы</string>
+    <string name="availablethingslist">Список имеющихся вещей</string>
+    <string name="apply">Отправить заявку</string>
+    <string name="buildaroute">Построить маршрут</string>
+    <string name="rowstoappl">Список полей для подачи заявки</string>
+    <string name="makeacomm">Введите комментарий</string>
+    <string name="statusT">Принять заявку</string>
+    <string name="statusF">Отклонить заявку</string>
+    <string name="name123">Название</string>
+    <string name="quantity">Количество</string>
+    <string name="titlemanual">Ввод кода</string>
+    <string name="subtitlemanual">Введите код вручную</string>
+    <string name="codeapp">Код заявки</string>
+    <string name="cancel">Отмена</string>
+    <string name="qr">QR‑код</string>
+    <string name="shooseenter">Выберите способ ввода кода</string>
+    <string name="scan">Отсканировать</string>
+    <string name="ntermanual">Ввести вручную</string>
+    <string name="findbyfio">Поиск по ФИО</string>
+    <string name="editdata">Изменить данные</string>
+    <string name="changepassword">Изменить пароль</string>
+    <string name="deleteaccount">Удалить аккаунт</string>
+    <string name="editlist">Редактировать список</string>
+    <string name="editlistuser">Редактировать перечень данных для подачи заявки</string>
+    <string name="language">Язык</string>
+    <string name="lang_ru">Рус</string>
+    <string name="lang_en">Eng</string>
+
+
+    <string name="error_enter_time">Введите время</string>
+    <string name="error_enter_date">Введите дату</string>
+    <string name="error_select_center">Выберите центр</string>
+    <string name="error_fill_all_fields">Заполните все поля!</string>
+    <string name="msg_application_sent">Заявка подана</string>
+    <string name="error_application_submit">Ошибка при подаче заявки</string>
+    <string name="field">Поле</string>
+    <string name="value">Значение</string>
+
+    <string name="error_login_required">Пожалуйста, войдите в систему</string>
+    <string name="error_load_list_c">Ошибка загрузки</string>
+    <string name="error_load_list_u">Ошибка загрузки</string>
+    <string name="scan_cancelled">Сканирование отменено</string>
+    <string name="account_deleted">Аккаунт удалён</string>
+    <string name="error_delete_account">Ошибка удаления аккаунта</string>
+    <string name="error_delete_data">Ошибка при удалении данных</string>
+    <string name="error_fill_all_fields_short">Заполните все поля</string>
+    <string name="error_registration_prefix">Ошибка регистрации</string>
+    <string name="center_registered_success">Центр успешно зарегистрирован</string>
+    <string name="error_save_prefix">Ошибка сохранения</string>
+    <string name="error_password_too_short">Пароль должен содержать минимум 6 символов</string>
+    <string name="error_auth_prefix">Ошибка аутентификации</string>
+    <string name="password_changed_success">Пароль успешно изменен</string>
+    <string name="error_change_password_prefix">Ошибка изменения пароля</string>
+    <string name="error_enter_email">Введите адрес электронной почты</string>
+    <string name="error_enter_password">Введите пароль</string>
+    <string name="login_success">Авторизация прошла успешно</string>
+    <string name="login_error">Ошибка авторизации</string>
+    <string name="error_fetch_data">Ошибка получения данных</string>
+    <string name="error_enter_center_name">Введите название центра</string>
+    <string name="error_enter_address">Введите адрес</string>
+    <string name="error_enter_fio">Введите ФИО</string>
+    <string name="error_enter_work_time">Введите часы работы</string>
+    <string name="error_enter_phone_number">Введите номер телефона</string>
+    <string name="error_enter_doc_list">Введите список необходимых документов</string>
+    <string name="error_enter_email_short">Введите почту</string>
+    <string name="error_enter_birthdate">Введите дату рождения</string>
+    <string name="account_created">Аккаунт создан</string>
+    <string name="error_registration_prefix_long">Ошибка регистрации</string>
+    <string name="changes_saved">Изменения сохранены</string>
+    <string name="hint_item_name">Название</string>
+    <string name="hint_item_quantity">Количество</string>
+    <string name="btn_save">Сохранить</string>
+    <string name="msg_fill_all_fields_short">Заполните все поля</string>
+    <string name="msg_item_added">Элемент добавлен</string>
+    <string name="msg_item_add_error">Ошибка добавления</string>
+    <string name="dialog_edit_item_title">Редактировать пункт</string>
+    <string name="btn_cancel">Отмена</string>
+    <string name="btn_delete">Удалить</string>
+    <string name="error_load_data">Ошибка загрузки данных</string>
+    <string name="dialog_edit_field_title">Редактировать поле</string>
+    <string name="dialog_add_field_title">Добавить поле</string>
+    <string name="btn_ok">OK</string>
+    <string name="error_save_short">Ошибка сохранения</string>
+    <string name="error_unknown">Неизвестная ошибка!</string>
+    <string name="error_select_location">Выберите локацию</string>
+    <string name="no_approved_centers">Нет одобренных центров помощи</string>
+    <string name="centers_loaded">Загружено %1$d центров</string>
+    <string name="error_loading_centers">Ошибка загрузки центров: %1$s</string>
+    <string name="error_get_location">Не удалось определить ваше местоположение</string>
+    <string name="route_built_to_center">Маршрут до %1$s построен</string>
+    <string name="error_build_route">Ошибка построения маршрута</string>
+    <string name="hint_center_item_name">Название</string>
+    <string name="hint_center_item_quantity">Количество</string>
+    <string name="data_saved">Данные сохранены</string>
+    <string name="qr_after_approval">Генерация QR-кода доступна после одобрения заявки</string>
+    <string name="status_approved">Одобрено</string>
+    <string name="status_rejected">Отклонено</string>
+    <string name="status_changed_to_approved">Статус заявки изменен на Одобрено</string>
+    <string name="status_changed_to_rejected">Статус заявки изменен на Отклонено</string>
+    <string name="error_get_token">Ошибка получения токена</string>
+    <string name="error_get_application">Ошибка получения заявки</string>
+    <string name="error_application_other_center">Заявка отправлена в другой центр</string>
+    <string name="error_application_already_issued">Заявка уже выдана</string>
+
+    <string name="status_issued">Выдано</string>
+    <string name="error_update_status">Ошибка обновления статуса</string>
+
+    <string name="error_center_not_defined">Центр не определен</string>
+    <string name="error_center_items_not_found">Товары центра не найдены</string>
+    <string name="status_changed_to_issued">Статус заявки изменен на Выдано</string>
+    <string name="error_save_data">Ошибка при сохранении</string>
+    <string name="no_items_to_write_off">Нет товаров для списания</string>
+    <string name="error_quantity_format">Ошибка формата количества</string>
+    <string name="error_center_id_missing">Ошибка: ID центра не получен</string>
+    <string name="error_center_not_found">Центр не найден</string>
+    <string name="error_coordinates_unavailable">Координаты не доступны</string>
+    <string name="status_approved_exclamation">Заявка одобрена!</string>
+    <string name="status_pending">Рассматривается</string>
+
+
+
+    <string-array name="sort_options">
+        <item>Сначала старые</item>
+        <item>Сначала новые</item>
+    </string-array>
+
+
+    <string name="status_center_pending">Заявка на регистрацию центра рассматривается. Пользователи пока не могут отправлять заявки центр. Пожалуйста, дождитесь решения модератора.</string>
+    <string name="status_center_approved">Заявка на регистрацию центра одобрена. Пользователи могут отправлять заявки в центр.</string>
+    <string name="status_center_rejected">Заявка на регистрацию центра отклонена.</string>
+
+
+    <string name="confirm_delete_title">Подтверждение удаления</string>
+    <string name="confirm_delete_message">Вы хотите удалить свой аккаунт?</string>
+    <string name="delete">Удалить</string>
+
+    <string name="id_copied">Id скопирован</string>
+
+    <string-array name="time_ranges">
+        <item>Последние 3 месяца</item>
+        <item>Последние 6 месяцев</item>
+        <item>Последние 12 месяцев</item>
+        <item>Последние 2 года</item>
+        <item>Все время</item>
+    </string-array>
+
 </resources>

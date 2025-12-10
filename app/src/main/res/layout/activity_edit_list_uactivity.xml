@@ -37,7 +37,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Укажите, какие данные нужны для подачи заявки в центр"
+                    android:text="@string/editlistu"
                     android:textSize="15sp"
                     android:textColor="@color/black"
                     android:fontFamily="sans-serif-medium"
@@ -57,7 +57,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Вам будут видны ФИО, номер телефона, дата рождения и электронная почта пользователя. Если нужны ещё другие данные, пожалуйста, укажите их здесь."
+                        android:text="@string/editlistu1"
                         android:textColor="@color/black"
                         android:fontFamily="sans-serif"
                         android:textSize="14sp" />
@@ -75,7 +75,7 @@
         <!-- Кнопки -->
         <Button
             android:id="@+id/btn_add_row"
-            android:text="Добавить поле"
+            android:text="@string/addrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/shape"
@@ -88,7 +88,7 @@
 
         <Button
             android:id="@+id/save"
-            android:text="Сохранить изменения"
+            android:text="@string/savechanges"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/shape"

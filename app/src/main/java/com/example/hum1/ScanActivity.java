@@ -27,7 +27,10 @@ public class ScanActivity extends AppCompatActivity {
      */
     private final ActivityResultLauncher<ScanOptions> qrLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() == null) {
-            Toast.makeText(this, "Сканирование отменено", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    getString(R.string.scan_cancelled),
+                    Toast.LENGTH_SHORT
+            ).show();
         } else {
             Intent intent = new Intent(getApplicationContext(), ViewApplicQR.class);
             intent.putExtra("id", result.getContents());
@@ -44,6 +47,7 @@ public class ScanActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_scan);

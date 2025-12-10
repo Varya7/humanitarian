@@ -13,7 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:hint="Название"/>
+        android:hint="@string/name123"/>
 
     <EditText
         android:id="@+id/edit_quantity"
@@ -23,6 +23,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp"
-        android:hint="Количество"
+        android:hint="@string/quantity"
         android:inputType="number"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

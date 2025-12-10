@@ -111,7 +111,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
      */
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView date, time, email, fio, phone_number, birth, family_members, list;;
+        final TextView date, time, email, fio, phone_number, birth, list;;
 
 
         /**
@@ -128,7 +128,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>{
             fio = view.findViewById(R.id.fio);
             phone_number = view.findViewById(R.id.phone_number);
             birth = view.findViewById(R.id.birth);
-            family_members = view.findViewById(R.id.family_members);
+            //family_members = view.findViewById(R.id.family_members);
             list = view.findViewById(R.id.list);
         }
     }

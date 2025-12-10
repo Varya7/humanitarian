@@ -74,7 +74,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Центр"
+                            android:text="@string/center"
                             android:textColor="@color/black"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="16sp"
@@ -103,7 +103,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Адрес"
+                            android:text="@string/address"
                             android:textColor="@color/black"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="16sp"
@@ -132,7 +132,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Время работы"
+                            android:text="@string/worktime"
                             android:textColor="@color/black"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="16sp"
@@ -161,7 +161,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Почта"
+                            android:text="@string/email"
                             android:textColor="@color/black"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="16sp"
@@ -190,7 +190,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="ФИО"
+                            android:text="@string/fio"
                             android:textColor="@color/black"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="16sp"
@@ -219,7 +219,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Документы, необходимые для получения заявки"
+                            android:text="@string/documentstoapp"
                             android:textColor="@color/black"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="16sp"
@@ -248,7 +248,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Телефон"
+                            android:text="@string/phonenumber"
                             android:textColor="@color/black"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="16sp"
@@ -278,7 +278,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Комментарий"
+                            android:text="@string/comment"
                             android:textColor="@color/black"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="16sp"
@@ -295,7 +295,7 @@
                                 android:id="@+id/comm"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Текст комментария"
+                                android:text="@string/commtext"
                                 android:textColor="@color/black"
                                 android:fontFamily="sans-serif"
                                 android:textSize="16sp" />
@@ -307,7 +307,7 @@
             <!-- Кнопка: изменить данные -->
             <Button
                 android:id="@+id/btn_edit_data"
-                android:text="Изменить данные"
+                android:text="@string/editdata"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/shape"
@@ -327,7 +327,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Список имеющихся вещей"
+                android:text="@string/availablethingslist"
                 android:textColor="@color/black"
                 android:fontFamily="sans-serif-medium"
                 android:textSize="16sp"
@@ -349,7 +349,7 @@
             <!-- Кнопка: редактировать список -->
             <Button
                 android:id="@+id/btn_edit_list"
-                android:text="Редактировать список"
+                android:text="@string/editlist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -364,7 +364,7 @@
             <!-- Кнопка: редактировать перечень данных -->
             <Button
                 android:id="@+id/btn_edit_list_user"
-                android:text="Редактировать перечень данных для подачи заявки"
+                android:text="@string/editlistuser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -379,7 +379,7 @@
             <!-- Кнопка: изменить пароль -->
             <Button
                 android:id="@+id/btn_edit_password"
-                android:text="Изменить пароль"
+                android:text="@string/changepasswor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -395,12 +395,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="16dp" />
 
+            <!-- Блок выбора языка -->
+            <LinearLayout
+                android:id="@+id/lang_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/tv_lang_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/language"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="16sp"
+                    android:paddingEnd="8dp" />
+
+                <Spinner
+                    android:id="@+id/spinner_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+
+
+
+
             <!-- Выход и удаление аккаунта -->
             <TextView
                 android:id="@+id/logout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Выйти из аккаунта"
+                android:text="@string/logout"
                 android:textSize="15sp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/black"
@@ -411,7 +442,7 @@
                 android:id="@+id/delete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Удалить аккаунт"
+                android:text="@string/deleteaccount"
                 android:textSize="15sp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/black"

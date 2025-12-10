@@ -12,6 +12,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -46,6 +47,7 @@ public class EditDataUserActivity extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         if (getSupportActionBar() != null) {
@@ -94,7 +96,6 @@ public class EditDataUserActivity extends AppCompatActivity {
             }
         });
 
-        // Сохранение изменений
         saveB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,8 +109,11 @@ public class EditDataUserActivity extends AppCompatActivity {
                 userRef.child("birth").setValue(birth);
                 userRef.child("phone_number").setValue(phone_number);
 
-                Toast.makeText(EditDataUserActivity.this, "Изменения сохранены", Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(
+                        EditDataUserActivity.this,
+                        getString(R.string.changes_saved),
+                        Toast.LENGTH_SHORT
+                ).show();
 
                 finish();
             }
@@ -119,7 +123,7 @@ public class EditDataUserActivity extends AppCompatActivity {
     /**
      * Показывает диалог выбора даты и устанавливает выбранную дату в поле birthV.
      */
-    void showBirthPickerDialog() {
+    public void showBirthPickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);

@@ -1,0 +1,235 @@
+<resources>
+    <string name="app_name">hum1</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Sign up</string>
+    <string name="click_to_login">Log in to account</string>
+    <string name="click_to_register">Create an account</string>
+    <string name="logout">Logout</string>
+    <string name="name">First name</string>
+    <string name="surname">Last name</string>
+    <string name="phone_number">Phone number</string>
+
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="registration_of_the_center">Center registration</string>
+    <string name="center_name">Center name</string>
+    <string name="address">Address</string>
+    <string name="register_center">Register center</string>
+    <string name="reg_center">Register center</string>
+    <string name="register_user">Register account</string>
+    <string name="title_activity_app_true">Approved</string>
+    <string name="title_activity_app_false">Rejected</string>
+    <string name="title_activity_map_c">MapActivityC</string>
+    <string name="title_activity_view_applic_qr">ViewApplicQR</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="applic">Applications</string>
+    <string name="account">Account</string>
+    <string name="activity_center_list1">Specify which items can be requested from the center</string>
+    <string name="addthings">Add items</string>
+    <string name="next">Next</string>
+    <string name="changepasswor">Change password</string>
+    <string name="oldpassword">Old password</string>
+    <string name="newpassword">New password</string>
+    <string name="to_change_password">Change password</string>
+
+    <string name="centername">Center name</string>
+    <string name="worktimme">Opening hours</string>
+    <string name="agentfio">Representative’s full name</string>
+    <string name="documentstoapp">Documents required to submit an application</string>
+    <string name="phonenumber">Phone number</string>
+    <string name="savechanges">Save changes</string>
+    <string name="fio">Full name</string>
+    <string name="birthdate">Date of birth</string>
+
+    <string name="editlist1">Specify which items can be requested from the center</string>
+    <string name="addrows">Add items</string>
+    <string name="editlistu1">
+        You will see the user’s full name, phone number, date of birth, and email address. If you need any additional data, please specify it here.
+    </string>
+    <string name="editlistu">Specify which data is required to submit an application to the center</string>
+    <string name="addrow">Add field</string>
+
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="appreceive">Submit application</string>
+
+    <string name="search">Search</string>
+    <string name="centers">Centers</string>
+    <string name="statistic">Statistics</string>
+    <string name="period">Display period</string>
+    <string name="allapplics">Total applications</string>
+    <string name="considerate">Under review</string>
+    <string name="approve">Approved</string>
+    <string name="rejected">Rejected</string>
+    <string name="done">Issued</string>
+    <string name="graphics">Charts</string>
+    <string name="statusesdistribution">Status distribution</string>
+    <string name="persentsappl">Application percentage</string>
+    <string name="monthdinamic">Monthly dynamics</string>
+    <string name="appsofthisperiod">Applications for the selected period</string>
+    <string name="nodata">No data to display</string>
+
+    <string name="myapps">My applications</string>
+    <string name="status">Status</string>
+    <string name="comment">Comment</string>
+    <string name="commtext">Comment text</string>
+    <string name="shoosethings">Selected items</string>
+    <string name="center">Center</string>
+    <string name="qrcodeforeceiving">QR code for pickup</string>
+    <string name="declaredthings">Requested items</string>
+    <string name="issuedthings">Issued items</string>
+    <string name="issued">Issued</string>
+    <string name="worktime">Opening hours</string>
+    <string name="availablethingslist">List of available items</string>
+    <string name="apply">Send application</string>
+    <string name="buildaroute">Build route</string>
+    <string name="rowstoappl">List of fields for application submission</string>
+    <string name="makeacomm">Enter a comment</string>
+    <string name="statusT">Accept application</string>
+    <string name="statusF">Reject application</string>
+    <string name="name123">Name</string>
+    <string name="quantity">Quantity</string>
+
+    <string name="titlemanual">Enter code</string>
+    <string name="subtitlemanual">Enter the code manually</string>
+    <string name="codeapp">Application code</string>
+    <string name="cancel">Cancel</string>
+    <string name="qr">QR code</string>
+    <string name="shooseenter">Choose how to enter the code</string>
+    <string name="scan">Scan</string>
+    <string name="ntermanual">Enter manually</string>
+    <string name="findbyfio">Search by full name</string>
+
+    <string name="editdata">Edit data</string>
+    <string name="changepassword">Change password</string>
+    <string name="deleteaccount">Delete account</string>
+    <string name="editlist">Edit list</string>
+    <string name="editlistuser">Edit the list of data required to submit an application</string>
+    <string name="language">Language</string>
+    <string name="lang_ru">Ru</string>
+    <string name="lang_en">En</string>
+
+    <string name="error_enter_time">Enter time</string>
+    <string name="error_enter_date">Enter date</string>
+    <string name="error_select_center">Select a center</string>
+    <string name="error_fill_all_fields">Please fill in all fields!</string>
+    <string name="msg_application_sent">Application submitted</string>
+    <string name="error_application_submit">Error submitting application</string>
+
+    <string name="field">Field</string>
+    <string name="value">Value</string>
+
+    <string name="error_login_required">Please log in</string>
+    <string name="error_load_list_c">Error loading</string>
+    <string name="error_load_list_u">Error loading</string>
+    <string name="scan_cancelled">Scan cancelled</string>
+    <string name="account_deleted">Account deleted</string>
+    <string name="error_delete_account">Error deleting account</string>
+    <string name="error_delete_data">Error deleting data</string>
+    <string name="error_fill_all_fields_short">Please fill in all fields</string>
+    <string name="error_registration_prefix">Registration error</string>
+    <string name="center_registered_success">Center registered successfully</string>
+    <string name="error_save_prefix">Save error</string>
+    <string name="error_password_too_short">Password must be at least 6 characters long</string>
+    <string name="error_auth_prefix">Authentication error</string>
+    <string name="password_changed_success">Password changed successfully</string>
+    <string name="error_change_password_prefix">Error changing password</string>
+    <string name="error_enter_email">Enter email address</string>
+    <string name="error_enter_password">Enter password</string>
+    <string name="login_success">Login successful</string>
+    <string name="login_error">Login error</string>
+    <string name="error_fetch_data">Error fetching data</string>
+    <string name="error_enter_center_name">Enter center name</string>
+    <string name="error_enter_address">Enter address</string>
+    <string name="error_enter_fio">Enter full name</string>
+    <string name="error_enter_work_time">Enter opening hours</string>
+    <string name="error_enter_phone_number">Enter phone number</string>
+    <string name="error_enter_doc_list">Enter list of required documents</string>
+    <string name="error_enter_email_short">Enter email</string>
+    <string name="error_enter_birthdate">Enter date of birth</string>
+    <string name="account_created">Account created</string>
+    <string name="error_registration_prefix_long">Registration error</string>
+    <string name="changes_saved">Changes saved</string>
+    <string name="hint_item_name">Name</string>
+    <string name="hint_item_quantity">Quantity</string>
+    <string name="btn_save">Save</string>
+    <string name="msg_fill_all_fields_short">Please fill in all fields</string>
+    <string name="msg_item_added">Item added</string>
+    <string name="msg_item_add_error">Error adding item</string>
+    <string name="dialog_edit_item_title">Edit item</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_delete">Delete</string>
+    <string name="error_load_data">Error loading data</string>
+    <string name="dialog_edit_field_title">Edit field</string>
+    <string name="dialog_add_field_title">Add field</string>
+    <string name="btn_ok">OK</string>
+    <string name="error_save_short">Save error</string>
+    <string name="error_unknown">Unknown error!</string>
+    <string name="error_select_location">Select a location</string>
+    <string name="no_approved_centers">No approved help centers</string>
+    <string name="centers_loaded">%1$d centers loaded</string>
+    <string name="error_loading_centers">Error loading centers: %1$s</string>
+    <string name="error_get_location">Could not determine your location</string>
+    <string name="route_built_to_center">Route to %1$s has been built</string>
+    <string name="error_build_route">Error building route</string>
+    <string name="hint_center_item_name">Name</string>
+    <string name="hint_center_item_quantity">Quantity</string>
+    <string name="data_saved">Data saved</string>
+    <string name="qr_after_approval">QR code generation is available after the application is approved</string>
+    <string name="status_approved">Approved</string>
+    <string name="status_rejected">Rejected</string>
+    <string name="status_changed_to_approved">Application status changed to Approved</string>
+    <string name="status_changed_to_rejected">Application status changed to Rejected</string>
+    <string name="error_get_token">Error getting token</string>
+    <string name="error_get_application">Error getting application</string>
+    <string name="error_application_other_center">The application was sent to another center</string>
+    <string name="error_application_already_issued">The application has already been issued</string>
+
+    <string name="status_issued">Issued</string>
+    <string name="error_update_status">Error updating status</string>
+
+    <string name="error_center_not_defined">Center is not defined</string>
+    <string name="error_center_items_not_found">Center items not found</string>
+    <string name="status_changed_to_issued">Application status changed to Issued</string>
+    <string name="error_save_data">Error saving data</string>
+    <string name="no_items_to_write_off">No items to write off</string>
+    <string name="error_quantity_format">Quantity format error</string>
+    <string name="error_center_id_missing">Error: center ID not received</string>
+    <string name="error_center_not_found">Center not found</string>
+    <string name="error_coordinates_unavailable">Coordinates are not available</string>
+    <string name="status_approved_exclamation">Application approved!</string>
+    <string name="status_pending">Pending</string>
+
+
+    <string-array name="sort_options">
+        <item>Oldest first</item>
+        <item>Newest first</item>
+    </string-array>
+
+
+    <string name="status_center_pending">Center registration application is under review. Users cannot send applications to the center yet. Please wait for moderator decision.</string>
+    <string name="status_center_approved">Center registration application approved. Users can send applications to the center.</string>
+    <string name="status_center_rejected">Center registration application rejected.</string>
+
+    <string name="confirm_delete_title">Delete confirmation</string>
+    <string name="confirm_delete_message">Do you want to delete your account?</string>
+    <string name="delete">Delete</string>
+
+    <string name="id_copied">ID copied</string>
+
+
+    <string-array name="time_ranges">
+        <item>Last 3 months</item>
+        <item>Last 6 months</item>
+        <item>Last 12 months</item>
+        <item>Last 2 years</item>
+        <item>All time</item>
+    </string-array>
+
+</resources>

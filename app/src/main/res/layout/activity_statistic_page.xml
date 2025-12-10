@@ -45,7 +45,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Статистика"
+                        android:text="@string/statistic"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         android:textColor="#3b82f6" />
@@ -54,7 +54,7 @@
                         android:id="@+id/tvCenterName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Название центра"
+                        android:text="@string/centername"
                         android:textSize="14sp"
                         android:textColor="#6b7280" />
                 </LinearLayout>
@@ -77,7 +77,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Период отображения"
+                    android:text="@string/period"
                     android:textSize="14sp"
 
                     android:textColor="#374151"
@@ -123,7 +123,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
-                        android:text="Всего заявок"
+                        android:text="@string/allapplics"
                         android:textSize="16sp"
                         android:textColor="#6b7280" />
 
@@ -156,7 +156,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
-                        android:text="Рассматривается"
+                        android:text="@string/considerate"
                         android:textSize="16sp"
                         android:textColor="#6b7280" />
 
@@ -189,7 +189,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
-                        android:text="Одобрено"
+                        android:text="@string/approve"
                         android:textSize="16sp"
                         android:textColor="#6b7280" />
 
@@ -222,7 +222,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
-                        android:text="Отклонено"
+                        android:text="@string/rejected"
                         android:textSize="16sp"
                         android:textColor="#6b7280" />
 
@@ -254,7 +254,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
-                        android:text="Выдано"
+                        android:text="@string/done"
                         android:textSize="16sp"
                         android:textColor="#6b7280" />
 
@@ -288,7 +288,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Графики"
+            android:text="@string/graphics"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#374151"
@@ -310,7 +310,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Распределение по статусам"
+                    android:text="@string/statusesdistribution"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="#374151"
@@ -319,7 +319,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Процентное соотношение заявок"
+                    android:text="@string/persentsappl"
                     android:textSize="14sp"
                     android:textColor="#6b7280"
                     android:layout_marginBottom="16dp" />
@@ -346,7 +346,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Динамика по месяцам"
+                            android:text="@string/monthdinamic"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="#374151"
@@ -355,7 +355,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Заявки за выбранный период"
+                            android:text="@string/appsofthisperiod"
                             android:textSize="14sp"
                             android:textColor="#6b7280"
                             android:layout_marginBottom="16dp" />
@@ -371,7 +371,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="300dp"
                             android:gravity="center"
-                            android:text="Нет данных для отображения"
+                            android:text="@string/nodata"
                             android:textColor="#6b7280"
                             android:visibility="gone" />
                     </LinearLayout>
@@ -383,7 +383,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
                     android:gravity="center"
-                    android:text="Нет данных для отображения"
+                    android:text="@string/nodata"
                     android:textColor="#6b7280"
                     android:visibility="gone" />
             </LinearLayout>

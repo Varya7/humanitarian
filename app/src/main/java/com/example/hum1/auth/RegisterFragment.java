@@ -133,27 +133,28 @@ public class RegisterFragment extends Fragment {
      */
     boolean validateInputs(String email, String password, String fio, String birth, String phoneNumber) {
         if (TextUtils.isEmpty(email)) {
-            showToast("Введите почту");
+            showToast(getString(R.string.error_enter_email_short));
             return false;
         }
         if (TextUtils.isEmpty(password)) {
-            showToast("Введите пароль");
+            showToast(getString(R.string.error_enter_password));
             return false;
         }
         if (TextUtils.isEmpty(fio)) {
-            showToast("Введите ФИО");
+            showToast(getString(R.string.error_enter_fio));
             return false;
         }
         if (TextUtils.isEmpty(birth)) {
-            showToast("Введите дату рождения");
+            showToast(getString(R.string.error_enter_birthdate));
             return false;
         }
         if (TextUtils.isEmpty(phoneNumber)) {
-            showToast("Введите номер телефона");
+            showToast(getString(R.string.error_enter_phone_number));
             return false;
         }
         return true;
     }
+
 
     /**
      * Обрабатывает результат регистрации в Firebase.
@@ -166,15 +167,20 @@ public class RegisterFragment extends Fragment {
      * @param birth    дата рождения пользователя
      * @param phoneNumber номер телефона пользователя
      */
-    private void handleRegistrationResult(@NonNull Task<AuthResult> task, String email, String fio, String birth, String phoneNumber) {
+    private void handleRegistrationResult(@NonNull Task<AuthResult> task,
+                                          String email, String fio,
+                                          String birth, String phoneNumber) {
         if (task.isSuccessful()) {
             saveUserInfoToDatabase(email, fio, birth, phoneNumber);
             navigateToMyApplications();
-            showToast("Аккаунт создан");
+            showToast(getString(R.string.account_created));
         } else {
-            showToast("Ошибка регистрации: " + task.getException().getMessage());
+            String msg = getString(R.string.error_registration_prefix_long)
+                    + ": " + task.getException().getMessage();
+            showToast(msg);
         }
     }
+
 
     /**
      * Сохраняет информацию о зарегистрированном пользователе в базе Firebase Realtime Database.

@@ -26,6 +26,10 @@ import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.Map;
 
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.os.LocaleListCompat;
+import androidx.appcompat.app.AppCompatDelegate;
+
 
 /**
  * Фрагмент настроек для пользователя с ролью центра.
@@ -48,6 +52,7 @@ public class SettingCFragment extends Fragment {
     private TextView commV, statusV, emailV, fioV, work_timeV, phone_numberV, logoutV, deleteV, center_nameV, addressV, docV;
     private Button edit_dataB, edit_passwordB, edit_listB, edit_listU;
     private ImageButton statB;
+    private Spinner spinnerLanguage;
 
 
     /**
@@ -70,6 +75,35 @@ public class SettingCFragment extends Fragment {
 
         loadUserData();
         loadListData();
+
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.languages_display,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLanguage.setAdapter(adapter);
+
+        String currentLang = LangPrefs.loadLang(requireContext()); // "ru" или "en"
+        int position = currentLang.startsWith("en") ? 1 : 0;
+        spinnerLanguage.setSelection(position, false); // false, чтобы не триггерить listener при установке
+
+        spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String newLang = (pos == 1) ? "en" : "ru";
+                String current = LangPrefs.loadLang(requireContext());
+
+                if (newLang.equals(current)) return;
+
+                LocaleUtil.applyAppLocale(requireContext(), newLang);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
 
         return view;
     }
@@ -98,11 +132,16 @@ public class SettingCFragment extends Fragment {
         commentLayout = view.findViewById(R.id.commentLayout);
         recyclerView = view.findViewById(R.id.recyclerView_list);
         statB = view.findViewById(R.id.statButton);
+        spinnerLanguage = view.findViewById(R.id.spinner_language);
 
         listC = new ArrayList<>();
         adapter = new ListAdapter(listC);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+
+
+
+
     }
 
     /**
@@ -137,11 +176,11 @@ public class SettingCFragment extends Fragment {
 
                     String status = snapshot.child("status").getValue(String.class);
                     if ("Рассматривается".equals(status)) {
-                        statusV.setText("Заявка на регистрацию центра рассматривается. Пользователи пока не могут отправлять заявки центр. Пожалуйста, дождитесь решения модератора.");
+                        statusV.setText(getString(R.string.status_center_pending));
                     } else if ("Одобрено".equals(status)) {
-                        statusV.setText("Заявка на регистрацию центра одобрена. Пользователи могут отправлять заявки в центр.");
+                        statusV.setText(getString(R.string.status_center_approved));
                     } else {
-                        statusV.setText("Заявка на регистрацию центра отклонена.");
+                        statusV.setText(getString(R.string.status_center_rejected));
                     }
 
                     String com = snapshot.child("comment").getValue(String.class);
@@ -224,6 +263,7 @@ public class SettingCFragment extends Fragment {
 
         statB.setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), StatisticPage.class)));
+
     }
 
     /**
@@ -231,11 +271,11 @@ public class SettingCFragment extends Fragment {
      */
     private void showDeleteConfirmationDialog() {
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Подтверждение удаления")
-                .setMessage("Вы хотите удалить свой аккаунт?")
-                .setPositiveButton("Удалить", (dialog, which) -> deleteAccount())
-                .setNegativeButton("Отмена", null)
-                .show();
+                .setTitle(getString(R.string.confirm_delete_title))
+                .setMessage(getString(R.string.confirm_delete_message))
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteAccount())
+                .setNegativeButton(getString(android.R.string.cancel), null);
+
     }
 
     /**
@@ -247,16 +287,29 @@ public class SettingCFragment extends Fragment {
             if (task.isSuccessful()) {
                 user.delete().addOnCompleteListener(task1 -> {
                     if (task1.isSuccessful()) {
-                        Toast.makeText(getContext(), "Аккаунт удалён", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(
+                                getContext(),
+                                getString(R.string.account_deleted),
+                                Toast.LENGTH_SHORT
+                        ).show();
                         startActivity(new Intent(getActivity(), AuthActivity.class));
                         requireActivity().finish();
                     } else {
-                        Toast.makeText(getContext(), "Ошибка удаления аккаунта", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(
+                                getContext(),
+                                getString(R.string.error_delete_account),
+                                Toast.LENGTH_SHORT
+                        ).show();
                     }
                 });
             } else {
-                Toast.makeText(getContext(), "Ошибка при удалении данных", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        getContext(),
+                        getString(R.string.error_delete_data),
+                        Toast.LENGTH_SHORT
+                ).show();
             }
         });
     }
+
 }

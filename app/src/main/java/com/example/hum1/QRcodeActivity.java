@@ -47,6 +47,7 @@ public class QRcodeActivity extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -68,7 +69,11 @@ public class QRcodeActivity extends AppCompatActivity {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("Copied Text", tvId.getText());
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(getApplicationContext(), "Id скопирован", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        getApplicationContext(),
+                        getString(R.string.id_copied),
+                        Toast.LENGTH_SHORT
+                ).show();
             }
         });
     }

@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.QRcodeActivity;
 import com.example.hum1.R;
 import com.example.hum1.adapters.ListAdapter;
@@ -48,7 +49,7 @@ public class ViewApplic extends AppCompatActivity {
 
     DatabaseReference mDatabase;
 
-    TextView centerV, statusV, dateV, timeV, emailV, fioV, phone_numberV, birthV, family_membersV, comV;
+    TextView centerV, statusV, dateV, timeV, emailV, fioV, phone_numberV, birthV, comV;
     String id, date, time, email, fio, phone_number, birth, status, com;
     Button qrcode;
     LinearLayout commentLayout;
@@ -66,6 +67,7 @@ public class ViewApplic extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         if (getSupportActionBar() != null) {
@@ -128,25 +130,27 @@ public class ViewApplic extends AppCompatActivity {
                         timeV.setText(time);
                         emailV.setText(email);
                         fioV.setText(fio);
+                        phone_numberV.setText(phone_number);
+                        birthV.setText(birth);
+                        centerV.setText(center);
                         if ("Одобрено".equals(status)) {
                             qrcode.setVisibility(View.VISIBLE);
                         } else {
                             qrcode.setVisibility(View.GONE);
                         }
 
+                        if ("Рассматривается".equals(status)) {
+                            statusV.setText(getString(R.string.status_pending));
+                        } else if ("Одобрено".equals(status)) {
+                            statusV.setText(getString(R.string.status_approved));
+                        } else if ("Отклонено".equals(status)) {
+                            statusV.setText(getString(R.string.status_rejected));
+                        } else if ("Выдано".equals(status)) {
+                            statusV.setText(getString(R.string.status_issued));
+                        } else {
+                            statusV.setText(status);
+                        }
 
-                        phone_numberV.setText(phone_number);
-                        birthV.setText(birth);
-                        centerV.setText(center);
-                        if (status.equals("Рассматривается")){
-                            statusV.setText("На рассмотрении");
-                        }
-                        else if (status.equals("Одобрено")){
-                            statusV.setText("Одобрено");
-                        }
-                        else{
-                            statusV.setText("Отклонено");
-                        }
                         if (com.equals("")){
                             commentLayout.setVisibility(View.GONE);
                         }
@@ -165,17 +169,20 @@ public class ViewApplic extends AppCompatActivity {
         qrcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if ("Одобрено".equals(status))
-                {
+                if ("Одобрено".equals(status)) {
                     Intent intent = new Intent(getApplicationContext(), QRcodeActivity.class);
                     intent.putExtra("id", id);
                     startActivity(intent);
-                }
-                else{
-                    Toast.makeText(ViewApplic.this, "Генерация QR-ода доступна после одобрения заявки", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(
+                            ViewApplic.this,
+                            getString(R.string.qr_after_approval),
+                            Toast.LENGTH_SHORT
+                    ).show();
                 }
             }
         });
+
 
     }
 

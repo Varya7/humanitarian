@@ -95,7 +95,7 @@ public class LoginFragment extends Fragment {
             mDatabase.child("Users").child(idU).get().addOnCompleteListener(task -> {
                 progressBar.setVisibility(View.GONE);
                 if (!task.isSuccessful()) {
-                    Log.e("firebase", "Ошибка получения данных", task.getException());
+                    //Log.e("firebase", "Ошибка получения данных", task.getException());
                 } else {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
@@ -117,13 +117,17 @@ public class LoginFragment extends Fragment {
         String password = editTextPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(email)) {
-            Toast.makeText(getContext(), "Введите адрес электронной почты", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),
+                    getString(R.string.error_enter_email),
+                    Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getContext(), "Введите пароль", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),
+                    getString(R.string.error_enter_password),
+                    Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
             return;
         }
@@ -132,14 +136,18 @@ public class LoginFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
                     if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Авторизация прошла успешно", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(),
+                                getString(R.string.login_success),
+                                Toast.LENGTH_SHORT).show();
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
                             userId = user.getUid();
                             checkUserRole(userId);
                         }
                     } else {
-                        Toast.makeText(getContext(), "Ошибка авторизации", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(),
+                                getString(R.string.login_error),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -155,7 +163,7 @@ public class LoginFragment extends Fragment {
         mDatabase.child("Users").child(userId).get().addOnCompleteListener(task -> {
             progressBar.setVisibility(View.GONE);
             if (!task.isSuccessful()) {
-                Log.e("firebase", "Ошибка получения данных", task.getException());
+                //Log.e("firebase", "Ошибка получения данных", task.getException());
             } else {
                 DataSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {

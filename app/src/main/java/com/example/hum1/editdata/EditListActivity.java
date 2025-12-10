@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.example.hum1.adapters.ListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,6 +58,7 @@ public class EditListActivity extends AppCompatActivity {
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -99,7 +101,7 @@ public class EditListActivity extends AppCompatActivity {
     /**
      * Создаёт новую строку ввода для добавления элемента.
      */
-    void addRow() {
+    public void addRow() {
         LinearLayout rowLayout = new LinearLayout(this);
         rowLayout.setOrientation(LinearLayout.HORIZONTAL);
         rowLayout.setLayoutParams(new LinearLayout.LayoutParams(
@@ -107,18 +109,18 @@ public class EditListActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
         EditText etName = new EditText(this);
-        etName.setHint("Название");
+        etName.setHint(getString(R.string.hint_item_name));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         etName.setLayoutParams(params);
 
         EditText etQuantity = new EditText(this);
-        etQuantity.setHint("Количество");
+        etQuantity.setHint(getString(R.string.hint_item_quantity));
         etQuantity.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         etQuantity.setLayoutParams(params);
 
         Button btnSaveRow = new Button(this);
-        btnSaveRow.setText("Сохранить");
+        btnSaveRow.setText(getString(R.string.btn_save));
         btnSaveRow.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -132,7 +134,9 @@ public class EditListActivity extends AppCompatActivity {
                 containerFields.removeView(rowLayout);
                 addedRows.remove(rowLayout);
             } else {
-                Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,
+                        getString(R.string.msg_fill_all_fields_short),
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -157,9 +161,16 @@ public class EditListActivity extends AppCompatActivity {
         String key = userRef.child("list_c").push().getKey();
         if (key != null) {
             userRef.child("list_c").child(key).setValue(newItem)
-                    .addOnSuccessListener(aVoid -> Toast.makeText(this, "Элемент добавлен", Toast.LENGTH_SHORT).show())
-                    .addOnFailureListener(e -> Toast.makeText(this, "Ошибка добавления", Toast.LENGTH_SHORT).show());
+                    .addOnSuccessListener(aVoid ->
+                            Toast.makeText(this,
+                                    getString(R.string.msg_item_added),
+                                    Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this,
+                                    getString(R.string.msg_item_add_error),
+                                    Toast.LENGTH_SHORT).show());
         }
+
     }
 
     /**
@@ -188,7 +199,7 @@ public class EditListActivity extends AppCompatActivity {
         Map<String, String> item = listC.get(position);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Редактировать пункт");
+        builder.setTitle(getString(R.string.dialog_edit_item_title));
 
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_item, null);
         EditText nameEditText = view.findViewById(R.id.edit_name);
@@ -199,7 +210,7 @@ public class EditListActivity extends AppCompatActivity {
 
         builder.setView(view);
 
-        builder.setPositiveButton("Сохранить", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.btn_save), (dialog, which) -> {
             String newName = nameEditText.getText().toString().trim();
             String newQuantity = quantityEditText.getText().toString().trim();
 
@@ -208,9 +219,9 @@ public class EditListActivity extends AppCompatActivity {
             }
         });
 
-        builder.setNegativeButton("Отмена", null);
-        builder.setNeutralButton("Удалить", (dialog, which) -> deleteItem(position));
-
+        builder.setNegativeButton(getString(R.string.btn_cancel), null);
+        builder.setNeutralButton(getString(R.string.btn_delete),
+                (dialog, which) -> deleteItem(position));
         builder.show();
     }
 

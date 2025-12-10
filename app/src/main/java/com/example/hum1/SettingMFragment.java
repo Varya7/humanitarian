@@ -1,18 +1,23 @@
 package com.example.hum1;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.hum1.auth.ChangePasswordActivity;
@@ -40,6 +45,7 @@ public class SettingMFragment extends Fragment {
 
     private TextView emailV, logoutV, deleteV;
     private Button edit_passwordB;
+    private Spinner spinnerLanguage;
 
     /**
      * Вызывается при создании интерфейса фрагмента.
@@ -50,6 +56,7 @@ public class SettingMFragment extends Fragment {
      * @param savedInstanceState Сохранённое состояние, если оно есть.
      * @return View, соответствующий интерфейсу фрагмента.
      */
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,7 +66,7 @@ public class SettingMFragment extends Fragment {
         logoutV = view.findViewById(R.id.logout);
         deleteV = view.findViewById(R.id.delete);
         edit_passwordB = view.findViewById(R.id.edit_password);
-
+        spinnerLanguage = view.findViewById(R.id.spinner_language);
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
@@ -70,6 +77,34 @@ public class SettingMFragment extends Fragment {
             loadUserData();
             setupButtons();
         }
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.languages_display,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLanguage.setAdapter(adapter);
+
+        String currentLang = LangPrefs.loadLang(requireContext()); // "ru" или "en"
+        int position = currentLang.startsWith("en") ? 1 : 0;
+        spinnerLanguage.setSelection(position, false); // false, чтобы не триггерить listener при установке
+
+        spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String newLang = (pos == 1) ? "en" : "ru";
+                String current = LangPrefs.loadLang(requireContext());
+
+                if (newLang.equals(current)) return;
+
+                LocaleUtil.applyAppLocale(requireContext(), newLang);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
 
 
         return view;
@@ -108,6 +143,7 @@ public class SettingMFragment extends Fragment {
 
         edit_passwordB.setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), ChangePasswordActivity.class)));
+
     }
 
 
@@ -116,11 +152,10 @@ public class SettingMFragment extends Fragment {
      */
     void showDeleteConfirmationDialog() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Подтверждение удаления")
-                .setMessage("Вы хотите удалить свой аккаунт?")
-                .setPositiveButton("Удалить", (dialog, which) -> deleteAccount())
-                .setNegativeButton("Отмена", null)
-                .show();
+                .setTitle(getString(R.string.confirm_delete_title))
+                .setMessage(getString(R.string.confirm_delete_message))
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteAccount())
+                .setNegativeButton(getString(android.R.string.cancel), null);
     }
 
     /**
@@ -134,16 +169,33 @@ public class SettingMFragment extends Fragment {
                         user.delete()
                                 .addOnCompleteListener(task1 -> {
                                     if (task1.isSuccessful()) {
-                                        Toast.makeText(getContext(), "Аккаунт удалён", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(
+                                                getContext(),
+                                                getString(R.string.account_deleted),
+                                                Toast.LENGTH_SHORT
+                                        ).show();
                                         startActivity(new Intent(getActivity(), AuthActivity.class));
                                         requireActivity().finish();
                                     } else {
-                                        Toast.makeText(getContext(), "Ошибка удаления аккаунта: " + task1.getException(), Toast.LENGTH_SHORT).show();
+                                        String msg = getString(R.string.error_delete_account)
+                                                + ": " + task1.getException();
+                                        Toast.makeText(
+                                                getContext(),
+                                                msg,
+                                                Toast.LENGTH_SHORT
+                                        ).show();
                                     }
                                 });
                     } else {
-                        Toast.makeText(getContext(), "Ошибка удаления данных из базы: " + task.getException(), Toast.LENGTH_SHORT).show();
+                        String msg = getString(R.string.error_delete_data)
+                                + ": " + task.getException();
+                        Toast.makeText(
+                                getContext(),
+                                msg,
+                                Toast.LENGTH_SHORT
+                        ).show();
                     }
                 });
     }
+
 }

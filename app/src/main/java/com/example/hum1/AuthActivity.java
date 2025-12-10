@@ -32,6 +32,7 @@ public class AuthActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -145,11 +146,8 @@ public class AuthActivity extends AppCompatActivity {
                     .child("fcmToken")
                     .setValue(token)
                     .addOnSuccessListener(aVoid -> {
-                        //Log.d("FCM_TOKEN", "Токен сохранен для пользователя: " + userId);
-                        //Toast.makeText(AuthActivity.this, "Токен обновлен", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        //Log.e("FCM_TOKEN", "Ошибка сохранения токена", e);
                     });
         }
     }

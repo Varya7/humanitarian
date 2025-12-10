@@ -29,14 +29,6 @@
             android:name=".maps.MapActivityU"
             android:exported="false" />
 
-        <service
-            android:name=".MessagingService"
-            android:exported="false"
-            tools:ignore="WrongManifestParent">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
         <activity
             android:name=".ModeratorActivity"

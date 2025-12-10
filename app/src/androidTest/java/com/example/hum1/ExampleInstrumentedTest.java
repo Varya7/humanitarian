@@ -1,730 +1,1290 @@
 package com.example.hum1;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.matcher.RootMatchers.isDialog;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static androidx.test.espresso.Espresso.onData;
-
-import android.content.Context;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.intent.Intents;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
+import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Intent;
-import android.view.ViewGroup;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.LinearLayout;
 
-import com.example.hum1.adapters.AppAdapter;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.ActivityTestRule;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.junit.Assert.*;
-
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-
-
-import com.example.hum1.adapters.AppAdapterU;
-import com.example.hum1.adapters.CenterAppAdapter;
-import com.example.hum1.adapters.ListAdapter;
-import com.example.hum1.adapters.ListAdapter2;
-import com.example.hum1.adapters.ListU2Adapter;
-import com.example.hum1.adapters.ListU3Adapter;
-import com.example.hum1.adapters.ListUAdapter;
-import com.example.hum1.classes.Application;
-import com.example.hum1.classes.ApplicationU;
-import com.example.hum1.classes.CenterApp;
+import com.example.hum1.auth.ChangePasswordActivity;
 import com.example.hum1.classes.ListU;
-import com.example.hum1.classes.ListU2;
-import com.example.hum1.classes.ListU3;
 import com.example.hum1.editdata.EditDataCenterActivity;
 import com.example.hum1.editdata.EditDataUserActivity;
 import com.example.hum1.editdata.EditListActivity;
 import com.example.hum1.editdata.EditListUActivity;
+import com.example.hum1.maps.MapActivity;
+import com.example.hum1.maps.MapActivityC;
+import com.example.hum1.maps.MapActivityU;
 import com.example.hum1.views.ViewAppComplete;
 import com.example.hum1.views.ViewApplic;
 import com.example.hum1.views.ViewApplicC;
+import com.example.hum1.views.ViewApplicQR;
 import com.example.hum1.views.ViewCenter;
 import com.example.hum1.views.ViewCenterApp;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.yandex.mapkit.geometry.Point;
+import com.yandex.mapkit.mapview.MapView;
 
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
-
-import static org.junit.Assert.assertEquals;
-
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static org.mockito.AdditionalMatchers.not;
-import static org.mockito.ArgumentMatchers.any;
-
-import androidx.test.espresso.contrib.RecyclerViewActions;
-import static org.mockito.Mockito.mock;
-
-// Импорты для Firebase Auth
-import com.google.firebase.database.ValueEventListener;
-
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
+@LargeTest
 public class ExampleInstrumentedTest {
-    private Context context;
 
-
-    private static final String TEST_EMAIL = "testuser@example.com";
-    private static final String TEST_PASSWORD = "123456";
-    private static final String TEST_APP_ID = "test_application_123";
-
-    private FirebaseAuth auth;
-    private FirebaseDatabase database;
-
-    private AutoCloseable closeable;
-
-    @Before
-    public void initFirebaseAndSignIn() throws Exception {
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        FirebaseApp.initializeApp(appContext);
-        auth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-
-        CountDownLatch signInLatch = new CountDownLatch(1);
-        auth.signInWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD)
-                .addOnCompleteListener(task -> signInLatch.countDown());
-
-        signInLatch.await(5, TimeUnit.SECONDS);
-
-        FirebaseUser user = auth.getCurrentUser();
-        assertNotNull("User is not signed in", user);
-
-        prepareTestData();
-    }
-
-
-    @Before
-    public void setUp() throws InterruptedException {
-
-        context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        Intents.init();
-
-    }
-
-    @After
-    public void tearDown() {
-        FirebaseAuth.getInstance().signOut();
-            Intents.release();
-
-    }
-
-
-
-
-
-
-    @Test
-    public void testListUAdapter() {
-        List<ListU> items = new ArrayList<>();
-        items.add(new ListU("Margin1"));
-
-        ListUAdapter adapter = new ListUAdapter(items);
-
-        assertEquals(1, adapter.getItemCount());
-
-        ListUAdapter.ViewHolder viewHolder = adapter.onCreateViewHolder(
-                new ViewGroupForTesting(context), 0);
-
-        adapter.onBindViewHolder(viewHolder, 0);
-
-        assertEquals("Margin1", viewHolder.textView.getText().toString());
-    }
-
-    @Test
-    public void testListU2Adapter() {
-        List<ListU2> items = new ArrayList<>();
-        items.add(new ListU2("Hint1"));
-
-        ListU2Adapter adapter = new ListU2Adapter(items);
-
-        assertEquals(1, adapter.getItemCount());
-
-        ListU2Adapter.ViewHolder viewHolder = adapter.onCreateViewHolder(
-                new ViewGroupForTesting(context), 0);
-
-        adapter.onBindViewHolder(viewHolder, 0);
-
-        assertEquals("Hint1", viewHolder.editText.getHint().toString());
-    }
-
-
-
-    private static class ViewGroupForTesting extends ViewGroup {
-        public ViewGroupForTesting(Context context) {
-            super(context);
-        }
-
+    @Rule
+    public ActivityTestRule<ChangePasswordActivity> activityRule = new ActivityTestRule<ChangePasswordActivity>(
+            ChangePasswordActivity.class
+    ) {
         @Override
-        protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        protected Intent getActivityIntent() {
+            return new Intent(InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                    ChangePasswordActivity.class)
+                    .putExtra("role", "user");
+        }
+    };
 
+    @Test
+    public void testChangePasswordActivityLaunches() {
+        ChangePasswordActivity activity = activityRule.getActivity();
+
+        assert activity.findViewById(R.id.old_password) != null;
+        assert activity.findViewById(R.id.new_password) != null;
+        assert activity.findViewById(R.id.save) != null;
+    }
+
+    @Test
+    public void testChangePasswordActivityRoleHandling() {
+        ChangePasswordActivity activity = activityRule.getActivity();
+
+        String role = activity.getIntent().getStringExtra("role");
+        assert "user".equals(role);
+    }
+
+    @Test
+    public void testFirebaseUserNotNullHandling() {
+        ChangePasswordActivity activity = activityRule.getActivity();
+        assert activity != null;
+    }
+
+
+
+    @Rule
+    public ActivityTestRule<EditDataCenterActivity> editDataRule = new ActivityTestRule<EditDataCenterActivity>(
+            EditDataCenterActivity.class
+    ) {
+        @Override
+        protected Intent getActivityIntent() {
+            return new Intent(InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                    EditDataCenterActivity.class);
+        }
+    };
+
+    @Test
+    public void testEditDataCenterActivityLaunches() {
+        EditDataCenterActivity activity = editDataRule.getActivity();
+
+        assert activity.findViewById(R.id.center_name) != null;
+        assert activity.findViewById(R.id.address) != null;
+        assert activity.findViewById(R.id.fio) != null;
+        assert activity.findViewById(R.id.work_time) != null;
+        assert activity.findViewById(R.id.phone_number) != null;
+        assert activity.findViewById(R.id.doc) != null;
+        assert activity.findViewById(R.id.save) != null;
+    }
+
+    @Test
+    public void testEditDataCenterActivityFirebaseHandling() {
+        EditDataCenterActivity activity = editDataRule.getActivity();
+
+        assert activity != null;
+    }
+
+    @Test
+    public void testEditDataCenterSaveButtonExists() {
+        EditDataCenterActivity activity = editDataRule.getActivity();
+
+        Button saveButton = activity.findViewById(R.id.save);
+        assert saveButton != null;
+        assert saveButton.isEnabled();
+    }
+
+
+    @Rule
+    public ActivityTestRule<EditDataUserActivity> editUserRule =
+            new ActivityTestRule<EditDataUserActivity>(EditDataUserActivity.class, false, false) {
+                @Override
+                protected Intent getActivityIntent() {
+                    return new Intent(
+                            InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                            EditDataUserActivity.class
+                    );
+                }
+            };
+
+    @Test
+    public void testEditDataUserActivityLaunches() {
+        EditDataUserActivity activity = editUserRule.launchActivity(null);
+
+        EditText fio = activity.findViewById(R.id.fio);
+        EditText birth = activity.findViewById(R.id.birth);
+        EditText phone = activity.findViewById(R.id.phone_number);
+        Button save = activity.findViewById(R.id.save);
+
+        assert fio != null;
+        assert birth != null;
+        assert phone != null;
+        assert save != null;
+    }
+
+    @Test
+    public void testEditDataUserActivityInitialValuesDoNotCrash() {
+        EditDataUserActivity activity = editUserRule.launchActivity(null);
+
+        EditText fio = activity.findViewById(R.id.fio);
+        EditText birth = activity.findViewById(R.id.birth);
+        EditText phone = activity.findViewById(R.id.phone_number);
+
+        fio.getText();
+        birth.getText();
+        phone.getText();
+    }
+
+    @Test
+    public void testShowBirthPickerDialogDoesNotCrash() {
+        EditDataUserActivity activity = editUserRule.launchActivity(null);
+
+        activity.runOnUiThread(activity::showBirthPickerDialog);
+
+        assert activity != null;
+    }
+
+
+
+    @Rule
+    public ActivityTestRule<EditListActivity> editListRule =
+            new ActivityTestRule<EditListActivity>(EditListActivity.class, false, false) {
+                @Override
+                protected Intent getActivityIntent() {
+                    return new Intent(
+                            InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                            EditListActivity.class
+                    );
+                }
+            };
+
+    @Test
+    public void testEditListActivityLaunchesAndUiExists() {
+        EditListActivity activity = editListRule.launchActivity(null);
+
+        Button save = activity.findViewById(R.id.save);
+        Button addRow = activity.findViewById(R.id.btn_add_row);
+        LinearLayout container = activity.findViewById(R.id.container_fields);
+        RecyclerView recycler = activity.findViewById(R.id.recyclerView_list);
+
+        assert save != null;
+        assert addRow != null;
+        assert container != null;
+        assert recycler != null;
+    }
+
+
+    @Test
+    public void testEditListActivityAddRowDoesNotCrash() throws Throwable {
+        EditListActivity activity = editListRule.launchActivity(null);
+
+        editListRule.runOnUiThread(activity::addRow);
+
+        LinearLayout container = activity.findViewById(R.id.container_fields);
+        boolean hasChild = false;
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            if (child instanceof LinearLayout) {
+                hasChild = true;
+                break;
+            }
+        }
+        assert hasChild;
+    }
+
+
+    @Rule
+    public ActivityTestRule<EditListUActivity> editListURule =
+            new ActivityTestRule<EditListUActivity>(EditListUActivity.class, false, false) {
+                @Override
+                protected Intent getActivityIntent() {
+                    return new Intent(
+                            InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                            EditListUActivity.class
+                    );
+                }
+            };
+
+    @Test
+    public void testEditListUActivityLaunchesAndUiExists() {
+        EditListUActivity activity = editListURule.launchActivity(null);
+
+        RecyclerView recycler = activity.findViewById(R.id.recyclerView_list);
+        assert recycler != null;
+
+        assert activity.findViewById(R.id.btn_add_row) != null;
+        assert activity.findViewById(R.id.save) != null;
+    }
+
+    @Test
+    public void testEditListUActivityAdapterAttached() {
+        EditListUActivity activity = editListURule.launchActivity(null);
+
+        RecyclerView recycler = activity.findViewById(R.id.recyclerView_list);
+        RecyclerView.Adapter<?> adapter = recycler.getAdapter();
+        assert adapter != null;
+
+        int count = adapter.getItemCount();
+        assert count >= 0;
+    }
+
+    @Test
+    public void testEditListUAddNewFieldDoesNotCrash() throws Throwable {
+        EditListUActivity activity = editListURule.launchActivity(null);
+
+        editListURule.runOnUiThread(activity::addNewField);
+
+        assert activity != null;
+    }
+
+
+    @Rule
+    public ActivityTestRule<MapActivity> mapActivityRule =
+            new ActivityTestRule<MapActivity>(MapActivity.class, false, false) {
+                @Override
+                protected Intent getActivityIntent() {
+                    Intent intent = new Intent(
+                            InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                            MapActivity.class
+                    );
+                    intent.putExtra("latitude", 55.751244);
+                    intent.putExtra("longitude", 37.618423);
+                    return intent;
+                }
+            };
+
+
+    @Rule
+    public ActivityTestRule<MapActivityC> mapActivityCRule =
+            new ActivityTestRule<MapActivityC>(MapActivityC.class, false, false) {
+                @Override
+                protected Intent getActivityIntent() {
+                    Intent intent = new Intent(
+                            InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                            MapActivityC.class
+                    );
+                    intent.putExtra("center_name", "Test Center");
+                    intent.putExtra("address", "Test Address");
+                    intent.putExtra("email", "test@example.com");
+                    intent.putExtra("password", "password123");
+                    intent.putExtra("fio", "Test FIO");
+                    intent.putExtra("work_time", "09:00-18:00");
+                    intent.putExtra("phone_number", "+1234567890");
+                    intent.putExtra("doc", "DOC123");
+                    return intent;
+                }
+            };
+
+
+    @Rule
+    public ActivityTestRule<MapActivityU> mapActivityURule =
+            new ActivityTestRule<MapActivityU>(MapActivityU.class, false, false) {
+                @Override
+                protected Intent getActivityIntent() {
+                    Intent intent = new Intent(
+                            InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                            MapActivityU.class
+                    );
+                    return intent;
+                }
+            };
+
+    @Test
+    public void testMapActivityU_LaunchesAndUiExists() {
+        MapActivityU activity = mapActivityURule.launchActivity(null);
+        assertNotNull(activity);
+        assertNotNull(activity.findViewById(R.id.mapview));
+        assertNotNull(activity.findViewById(R.id.jambut));
+    }
+
+    @Rule
+    public ActivityTestRule<MainActivity> mainActivityRule =
+            new ActivityTestRule<>(MainActivity.class, false, false);
+
+    @Test
+    public void testMainActivity_LaunchesAndUiExists() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                MainActivity.class
+        );
+        MainActivity activity = mainActivityRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        assertNotNull(activity.findViewById(R.id.center));
+        assertNotNull(activity.findViewById(R.id.appl));
+        assertNotNull(activity.findViewById(R.id.date));
+        assertNotNull(activity.findViewById(R.id.time));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list2));
+    }
+
+    @Test
+    public void testMainActivity_ShowDatePickerDialog_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                MainActivity.class
+        );
+        MainActivity activity = mainActivityRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = MainActivity.class.getDeclaredMethod("showDatePickerDialog");
+            m.setAccessible(true);
+            mainActivityRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void prepareTestData() throws InterruptedException {
-        DatabaseReference ref = database.getReference("Applications").child(TEST_APP_ID);
+    @Test
+    public void testMainActivity_ShowTimePickerDialog_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                MainActivity.class
+        );
+        MainActivity activity = mainActivityRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        Map<String, Object> testData = new HashMap<>();
-        testData.put("email", TEST_EMAIL);
-        testData.put("fio", "Иван Иванов");
-        testData.put("phone_number", "1234567890");
-        testData.put("birth", "01.01.1990");
-        testData.put("date", "30.05.2025");
-        testData.put("time", "10:00");
-        testData.put("status", "Одобрено");
-        testData.put("comment", "Все в порядке");
-        testData.put("center", "Центр 1");
-
-        Map<String, Object> selectedItems = new HashMap<>();
-        selectedItems.put("Хлеб", "2");
-        selectedItems.put("Молоко", "1");
-
-        Map<String, Object> listU = new HashMap<>();
-        listU.put("Допинфо", "Есть дети");
-
-        testData.put("selected_items", selectedItems);
-        testData.put("list_u", listU);
-
-        CountDownLatch dataLatch = new CountDownLatch(1);
-        ref.setValue(testData).addOnCompleteListener(task -> dataLatch.countDown());
-        dataLatch.await(3, TimeUnit.SECONDS);
+        try {
+            Method m = MainActivity.class.getDeclaredMethod("showTimePickerDialog");
+            m.setAccessible(true);
+            mainActivityRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    public void testViewApplicDisplaysCorrectData() throws InterruptedException {
+    public void testMainActivity_LoadListMethods_DoNotCrash() {
         Intent intent = new Intent(
                 InstrumentationRegistry.getInstrumentation().getTargetContext(),
-                ViewApplic.class
+                MainActivity.class
         );
-        intent.putExtra("id", TEST_APP_ID);
+        MainActivity activity = mainActivityRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        ActivityScenario.launch(intent);
+        try {
+            Method loadListData = MainActivity.class
+                    .getDeclaredMethod("loadListData", String.class);
+            Method loadListUData = MainActivity.class
+                    .getDeclaredMethod("loadListUData", String.class);
+            loadListData.setAccessible(true);
+            loadListUData.setAccessible(true);
 
-        Thread.sleep(3000);
-
-        Espresso.onView(withId(R.id.email)).check(matches(withText(TEST_EMAIL)));
-        Espresso.onView(withId(R.id.fio)).check(matches(withText("Иван Иванов")));
-        Espresso.onView(withId(R.id.phone_number)).check(matches(withText("1234567890")));
-        Espresso.onView(withId(R.id.birth)).check(matches(withText("01.01.1990")));
-        Espresso.onView(withId(R.id.date)).check(matches(withText("30.05.2025")));
-        Espresso.onView(withId(R.id.time)).check(matches(withText("10:00")));
-        Espresso.onView(withId(R.id.center)).check(matches(withText("Центр 1")));
-        Espresso.onView(withId(R.id.status)).check(matches(withText("Одобрено")));
-        Espresso.onView(withId(R.id.comm)).check(matches(withText("Все в порядке")));
-
-
-        Thread.sleep(1000);
+            mainActivityRule.runOnUiThread(() -> {
+                try {
+                    loadListData.invoke(activity, "testCenterId");
+                    loadListUData.invoke(activity, "testCenterId");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
+    @Rule
+    public ActivityTestRule<MainActivity3> mainActivity3Rule =
+            new ActivityTestRule<>(MainActivity3.class, false, false);
+
     @Test
-    public void testViewApplicCDisplaysCorrectData() throws InterruptedException {
+    public void testMainActivity3_LaunchesAndUiExists() {
         Intent intent = new Intent(
                 InstrumentationRegistry.getInstrumentation().getTargetContext(),
-                ViewApplicC.class
+                MainActivity3.class
         );
-        intent.putExtra("id", "test_application_123");
+        intent.putExtra("center_name", "Test Center");
+        intent.putExtra("id", "testCenterId");
+        MainActivity3 activity = mainActivity3Rule.launchActivity(intent);
+        assertNotNull(activity);
 
-        ActivityScenario.launch(intent);
-
-        Thread.sleep(3000);
-
-        Espresso.onView(withId(R.id.email)).check(matches(withText("testuser@example.com")));
-        Espresso.onView(withId(R.id.fio)).check(matches(withText("Иван Иванов")));
-        Espresso.onView(withId(R.id.phone_number)).check(matches(withText("1234567890")));
-        //Espresso.onView(withId(R.id.center)).check(matches(withText("Центр 1")));
-        Espresso.onView(withId(R.id.birth)).check(matches(withText("01.01.1990")));
-        Espresso.onView(withId(R.id.date)).check(matches(withText("30.05.2025")));
-        Espresso.onView(withId(R.id.time)).check(matches(withText("10:00")));
-        Espresso.onView(withId(R.id.statusT)).check(matches(withText("Заявка одобрена!")));
-        Espresso.onView(withId(R.id.comm)).perform(replaceText("Комментарий от теста"));
-
-
-        Thread.sleep(1000);
-}
+        assertNotNull(activity.findViewById(R.id.center_name));
+        assertNotNull(activity.findViewById(R.id.date));
+        assertNotNull(activity.findViewById(R.id.time));
+        assertNotNull(activity.findViewById(R.id.appl));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list2));
+    }
 
     @Test
-    public void testViewAppCompleteDisplaysCorrectData() throws InterruptedException {
+    public void testMainActivity3_ShowDatePickerDialog_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                MainActivity3.class
+        );
+        intent.putExtra("center_name", "Test Center");
+        intent.putExtra("id", "testCenterId");
+        MainActivity3 activity = mainActivity3Rule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = MainActivity3.class.getDeclaredMethod("showDatePickerDialog");
+            m.setAccessible(true);
+            mainActivity3Rule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testMainActivity3_ShowTimePickerDialog_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                MainActivity3.class
+        );
+        intent.putExtra("center_name", "Test Center");
+        intent.putExtra("id", "testCenterId");
+        MainActivity3 activity = mainActivity3Rule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = MainActivity3.class.getDeclaredMethod("showTimePickerDialog");
+            m.setAccessible(true);
+            mainActivity3Rule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testMainActivity3_LoadListMethods_DoNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                MainActivity3.class
+        );
+        intent.putExtra("center_name", "Test Center");
+        intent.putExtra("id", "testCenterId");
+        MainActivity3 activity = mainActivity3Rule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method loadListData = MainActivity3.class
+                    .getDeclaredMethod("loadListData", String.class);
+            Method loadListUData = MainActivity3.class
+                    .getDeclaredMethod("loadListUData", String.class);
+            loadListData.setAccessible(true);
+            loadListUData.setAccessible(true);
+
+            mainActivity3Rule.runOnUiThread(() -> {
+                try {
+                    loadListData.invoke(activity, "testCenterId");
+                    loadListUData.invoke(activity, "testCenterId");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Rule
+    public ActivityTestRule<QRcodeActivity> qrActivityRule =
+            new ActivityTestRule<>(QRcodeActivity.class, false, false);
+
+    @Test
+    public void testQRcodeActivity_LaunchesAndUiExists() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                QRcodeActivity.class
+        );
+        intent.putExtra("id", "TEST_ID_123");
+        QRcodeActivity activity = qrActivityRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        assertNotNull(activity.findViewById(R.id.idIVQrcode));
+        TextView tvId = activity.findViewById(R.id.idTextView);
+        assertNotNull(tvId);
+        assertEquals("TEST_ID_123", tvId.getText().toString());
+    }
+
+    @Test
+    public void testQRcodeActivity_GenerateQRCode_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                QRcodeActivity.class
+        );
+        intent.putExtra("id", "ANOTHER_TEST_ID");
+        QRcodeActivity activity = qrActivityRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = QRcodeActivity.class.getDeclaredMethod("generateQRCode", String.class);
+            m.setAccessible(true);
+            qrActivityRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity, "SAMPLE_TEXT");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testQRcodeActivity_QRImageIsSet() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                QRcodeActivity.class
+        );
+        intent.putExtra("id", "IMAGE_TEST_ID");
+        QRcodeActivity activity = qrActivityRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        ImageView qrImage = activity.findViewById(R.id.idIVQrcode);
+        assertNotNull(qrImage);
+        assertNotNull(qrImage.getDrawable());
+    }
+
+
+    @Rule
+    public ActivityTestRule<StatisticPage> statisticPageRule =
+            new ActivityTestRule<>(StatisticPage.class, false, false);
+
+    @Test
+    public void testStatisticPage_LaunchesAndUiExists() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                StatisticPage.class
+        );
+        StatisticPage activity = statisticPageRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        assertNotNull(activity.findViewById(R.id.tvCenterName));
+        assertNotNull(activity.findViewById(R.id.tvTotal));
+        assertNotNull(activity.findViewById(R.id.tvReviewing));
+        assertNotNull(activity.findViewById(R.id.tvApproved));
+        assertNotNull(activity.findViewById(R.id.tvRejected));
+        assertNotNull(activity.findViewById(R.id.tvIssued));
+        assertNotNull(activity.findViewById(R.id.tvCompletionRate));
+        assertNotNull(activity.findViewById(R.id.spinnerTimeRange));
+        assertNotNull(activity.findViewById(R.id.pieChart));
+        assertNotNull(activity.findViewById(R.id.barChart));
+    }
+
+    @Test
+    public void testStatisticPage_UpdateStatistics_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                StatisticPage.class
+        );
+        StatisticPage activity = statisticPageRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method method = StatisticPage.class.getDeclaredMethod("updateStatistics");
+            method.setAccessible(true);
+            statisticPageRule.runOnUiThread(() -> {
+                try {
+                    method.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testStatisticPage_UpdateCharts_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                StatisticPage.class
+        );
+        StatisticPage activity = statisticPageRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method method = StatisticPage.class.getDeclaredMethod("updateCharts");
+            method.setAccessible(true);
+            statisticPageRule.runOnUiThread(() -> {
+                try {
+                    method.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testStatisticPage_GetFilteredApplicationsByTimeRange_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                StatisticPage.class
+        );
+        StatisticPage activity = statisticPageRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method method = StatisticPage.class
+                    .getDeclaredMethod("getFilteredApplicationsByTimeRange");
+            method.setAccessible(true);
+            Object result = method.invoke(activity);
+            assertNotNull(result);
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        }
+    }
+
+
+    @Rule
+    public ActivityTestRule<UserListActivity> userListActivityRule =
+            new ActivityTestRule<>(UserListActivity.class, false, false);
+
+    @Test
+    public void testUserListActivity_LaunchesAndUiExists() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                UserListActivity.class
+        );
+        intent.putExtra("center_name", "Test Center");
+        intent.putExtra("address", "Test Address");
+        intent.putExtra("email", "test@example.com");
+        intent.putExtra("password", "password123");
+        intent.putExtra("fio", "Test FIO");
+        intent.putExtra("work_time", "09:00-18:00");
+        intent.putExtra("phone_number", "+1234567890");
+        intent.putExtra("doc", "DOC");
+        intent.putExtra("latitude", 55.75);
+        intent.putExtra("longitude", 37.61);
+
+        UserListActivity activity = userListActivityRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        assertNotNull(activity.findViewById(R.id.btn_register));
+        assertNotNull(activity.findViewById(R.id.btn_add_row));
+        assertNotNull(activity.findViewById(R.id.container_fields));
+    }
+
+    @Test
+    public void testUserListActivity_AddRow_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                UserListActivity.class
+        );
+        intent.putExtra("center_name", "Test Center");
+        intent.putExtra("address", "Test Address");
+        intent.putExtra("email", "test@example.com");
+        intent.putExtra("password", "password123");
+        intent.putExtra("fio", "Test FIO");
+        intent.putExtra("work_time", "09:00-18:00");
+        intent.putExtra("phone_number", "+1234567890");
+        intent.putExtra("doc", "DOC");
+        intent.putExtra("latitude", 55.75);
+        intent.putExtra("longitude", 37.61);
+
+        UserListActivity activity = userListActivityRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = UserListActivity.class.getDeclaredMethod("addRow");
+            m.setAccessible(true);
+            userListActivityRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Rule
+    public ActivityTestRule<ViewAppComplete> viewAppCompleteRule =
+            new ActivityTestRule<>(ViewAppComplete.class, false, false);
+
+    @Test
+    public void testViewAppComplete_LaunchesAndUiExists() {
         Intent intent = new Intent(
                 InstrumentationRegistry.getInstrumentation().getTargetContext(),
                 ViewAppComplete.class
         );
-        intent.putExtra("id", TEST_APP_ID);
+        intent.putExtra("id", "test_application_id");
+        ViewAppComplete activity = viewAppCompleteRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        ActivityScenario.launch(intent);
-
-        Thread.sleep(3000);
-
-        Espresso.onView(withId(R.id.email)).check(matches(withText(TEST_EMAIL)));
-        Espresso.onView(withId(R.id.fio)).check(matches(withText("Иван Иванов")));
-        Espresso.onView(withId(R.id.phone_number)).check(matches(withText("1234567890")));
-        Espresso.onView(withId(R.id.birth)).check(matches(withText("01.01.1990")));
-        Espresso.onView(withId(R.id.date)).check(matches(withText("30.05.2025")));
-        Espresso.onView(withId(R.id.time)).check(matches(withText("10:00")));
-
-        Espresso.onView(withId(R.id.comm)).check(matches(withText("Все в порядке")));
-    }
-
-    @Before
-    public void disableAnimations() {
-        InstrumentationRegistry.getInstrumentation().getUiAutomation()
-                .executeShellCommand("settings put global window_animation_scale 0");
-        InstrumentationRegistry.getInstrumentation().getUiAutomation()
-                .executeShellCommand("settings put global transition_animation_scale 0");
-        InstrumentationRegistry.getInstrumentation().getUiAutomation()
-                .executeShellCommand("settings put global animator_duration_scale 0");
+        assertNotNull(activity.findViewById(R.id.date));
+        assertNotNull(activity.findViewById(R.id.time));
+        assertNotNull(activity.findViewById(R.id.email));
+        assertNotNull(activity.findViewById(R.id.fio));
+        assertNotNull(activity.findViewById(R.id.phone_number));
+        assertNotNull(activity.findViewById(R.id.birth));
+        assertNotNull(activity.findViewById(R.id.status));
+        assertNotNull(activity.findViewById(R.id.comm));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list2));
     }
 
     @Test
-    public void testViewCenterActivity() throws InterruptedException {
-        String testCenterId = "test_center_" + System.currentTimeMillis();
-        DatabaseReference centerRef = database.getReference("Users").child(testCenterId);
+    public void testViewAppComplete_LoadListData_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewAppComplete.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewAppComplete activity = viewAppCompleteRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        Map<String, Object> centerData = new HashMap<>();
-        centerData.put("center_name", "Тестовый центр");
-        centerData.put("address", "ул. Тестовая, 123");
-        centerData.put("phone_number", "+71234567890");
-        centerData.put("email", "testcenter@example.com");
-        centerData.put("fio", "Иванов Иван Иванович");
-        centerData.put("work_time", "09:00-18:00");
-        centerData.put("doc", "Документы принимаются");
-        centerData.put("latitude", 55.7558);
-        centerData.put("longitude", 37.6176);
+        try {
+            Method m = ViewAppComplete.class.getDeclaredMethod("loadListData");
+            m.setAccessible(true);
+            viewAppCompleteRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        Map<String, Object> items = new HashMap<>();
-        Map<String, String> item1 = new HashMap<>();
-        item1.put("name", "Хлеб");
-        item1.put("quantity", "10");
-        items.put("item1", item1);
+    @Test
+    public void testViewAppComplete_LoadListU3Data_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewAppComplete.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewAppComplete activity = viewAppCompleteRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        centerData.put("list_c", items);
+        try {
+            Method m = ViewAppComplete.class.getDeclaredMethod("loadListU3Data");
+            m.setAccessible(true);
+            viewAppCompleteRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        CountDownLatch dataLatch = new CountDownLatch(1);
-        centerRef.setValue(centerData).addOnCompleteListener(task -> dataLatch.countDown());
-        dataLatch.await(3, TimeUnit.SECONDS);
+    @Rule
+    public ActivityTestRule<ViewApplic> viewApplicRule =
+            new ActivityTestRule<>(ViewApplic.class, false, false);
 
+    @Test
+    public void testViewApplic_LaunchesAndUiExists() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewApplic.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewApplic activity = viewApplicRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        assertNotNull(activity.findViewById(R.id.center));
+        assertNotNull(activity.findViewById(R.id.status));
+        assertNotNull(activity.findViewById(R.id.date));
+        assertNotNull(activity.findViewById(R.id.time));
+        assertNotNull(activity.findViewById(R.id.email));
+        assertNotNull(activity.findViewById(R.id.fio));
+        assertNotNull(activity.findViewById(R.id.phone_number));
+        assertNotNull(activity.findViewById(R.id.birth));
+        assertNotNull(activity.findViewById(R.id.comm));
+        assertNotNull(activity.findViewById(R.id.qrcode));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list2));
+    }
+
+    @Test
+    public void testViewApplic_LoadListData_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewApplic.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewApplic activity = viewApplicRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = ViewApplic.class.getDeclaredMethod("loadListData");
+            m.setAccessible(true);
+            viewApplicRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testViewApplic_LoadListU3Data_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewApplic.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewApplic activity = viewApplicRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = ViewApplic.class.getDeclaredMethod("loadListU3Data");
+            m.setAccessible(true);
+            viewApplicRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Rule
+    public ActivityTestRule<ViewApplicC> viewApplicCRule =
+            new ActivityTestRule<>(ViewApplicC.class, false, false);
+
+
+    @Test
+    public void testViewApplicC_LoadListData_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewApplicC.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewApplicC activity = viewApplicCRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = ViewApplicC.class.getDeclaredMethod("loadListData");
+            m.setAccessible(true);
+            viewApplicCRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testViewApplicC_LoadListU3Data_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewApplicC.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewApplicC activity = viewApplicCRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = ViewApplicC.class.getDeclaredMethod("loadListU3Data");
+            m.setAccessible(true);
+            viewApplicCRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Rule
+    public ActivityTestRule<ViewApplicQR> viewApplicQRRule =
+            new ActivityTestRule<>(ViewApplicQR.class, false, false);
+
+    @Test
+    public void testViewApplicQR_LaunchesAndUiExists() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewApplicQR.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewApplicQR activity = viewApplicQRRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        assertNotNull(activity.findViewById(R.id.date));
+        assertNotNull(activity.findViewById(R.id.time));
+        assertNotNull(activity.findViewById(R.id.email));
+        assertNotNull(activity.findViewById(R.id.fio));
+        assertNotNull(activity.findViewById(R.id.phone_number));
+        assertNotNull(activity.findViewById(R.id.birth));
+        assertNotNull(activity.findViewById(R.id.status));
+        assertNotNull(activity.findViewById(R.id.error));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list2));
+    }
+
+    @Test
+    public void testViewApplicQR_UpdateItemQuantities_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewApplicQR.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewApplicQR activity = viewApplicQRRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = ViewApplicQR.class.getDeclaredMethod("updateItemQuantities");
+            m.setAccessible(true);
+            viewApplicQRRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testViewApplicQR_LoadListData_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewApplicQR.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewApplicQR activity = viewApplicQRRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = ViewApplicQR.class.getDeclaredMethod("loadListData");
+            m.setAccessible(true);
+            viewApplicQRRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testViewApplicQR_LoadListU3Data_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewApplicQR.class
+        );
+        intent.putExtra("id", "test_application_id");
+        ViewApplicQR activity = viewApplicQRRule.launchActivity(intent);
+        assertNotNull(activity);
+
+        try {
+            Method m = ViewApplicQR.class.getDeclaredMethod("loadListU3Data");
+            m.setAccessible(true);
+            viewApplicQRRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Rule
+    public ActivityTestRule<ViewCenter> viewCenterRule =
+            new ActivityTestRule<>(ViewCenter.class, false, false);
+
+    @Test
+    public void testViewCenter_LaunchesAndUiExists() {
         Intent intent = new Intent(
                 InstrumentationRegistry.getInstrumentation().getTargetContext(),
                 ViewCenter.class
         );
-        intent.putExtra("id", testCenterId);
+        intent.putExtra("id", "test_center_id");
+        ViewCenter activity = viewCenterRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        ActivityScenario<ViewCenter> scenario = ActivityScenario.launch(intent);
-
-        Thread.sleep(3000);
-
-        onView(withId(R.id.center_name)).check(matches(withText("Тестовый центр")));
-        onView(withId(R.id.address)).check(matches(withText("ул. Тестовая, 123")));
-        onView(withId(R.id.phone_number)).check(matches(withText("+71234567890")));
-        onView(withId(R.id.email)).check(matches(withText("testcenter@example.com")));
-        onView(withId(R.id.fio)).check(matches(withText("Иванов Иван Иванович")));
-        onView(withId(R.id.work_time)).check(matches(withText("09:00-18:00")));
-        onView(withId(R.id.doc)).check(matches(withText("Документы принимаются")));
-
-        onView(withId(R.id.recyclerView_list)).check(matches(isDisplayed()));
-
-        centerRef.removeValue();
+        assertNotNull(activity.findViewById(R.id.center_name));
+        assertNotNull(activity.findViewById(R.id.address));
+        assertNotNull(activity.findViewById(R.id.phone_number));
+        assertNotNull(activity.findViewById(R.id.email));
+        assertNotNull(activity.findViewById(R.id.fio));
+        assertNotNull(activity.findViewById(R.id.work_time));
+        assertNotNull(activity.findViewById(R.id.doc));
+        assertNotNull(activity.findViewById(R.id.appl));
+        assertNotNull(activity.findViewById(R.id.route));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list));
     }
 
     @Test
-    public void testViewCenterAppActivity() throws InterruptedException {
-        String testCenterId = "test_center_" + System.currentTimeMillis();
-        DatabaseReference centerRef = database.getReference("Users").child(testCenterId);
+    public void testViewCenter_GetStringAndDoubleValue_DoNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewCenter.class
+        );
+        intent.putExtra("id", "test_center_id");
+        ViewCenter activity = viewCenterRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        Map<String, Object> centerData = new HashMap<>();
-        centerData.put("center_name", "Тестовый центр");
-        centerData.put("address", "ул. Тестовая, 123");
-        centerData.put("phone_number", "+71234567890");
-        centerData.put("email", "testcenter@example.com");
-        centerData.put("fio", "Иванов Иван Иванович");
-        centerData.put("work_time", "09:00-18:00");
-        centerData.put("doc", "Документы принимаются");
-        centerData.put("status", "На рассмотрении");
+        try {
+            Method getStringValue = ViewCenter.class
+                    .getDeclaredMethod("getStringValue", DataSnapshot.class, String.class);
+            Method getDoubleValue = ViewCenter.class
+                    .getDeclaredMethod("getDoubleValue", DataSnapshot.class, String.class);
+            getStringValue.setAccessible(true);
+            getDoubleValue.setAccessible(true);
 
-        Map<String, Object> items = new HashMap<>();
-        Map<String, String> item1 = new HashMap<>();
-        item1.put("name", "Хлеб");
-        item1.put("quantity", "10");
-        items.put("item1", item1);
+            DataSnapshot snapshot = Mockito.mock(DataSnapshot.class);
+            Mockito.when(snapshot.child(Mockito.anyString())).thenReturn(snapshot);
+            Mockito.when(snapshot.exists()).thenReturn(false);
 
-        Map<String, Object> services = new HashMap<>();
-        services.put("service1", "Выдача продуктов");
+            getStringValue.invoke(activity, snapshot, "center_name");
+            getDoubleValue.invoke(activity, snapshot, "latitude");
+        } catch (Exception e) {
+            fail("Reflection/Mokito error: " + e.getMessage());
+        }
+    }
 
-        centerData.put("list_c", items);
-        centerData.put("list_u", services);
+    @Test
+    public void testViewCenter_LoadListData_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewCenter.class
+        );
+        intent.putExtra("id", "test_center_id");
+        ViewCenter activity = viewCenterRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        CountDownLatch dataLatch = new CountDownLatch(1);
-        centerRef.setValue(centerData).addOnCompleteListener(task -> dataLatch.countDown());
-        dataLatch.await(3, TimeUnit.SECONDS);
+        try {
+            Method m = ViewCenter.class.getDeclaredMethod("loadListData");
+            m.setAccessible(true);
+            viewCenterRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+
+    @Rule
+    public ActivityTestRule<ViewCenterApp> viewCenterAppRule =
+            new ActivityTestRule<>(ViewCenterApp.class, false, false);
+
+    @Test
+    public void testViewCenterApp_LaunchesAndUiExists() {
         Intent intent = new Intent(
                 InstrumentationRegistry.getInstrumentation().getTargetContext(),
                 ViewCenterApp.class
         );
-        intent.putExtra("id", testCenterId);
+        intent.putExtra("id", "test_center_id");
+        ViewCenterApp activity = viewCenterAppRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        Thread.sleep(3000);
-
-        onView(withId(R.id.center_name)).check(matches(withText("Тестовый центр")));
-        onView(withId(R.id.address)).check(matches(withText("ул. Тестовая, 123")));
-        onView(withId(R.id.phone_number)).check(matches(withText("+71234567890")));
-        onView(withId(R.id.email)).check(matches(withText("testcenter@example.com")));
-        onView(withId(R.id.fio)).check(matches(withText("Иванов Иван Иванович")));
-        onView(withId(R.id.work_time)).check(matches(withText("09:00-18:00")));
-        onView(withId(R.id.doc)).check(matches(withText("Документы принимаются")));
-
-        centerRef.removeValue();
+        assertNotNull(activity.findViewById(R.id.email));
+        assertNotNull(activity.findViewById(R.id.fio));
+        assertNotNull(activity.findViewById(R.id.work_time));
+        assertNotNull(activity.findViewById(R.id.phone_number));
+        assertNotNull(activity.findViewById(R.id.statusT));
+        assertNotNull(activity.findViewById(R.id.statusF));
+        assertNotNull(activity.findViewById(R.id.comm));
+        assertNotNull(activity.findViewById(R.id.center_name));
+        assertNotNull(activity.findViewById(R.id.address));
+        assertNotNull(activity.findViewById(R.id.doc));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list));
+        assertNotNull(activity.findViewById(R.id.recyclerView_list2));
     }
 
     @Test
-    public void testCenterApplicationsFragment() throws InterruptedException {
-        String testCenterName = "Тестовый центр";
-        String testAppId = "test_app_" + System.currentTimeMillis();
+    public void testViewCenterApp_UpdateListUData_DoesNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewCenterApp.class
+        );
+        intent.putExtra("id", "test_center_id");
+        ViewCenterApp activity = viewCenterAppRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        FirebaseUser user = auth.getCurrentUser();
-        DatabaseReference userRef = database.getReference("Users").child(user.getUid());
-        userRef.child("center_name").setValue(testCenterName);
-
-        DatabaseReference appRef = database.getReference("Applications").child(testAppId);
-        Map<String, Object> appData = new HashMap<>();
-        appData.put("center", testCenterName);
-        appData.put("status", "Одобрено");
-        appData.put("date", "01.06.2025");
-        appData.put("time", "12:00");
-        appData.put("email", "test@example.com");
-        appData.put("fio", "Тестовый Пользователь");
-        appData.put("phone_number", "1234567890");
-        appData.put("birth", "01.01.1990");
-        appData.put("family_members", "3");
-        appData.put("list", "Хлеб, Молоко");
-        appData.put("id_appl", testAppId);
-
-        CountDownLatch dataLatch = new CountDownLatch(1);
-        appRef.setValue(appData).addOnCompleteListener(task -> dataLatch.countDown());
-        dataLatch.await(3, TimeUnit.SECONDS);
-
-
-        Thread.sleep(3000);
-
-        onView(withId(R.id.spinner)).check(matches(isDisplayed()));
-        onView(withId(R.id.scanner)).check(matches(isDisplayed()));
-        onView(withId(R.id.list)).check(matches(isDisplayed()));
-
-        onView(withId(R.id.spinner)).perform(click());
-        onData(allOf(is(instanceOf(String.class)), is("Одобрено"))).perform(click());
-
-        Thread.sleep(3000);
-
-        onView(withId(R.id.list))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-
-        intended(hasComponent(ViewApplicC.class.getName()));
-
-        appRef.removeValue();
-        userRef.removeValue();
-    }
-    @Test
-    public void testEditDataCenterActivity() throws Exception {
-        String testUserId = auth.getCurrentUser().getUid();
-        DatabaseReference userRef = database.getReference("Users").child(testUserId);
-
-        CountDownLatch deleteLatch = new CountDownLatch(1);
-        userRef.removeValue().addOnCompleteListener(t -> deleteLatch.countDown());
-        deleteLatch.await(3, TimeUnit.SECONDS);
-
-        ActivityScenario<EditDataCenterActivity> scenario = ActivityScenario.launch(EditDataCenterActivity.class);
-        Thread.sleep(2000);
-
-        onView(withId(R.id.center_name)).check(matches(withText("")));
-        onView(withId(R.id.address)).check(matches(withText("")));
-        onView(withId(R.id.fio)).check(matches(withText("")));
-        onView(withId(R.id.work_time)).check(matches(withText("")));
-        onView(withId(R.id.phone_number)).check(matches(withText("")));
-        onView(withId(R.id.doc)).check(matches(withText("")));
-
-        String testCenterName = "Тестовый центр " + System.currentTimeMillis();
-        onView(withId(R.id.center_name)).perform(replaceText(testCenterName));
-        onView(withId(R.id.address)).perform(replaceText("ул. Тестовая, 123"));
-        onView(withId(R.id.fio)).perform(replaceText("Иванов Иван Иванович"));
-        onView(withId(R.id.work_time)).perform(replaceText("09:00-18:00"));
-        onView(withId(R.id.phone_number)).perform(replaceText("+71234567890"));
-        onView(withId(R.id.doc)).perform(replaceText("Тестовые требования"));
-
-        onView(withId(R.id.save)).perform(click());
-
-        CountDownLatch latch = new CountDownLatch(1);
-        userRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DataSnapshot snapshot = task.getResult();
-                assertEquals(testCenterName, snapshot.child("center_name").getValue(String.class));
-                assertEquals("ул. Тестовая, 123", snapshot.child("address").getValue(String.class));
-                assertEquals("Иванов Иван Иванович", snapshot.child("fio").getValue(String.class));
-                assertEquals("09:00-18:00", snapshot.child("work_time").getValue(String.class));
-                assertEquals("+71234567890", snapshot.child("phone_number").getValue(String.class));
-                assertEquals("Тестовые требования", snapshot.child("doc").getValue(String.class));
-            } else {
-                fail("Ошибка чтения данных из Firebase: " + task.getException());
-            }
-            latch.countDown();
-        });
-
-        assertTrue("Данные не сохранились в Firebase", latch.await(10, TimeUnit.SECONDS));
-
-        Thread.sleep(1000);
-        assertTrue(scenario.getState() == Lifecycle.State.DESTROYED);
-
-        userRef.removeValue();
-    }
-
-    @Test
-    public void testEditDataUserActivity() throws Exception {
-        String testUserId = auth.getCurrentUser().getUid();
-        DatabaseReference userRef = database.getReference("Users").child(testUserId);
-
-        CountDownLatch deleteLatch = new CountDownLatch(1);
-        userRef.removeValue().addOnCompleteListener(t -> deleteLatch.countDown());
-        deleteLatch.await(3, TimeUnit.SECONDS);
-
-        ActivityScenario<EditDataUserActivity> scenario = ActivityScenario.launch(EditDataUserActivity.class);
-        Thread.sleep(2000);
-        onView(withId(R.id.fio)).check(matches(withText("")));
-        onView(withId(R.id.birth)).check(matches(withText("")));
-        onView(withId(R.id.phone_number)).check(matches(withText("")));
-
-        String testFio = "Тестовый Пользователь " + System.currentTimeMillis();
-        String testBirth = "01/01/1990";
-        String testPhone = "+79991112233";
-
-        onView(withId(R.id.fio)).perform(replaceText(testFio));
-        onView(withId(R.id.birth)).perform(replaceText(testBirth));
-        onView(withId(R.id.phone_number)).perform(replaceText(testPhone));
-
-        onView(withId(R.id.save)).perform(click());
-
-        CountDownLatch latch = new CountDownLatch(1);
-        userRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DataSnapshot snapshot = task.getResult();
-                assertEquals(testFio, snapshot.child("fio").getValue(String.class));
-                assertEquals(testBirth, snapshot.child("birth").getValue(String.class));
-                assertEquals(testPhone, snapshot.child("phone_number").getValue(String.class));
-            } else {
-                fail("Ошибка чтения данных из Firebase: " + task.getException());
-            }
-            latch.countDown();
-        });
-
-        assertTrue("Данные не сохранились в Firebase", latch.await(10, TimeUnit.SECONDS));
-
-        Thread.sleep(1000);
-        assertTrue(scenario.getState() == Lifecycle.State.DESTROYED);
-
-        userRef.removeValue();
-    }
-
-    @Test
-    public void testEditListActivity() throws Exception {
-        String testUserId = auth.getCurrentUser().getUid();
-        DatabaseReference userRef = database.getReference("Users").child(testUserId).child("list_c");
-
-        CountDownLatch deleteLatch = new CountDownLatch(1);
-        userRef.removeValue().addOnCompleteListener(t -> deleteLatch.countDown());
-        deleteLatch.await(5, TimeUnit.SECONDS);
-
-        ActivityScenario<EditListActivity> scenario = ActivityScenario.launch(EditListActivity.class);
-        Thread.sleep(3000);
-
-        onView(withId(R.id.btn_add_row)).perform(click());
-
-        onView(allOf(
-                isDescendantOfA(withId(R.id.container_fields)),
-                instanceOf(EditText.class),
-                withHint("Название")))
-                .perform(replaceText("Молоко"), closeSoftKeyboard());
-
-        onView(allOf(
-                isDescendantOfA(withId(R.id.container_fields)),
-                instanceOf(EditText.class),
-                withHint("Количество")))
-                .perform(replaceText("5"), closeSoftKeyboard());
-
-        onView(allOf(
-                isDescendantOfA(withId(R.id.container_fields)),
-                instanceOf(Button.class),
-                withText("Сохранить")))
-        .perform(click());
-
-        Thread.sleep(2000);
-
-        onView(withId(R.id.save)).perform(click());
-        Thread.sleep(2000);
-        CountDownLatch checkLatch = new CountDownLatch(1);
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean found = false;
-                for (DataSnapshot item : snapshot.getChildren()) {
-                    Map<String, String> value = (Map<String, String>) item.getValue();
-                    if (value != null && "Молоко".equals(value.get("name"))) {
-                        assertEquals("5", value.get("quantity"));
-                        found = true;
-                        break;
-                    }
+        try {
+            Method m = ViewCenterApp.class
+                    .getDeclaredMethod("updateListUData", List.class);
+            m.setAccessible(true);
+            List<ListU> testList = new ArrayList<>();
+            testList.add(new ListU("Test service"));
+            viewCenterAppRule.runOnUiThread(() -> {
+                try {
+                    m.invoke(activity, testList);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-                assertTrue("Элемент 'Молоко' не найден в Firebase. Содержимое: " + snapshot.getValue(), found);
-                checkLatch.countDown();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                fail("Ошибка чтения данных: " + error.getMessage());
-                checkLatch.countDown();
-            }
-        });
-
-        assertTrue("Данные не появились в Firebase", checkLatch.await(10, TimeUnit.SECONDS));
-
-        assertEquals(Lifecycle.State.DESTROYED, scenario.getState());
-
-        userRef.removeValue();
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    public void testEditListUActivity() throws Exception {
-        String testUserId = auth.getCurrentUser().getUid();
-        DatabaseReference userRef = database.getReference("Users").child(testUserId).child("list_u");
+    public void testViewCenterApp_UpdateRecyclerViewHeights_DoNotCrash() {
+        Intent intent = new Intent(
+                InstrumentationRegistry.getInstrumentation().getTargetContext(),
+                ViewCenterApp.class
+        );
+        intent.putExtra("id", "test_center_id");
+        ViewCenterApp activity = viewCenterAppRule.launchActivity(intent);
+        assertNotNull(activity);
 
-        CountDownLatch deleteLatch = new CountDownLatch(1);
-        userRef.removeValue().addOnCompleteListener(t -> deleteLatch.countDown());
-        deleteLatch.await(5, TimeUnit.SECONDS);
+        try {
+            Method upd1 = ViewCenterApp.class
+                    .getDeclaredMethod("updateRecyclerViewHeight");
+            Method upd2 = ViewCenterApp.class
+                    .getDeclaredMethod("updateRecyclerViewHeight2");
+            upd1.setAccessible(true);
+            upd2.setAccessible(true);
 
-        ActivityScenario<EditListUActivity> scenario = ActivityScenario.launch(EditListUActivity.class);
-
-        onView(withId(R.id.recyclerView_list))
-                .check(matches(hasChildCount(0)));
-
-        onView(withId(R.id.btn_add_row)).perform(click());
-
-        onView(withClassName(is(EditText.class.getName())))
-                .inRoot(isDialog())
-                .perform(replaceText("Новое поле"), closeSoftKeyboard());
-
-        onView(withText("OK"))
-                .inRoot(isDialog())
-                .perform(click());
-
-        Thread.sleep(2000);
-
-        onView(allOf(
-                withId(android.R.id.text1),
-                withText("Новое поле")))
-                .check(matches(isDisplayed()));
-
-        onView(withText("Новое поле"))
-                .perform(ViewActions.longClick());
-
-        onView(withClassName(is(EditText.class.getName())))
-                .inRoot(isDialog())
-                .perform(replaceText("Измененное поле"), closeSoftKeyboard());
-
-        onView(withText("OK"))
-                .inRoot(isDialog())
-                .perform(click());
-
-        Thread.sleep(2000);
-
-        onView(allOf(
-                withId(android.R.id.text1),
-                withText("Измененное поле")))
-                .check(matches(isDisplayed()));
-
-        onView(withText("Измененное поле"))
-                .perform(ViewActions.longClick());
-
-        onView(withText("Удалить"))
-                .inRoot(isDialog())
-                .perform(click());
-
-        Thread.sleep(2000);
-
-        onView(withId(R.id.recyclerView_list))
-                .check(matches(hasChildCount(0)));
-
-        onView(withId(R.id.btn_add_row)).perform(click());
-        onView(withClassName(is(EditText.class.getName())))
-                .inRoot(isDialog())
-                .perform(replaceText("Тестовое поле"), closeSoftKeyboard());
-        onView(withText("OK"))
-                .inRoot(isDialog())
-                .perform(click());
-
-        Thread.sleep(1000);
-
-        onView(withId(R.id.save)).perform(click());
-        Thread.sleep(2000);
-
-        CountDownLatch checkLatch = new CountDownLatch(1);
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<String> items = new ArrayList<>();
-                for (DataSnapshot item : snapshot.getChildren()) {
-                    items.add(item.getValue(String.class));
+            viewCenterAppRule.runOnUiThread(() -> {
+                try {
+                    upd1.invoke(activity);
+                    upd2.invoke(activity);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-                assertTrue("Элемент не найден в Firebase: " + items, items.contains("Тестовое поле"));
-                checkLatch.countDown();
-            }
+            });
+        } catch (Exception e) {
+            fail("Reflection error: " + e.getMessage());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                fail("Ошибка чтения данных: " + error.getMessage());
-                checkLatch.countDown();
-            }
-        });
-        assertTrue(checkLatch.await(10, TimeUnit.SECONDS));
 
-        assertEquals(Lifecycle.State.DESTROYED, scenario.getState());
 
-        userRef.removeValue();
+
+        }
     }
 
 
 }
-

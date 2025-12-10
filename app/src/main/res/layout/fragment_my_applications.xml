@@ -43,7 +43,7 @@
             android:id="@+id/appl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Подать заявку"
+            android:text="@string/apply"
             android:background="@drawable/shape"
             android:textSize="15sp"
             android:fontFamily="sans-serif"

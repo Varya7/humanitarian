@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -55,6 +56,7 @@ public class EditListUActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
@@ -98,15 +100,18 @@ public class EditListUActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(EditListUActivity.this, "Ошибка загрузки данных", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditListUActivity.this,
+                        getString(R.string.error_load_data),
+                        Toast.LENGTH_SHORT).show();
             }
+
         });
     }
 
     /**
      * Добавляет новое пустое поле в список через диалоговое окно.
      */
-    void addNewField() {
+    public void addNewField() {
         showEditDialog("", -1);
     }
 
@@ -118,13 +123,15 @@ public class EditListUActivity extends AppCompatActivity {
      */
     void showEditDialog(String currentValue, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(position >= 0 ? "Редактировать поле" : "Добавить поле");
+        builder.setTitle(position >= 0
+                ? getString(R.string.dialog_edit_field_title)
+                : getString(R.string.dialog_add_field_title));
 
         final EditText input = new EditText(this);
         input.setText(currentValue);
         builder.setView(input);
 
-        builder.setPositiveButton("OK", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.btn_ok), (dialog, which) -> {
             String newValue = input.getText().toString().trim();
             if (!newValue.isEmpty()) {
                 if (position >= 0) {
@@ -137,15 +144,18 @@ public class EditListUActivity extends AppCompatActivity {
         });
 
         if (position >= 0) {
-            builder.setNeutralButton("Удалить", (dialog, which) -> {
+            builder.setNeutralButton(getString(R.string.btn_delete), (dialog, which) -> {
                 listU.remove(position);
                 adapter.notifyDataSetChanged();
             });
         }
 
-        builder.setNegativeButton("Отмена", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(getString(R.string.btn_cancel),
+                (dialog, which) -> dialog.cancel());
+
         builder.show();
     }
+
 
     /**
      * Сохраняет изменения в список полей для подачи заявки в Firebase.
@@ -155,13 +165,18 @@ public class EditListUActivity extends AppCompatActivity {
         userRef.child("list_u").setValue(listU)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(EditListUActivity.this, "Изменения сохранены", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditListUActivity.this,
+                                getString(R.string.changes_saved),
+                                Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
-                        Toast.makeText(EditListUActivity.this, "Ошибка сохранения", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditListUActivity.this,
+                                getString(R.string.error_save_short),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
 
     /**
      * Адаптер для отображения списка строк в RecyclerView.

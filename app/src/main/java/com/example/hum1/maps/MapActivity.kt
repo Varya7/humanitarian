@@ -11,6 +11,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.hum1.LangPrefs
+import com.example.hum1.LocaleUtil
 import com.example.hum1.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -60,7 +62,7 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
 
     lateinit var searchManager: SearchManager
     lateinit var searchSession: Session
-    private var ROUTE_START_LOCATION = Point(55.700581, 37.520630)
+    private var ROUTE_START_LOCATION = Point(51.737062, 36.189906)
     private var ROUTE_END_LOCATION = Point(47.214004, 39.794605)
     private val SCREEN_CENTER = Point(
         (ROUTE_START_LOCATION.latitude+ROUTE_END_LOCATION.latitude)/2,
@@ -79,9 +81,13 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
      * @param savedInstanceState Состояние активити при создании
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        LocaleUtil.initAppLocale(this)
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey("3c89017d-c56c-4694-b14e-3085f7402ed4")
         MapKitFactory.initialize(this)
+
+
+
         enableEdgeToEdge()
         if (supportActionBar != null) {
             supportActionBar!!.hide()
@@ -288,8 +294,8 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
      * @param error Объект ошибки
      */
     override fun onDrivingRoutesError(p0: Error) {
-        var errorMessage = "Неизвестная ошибка!"
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT)
+        Toast.makeText(this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show()
+
     }
 
     /**

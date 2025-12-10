@@ -4,11 +4,11 @@
     <item
         android:id="@+id/navigation_see"
 android:icon="@drawable/ic_clock"
-        android:title="Заявки" />
+        android:title="@string/applic" />
 
     <item
         android:id="@+id/navigation_setting"
         android:icon="@drawable/ic_account"
-        android:title="Аккаунт"
+        android:title="@string/account"
         />
 </menu>

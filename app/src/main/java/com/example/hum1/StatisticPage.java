@@ -54,6 +54,7 @@ public class StatisticPage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic_page);
 
@@ -74,7 +75,6 @@ public class StatisticPage extends AppCompatActivity {
         tvRejected = findViewById(R.id.tvRejected);
         tvIssued = findViewById(R.id.tvIssued);
         tvCompletionRate = findViewById(R.id.tvCompletionRate);
-
         tvNoPieData = findViewById(R.id.tvNoPieData);
         tvNoBarData = findViewById(R.id.tvNoBarData);
 
@@ -87,23 +87,17 @@ public class StatisticPage extends AppCompatActivity {
     }
 
     private void setupSpinner() {
-        String[] timeRanges = {
-                "Последние 3 месяца",
-                "Последние 6 месяцев",
-                "Последние 12 месяцев",
-                "Последние 2 года",
-                "Все время"
-        };
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
-                android.R.layout.simple_spinner_item,
-                timeRanges
+                R.array.time_ranges,
+                android.R.layout.simple_spinner_item
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTimeRange.setAdapter(adapter);
 
-        // 6 месяцев по умолчанию
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTimeRange.setAdapter(adapter);
+
         spinnerTimeRange.setSelection(1);
 
         spinnerTimeRange.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -123,7 +117,7 @@ public class StatisticPage extends AppCompatActivity {
                         selectedTimeRange = 24;
                         break;
                     case 4:
-                        selectedTimeRange = 999; // Все время
+                        selectedTimeRange = 999;
                         break;
                 }
                 updateStatistics();
@@ -237,7 +231,6 @@ public class StatisticPage extends AppCompatActivity {
                 });
     }
 
-    // Фильтрация заявок по выбранному периоду
     private ArrayList<Application> getFilteredApplicationsByTimeRange() {
         if (selectedTimeRange == 999) {
             return new ArrayList<>(applications);
@@ -279,13 +272,14 @@ public class StatisticPage extends AppCompatActivity {
             calApp.set(Calendar.SECOND, 0);
             calApp.set(Calendar.MILLISECOND, 0);
 
-            if (!calApp.before(calFrom) && !calApp.after(calNow)) {
+            if (calApp.after(calFrom) || calApp.equals(calNow)) {
                 filtered.add(app);
             }
         }
 
         return filtered;
     }
+
 
     private void updateStatistics() {
         ArrayList<Application> filtered = getFilteredApplicationsByTimeRange();
@@ -296,6 +290,7 @@ public class StatisticPage extends AppCompatActivity {
         for (Application app : filtered) {
             String status = app.getStatus();
             if (status != null) {
+
                 switch (status) {
                     case "Рассматривается":
                         reviewing++;
@@ -359,21 +354,22 @@ public class StatisticPage extends AppCompatActivity {
         List<Integer> colors = new ArrayList<>();
 
         if (reviewing > 0) {
-            entries.add(new PieEntry(reviewing, "Рассматривается"));
+            entries.add(new PieEntry(reviewing, getString(R.string.status_pending)));
             colors.add(getResources().getColor(R.color.yellow_600));
         }
         if (approved > 0) {
-            entries.add(new PieEntry(approved, "Одобрено"));
+            entries.add(new PieEntry(approved, getString(R.string.status_approved)));
             colors.add(getResources().getColor(R.color.blue_600));
         }
         if (rejected > 0) {
-            entries.add(new PieEntry(rejected, "Отклонено"));
+            entries.add(new PieEntry(rejected, getString(R.string.status_rejected)));
             colors.add(getResources().getColor(R.color.red_600));
         }
         if (issued > 0) {
-            entries.add(new PieEntry(issued, "Выдано"));
+            entries.add(new PieEntry(issued, getString(R.string.status_issued)));
             colors.add(getResources().getColor(R.color.green_600));
         }
+
 
         if (entries.isEmpty()) {
             pieChart.setVisibility(View.GONE);

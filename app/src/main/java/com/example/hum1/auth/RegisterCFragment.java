@@ -131,39 +131,40 @@ public class RegisterCFragment extends Fragment {
                            String password, String fio, String workTime,
                            String phoneNumber, String doc) {
         if (TextUtils.isEmpty(centerName)) {
-            showToast("Введите название центра");
+            showToast(getString(R.string.error_enter_center_name));
             return false;
         }
         if (TextUtils.isEmpty(address)) {
-            showToast("Введите адрес");
+            showToast(getString(R.string.error_enter_address));
             return false;
         }
         if (TextUtils.isEmpty(email)) {
-            showToast("Введите email");
+            showToast(getString(R.string.error_enter_email));
             return false;
         }
         if (TextUtils.isEmpty(password)) {
-            showToast("Введите пароль");
+            showToast(getString(R.string.error_enter_password));
             return false;
         }
         if (TextUtils.isEmpty(fio)) {
-            showToast("Введите ФИО");
+            showToast(getString(R.string.error_enter_fio));
             return false;
         }
         if (TextUtils.isEmpty(workTime)) {
-            showToast("Введите часы работы");
+            showToast(getString(R.string.error_enter_work_time));
             return false;
         }
         if (TextUtils.isEmpty(phoneNumber)) {
-            showToast("Введите номер телефона");
+            showToast(getString(R.string.error_enter_phone_number));
             return false;
         }
         if (TextUtils.isEmpty(doc)) {
-            showToast("Введите список необходимых документов");
+            showToast(getString(R.string.error_enter_doc_list));
             return false;
         }
         return true;
     }
+
 
     /**
      * Переходит к активности MapActivityC с передачей введенных данных.
@@ -198,6 +199,7 @@ public class RegisterCFragment extends Fragment {
      *
      * @param message Текст сообщения для отображения
      */
+
     void showToast(String message) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }

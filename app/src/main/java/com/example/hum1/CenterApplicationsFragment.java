@@ -39,7 +39,7 @@ import java.util.*;
 
 /**
  * Фрагмент, отображающий список заявок текущего центра.
- * Фильтрация по статусу, поиск по ФИО и сортировка по дате.
+ * Фильтрация по статусу (с локализованными подписями), поиск по ФИО и сортировка по дате.
  */
 public class CenterApplicationsFragment extends Fragment {
 
@@ -58,9 +58,10 @@ public class CenterApplicationsFragment extends Fragment {
     private ImageButton scannerB;
 
     private String center_name;
-    private int sortMode = 1;
+    private int sortMode = 1; // 0 – сначала старые, 1 – сначала новые
 
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+    private final SimpleDateFormat dateOnlyFormat =
+            new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 
     @SuppressLint("MissingInflatedId")
     @Nullable
@@ -87,15 +88,7 @@ public class CenterApplicationsFragment extends Fragment {
 
         String userId = user.getUid();
 
-        //scannerB.setOnClickListener(v -> {
-        //    Intent intent = new Intent(getActivity(), ScanActivity.class);
-        //    startActivity(intent);
-        //});
-
-
         scannerB.setOnClickListener(v -> showQrChoiceDialog());
-
-
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
@@ -106,7 +99,7 @@ public class CenterApplicationsFragment extends Fragment {
 
         AppAdapter.OnAppClickListener appClickListener = (app, position) -> {
             Intent intent;
-            if ("Выдано".equals(app.getStatus())) {
+            if ("Выдано".equals(app.getStatus())) { // статус в БД по-русски
                 intent = new Intent(requireContext(), ViewAppComplete.class);
             } else {
                 intent = new Intent(requireContext(), ViewApplicC.class);
@@ -118,11 +111,12 @@ public class CenterApplicationsFragment extends Fragment {
         adapter = new AppAdapter(requireContext(), applications, appClickListener);
         recyclerView.setAdapter(adapter);
 
+        // Локализованные статусы для спиннера
         List<String> statuses = new ArrayList<>();
-        statuses.add("Рассматривается");
-        statuses.add("Одобрено");
-        statuses.add("Отклонено");
-        statuses.add("Выдано");
+        statuses.add(getString(R.string.status_pending));
+        statuses.add(getString(R.string.status_approved));
+        statuses.add(getString(R.string.status_rejected));
+        statuses.add(getString(R.string.status_issued));
 
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
                 requireContext(),
@@ -139,16 +133,17 @@ public class CenterApplicationsFragment extends Fragment {
         );
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSort.setAdapter(sortAdapter);
-        spinnerSort.setSelection(1); // по умолчанию "Сначала новые"
+        spinnerSort.setSelection(1);
 
         mDatabase.child("Users").child(userId).get().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 Log.e("firebase", "Ошибка при получении данных", task.getException());
             } else {
+                if (!isAdded()) return;
                 DataSnapshot snapshot = task.getResult();
                 if (snapshot.exists()) {
                     center_name = snapshot.child("center_name").getValue(String.class);
-                    loadCenterApplications(); // после того как знаем center_name
+                    loadCenterApplications();
                 }
             }
         });
@@ -175,14 +170,9 @@ public class CenterApplicationsFragment extends Fragment {
         });
 
         etSearchFio.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override public void afterTextChanged(Editable s) {
                 applyFiltersAndSort();
             }
         });
@@ -200,6 +190,8 @@ public class CenterApplicationsFragment extends Fragment {
             if (!task.isSuccessful()) {
                 Log.e("firebase", "Ошибка при получении заявок", task.getException());
             } else {
+                if (!isAdded()) return;
+
                 DataSnapshot snapshot = task.getResult();
                 allCenterApps.clear();
 
@@ -234,18 +226,22 @@ public class CenterApplicationsFragment extends Fragment {
      * Применяет:
      * 1) фильтр по статусу;
      * 2) поиск по ФИО;
-     * 3) сортировку по дате.
+     * 3) сортировку по дате и времени.
      */
     private void applyFiltersAndSort() {
-        String selectedStatus = (String) spinnerStatus.getSelectedItem();
-        String query = etSearchFio.getText() != null
-                ? etSearchFio.getText().toString().trim()
-                : "";
+        if (!isAdded() || getContext() == null) return;
+        if (spinnerStatus.getSelectedItem() == null) return;
+
+        String displayStatus = (String) spinnerStatus.getSelectedItem();
+        String selectedDbStatus = mapDisplayStatusToDb(displayStatus);
+
+        String query = etSearchFio.getText().toString().trim();
+
 
         statusFiltered.clear();
         for (Application app : allCenterApps) {
             String status = app.getStatus();
-            if (status != null && status.equals(selectedStatus)) {
+            if (status != null && status.equals(selectedDbStatus)) {
                 statusFiltered.add(app);
             }
         }
@@ -264,32 +260,30 @@ public class CenterApplicationsFragment extends Fragment {
         }
 
         Collections.sort(applications, (a, b) -> {
-            Date da = parseDate(a.getDate());
-            Date db = parseDate(b.getDate());
+            Date da = parseDateTime(a.getDate(), a.getTime());
+            Date db = parseDateTime(b.getDate(), b.getTime());
 
             if (da == null && db == null) return 0;
             if (da == null) return 1;
             if (db == null) return -1;
 
             int cmp = da.compareTo(db);
+            // sortMode == 0 — "сначала старые", == 1 — "сначала новые"
             return (sortMode == 0) ? cmp : -cmp;
         });
 
         adapter.notifyDataSetChanged();
     }
 
-    private Date parseDate(String dateStr) {
+    private Date parseDateTime(String dateStr, String timeStr) {
         if (dateStr == null) return null;
         try {
-            return dateFormat.parse(dateStr);
+            String time = (timeStr != null && !timeStr.isEmpty()) ? timeStr : "00:00";
+            return new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                    .parse(dateStr + " " + time);
         } catch (ParseException e) {
             return null;
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     private void showQrChoiceDialog() {
@@ -311,12 +305,11 @@ public class CenterApplicationsFragment extends Fragment {
 
         btnManual.setOnClickListener(v -> {
             dialog.dismiss();
-            showManualCodeDialog(); // второй диалог
+            showManualCodeDialog();
         });
 
         dialog.show();
     }
-
 
     private void showManualCodeDialog() {
         View dialogView = LayoutInflater.from(requireContext())
@@ -339,12 +332,29 @@ public class CenterApplicationsFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), ViewApplicQR.class);
                 intent.putExtra("id", code);
                 startActivity(intent);
-            } else {
-                etCode.setError("Введите код");
             }
         });
 
         dialog.show();
     }
 
+    /**
+     * Локализованный статус (из спиннера) -> русский статус в БД.
+     */
+    private String mapDisplayStatusToDb(String displayStatus) {
+        if (!isAdded() || getContext() == null) {
+            return displayStatus;
+        }
+
+        if (displayStatus.equals(getString(R.string.status_pending))) {
+            return "Рассматривается";
+        } else if (displayStatus.equals(getString(R.string.status_approved))) {
+            return "Одобрено";
+        } else if (displayStatus.equals(getString(R.string.status_rejected))) {
+            return "Отклонено";
+        } else if (displayStatus.equals(getString(R.string.status_issued))) {
+            return "Выдано";
+        }
+        return displayStatus;
+    }
 }

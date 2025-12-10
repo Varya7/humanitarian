@@ -67,7 +67,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Дата"
+                        android:text="@string/date"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp" />
@@ -77,7 +77,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Дата"
+                        android:text="@string/date"
                         android:textColor="#2A4D8F"
                         android:textStyle="bold"
                         android:fontFamily="sans-serif"
@@ -99,7 +99,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Время"
+                        android:text="@string/time"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp" />
@@ -109,7 +109,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Время"
+                        android:text="@string/time"
                         android:textColor="#0B8638"
                         android:textStyle="bold"
                         android:fontFamily="sans-serif"
@@ -131,7 +131,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Почта"
+                        android:text="@string/email"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp" />
@@ -141,7 +141,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Почта"
+                        android:text="@string/email"
                         android:textColor="#2A4D8F"
                         android:textStyle="bold"
                         android:fontFamily="sans-serif"
@@ -163,7 +163,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="ФИО"
+                        android:text="@string/fio"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp" />
@@ -173,7 +173,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="ФИО"
+                        android:text="@string/fio"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:fontFamily="sans-serif"
@@ -195,7 +195,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Телефон"
+                        android:text="@string/phonenumber"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp" />
@@ -205,7 +205,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Телефон"
+                        android:text="@string/phonenumber"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:fontFamily="sans-serif"
@@ -226,7 +226,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Дата рождения"
+                        android:text="@string/birthdate"
                         android:textColor="#A5A5A5"
                         android:fontFamily="sans-serif-medium"
                         android:textSize="13sp" />
@@ -236,7 +236,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="Дата рождения"
+                        android:text="@string/birthdate"
                         android:textColor="@color/black"
                         android:textStyle="bold"
                         android:fontFamily="sans-serif"
@@ -262,15 +262,7 @@
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Содержимое заявки"
-                    android:textColor="@color/black"
-                    android:fontFamily="sans-serif-medium"
-                    android:textSize="15sp"
-                    android:paddingStart="4dp"
-                    android:paddingBottom="8dp"/>
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView_list2"
@@ -301,7 +293,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Выданные товары"
+                    android:text="@string/issuedthings"
                     android:textColor="@color/black"
                     android:fontFamily="sans-serif-medium"
                     android:textSize="15sp"
@@ -324,7 +316,7 @@
 
         <Button
             android:id="@+id/status"
-            android:text="Выдано"
+            android:text="@string/issued"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/shape"

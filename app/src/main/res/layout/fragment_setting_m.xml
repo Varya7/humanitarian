@@ -52,7 +52,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:text="Email"
+                            android:text="@string/email"
                             android:textColor="@color/black"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="16sp"
@@ -74,7 +74,7 @@
 
             <Button
                 android:id="@+id/edit_password"
-                android:text="Изменить пароль"
+                android:text="@string/changepasswor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -90,11 +90,42 @@
                 android:layout_height="16dp"
                 android:layout_width="match_parent" />
 
+            <!-- Блок выбора языка -->
+            <LinearLayout
+                android:id="@+id/lang_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/tv_lang_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/language"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="16sp"
+                    android:paddingEnd="8dp" />
+
+                <Spinner
+                    android:id="@+id/spinner_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+
+
+
+
             <TextView
                 android:id="@+id/logout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Выйти из аккаунта"
+                android:text="@string/logout"
                 android:textSize="15sp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/black"
@@ -105,7 +136,7 @@
                 android:id="@+id/delete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Удалить аккаунт"
+                android:text="@string/deleteaccount"
                 android:textSize="15sp"
                 android:fontFamily="sans-serif"
                 android:textColor="@color/black"
