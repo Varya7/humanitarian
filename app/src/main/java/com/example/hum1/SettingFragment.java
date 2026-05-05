@@ -76,19 +76,15 @@ public class SettingFragment extends Fragment {
 
         loadUserData();
 
-        logoutV.setOnClickListener(v -> {
-            auth.signOut();
-            Intent intent = new Intent(getContext(), AuthActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
+        logoutV.setOnClickListener(v -> showLogoutConfirmationDialog());
 
         deleteV.setOnClickListener(v -> {
             new AlertDialog.Builder(requireContext())
                     .setTitle(getString(R.string.confirm_delete_title))
                     .setMessage(getString(R.string.confirm_delete_message))
                     .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteAccount())
-                    .setNegativeButton(getString(android.R.string.cancel), null);
+                    .setNegativeButton(getString(android.R.string.cancel), null)
+                    .show();
         });
 
 
@@ -127,6 +123,20 @@ public class SettingFragment extends Fragment {
 
 
         return view;
+    }
+
+    private void showLogoutConfirmationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.confirm_logout_title))
+                .setMessage(getString(R.string.confirm_logout_message))
+                .setPositiveButton(getString(R.string.logout), (dialog, which) -> {
+                    auth.signOut();
+                    Intent intent = new Intent(getContext(), AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                })
+                .setNegativeButton(getString(android.R.string.cancel), null)
+                .show();
     }
 
     /**

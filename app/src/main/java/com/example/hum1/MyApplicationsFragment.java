@@ -94,6 +94,7 @@ public class MyApplicationsFragment extends Fragment {
 
         // Локализованные подписи статусов для спиннера
         statusDisplayList = new ArrayList<>();
+        statusDisplayList.add(getString(R.string.status_all));
         statusDisplayList.add(getString(R.string.status_pending));
         statusDisplayList.add(getString(R.string.status_approved));
         statusDisplayList.add(getString(R.string.status_rejected));
@@ -135,7 +136,7 @@ public class MyApplicationsFragment extends Fragment {
                     String userIdFromDb = snapshot.child("id").getValue(String.class);
                     String statusFromDb = snapshot.child("status").getValue(String.class);
 
-                    if (userId.equals(userIdFromDb) && selectedDbStatus.equals(statusFromDb)) {
+                    if (userId.equals(userIdFromDb) && (selectedDbStatus == null || selectedDbStatus.equals(statusFromDb))) {
                         center = snapshot.child("center").getValue(String.class);
                         date = snapshot.child("date").getValue(String.class);
                         time = snapshot.child("time").getValue(String.class);
@@ -176,7 +177,9 @@ public class MyApplicationsFragment extends Fragment {
      * Маппинг: отображаемый (локализованный) статус -> русский статус в БД.
      */
     private String mapDisplayStatusToDb(String displayStatus) {
-        if (displayStatus.equals(getString(R.string.status_pending))) {
+        if (displayStatus.equals(getString(R.string.status_all))) {
+            return null;
+        } else if (displayStatus.equals(getString(R.string.status_pending))) {
             return "Рассматривается";
         } else if (displayStatus.equals(getString(R.string.status_approved))) {
             return "Одобрено";

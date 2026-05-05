@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         editTextTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showTimePickerDialog();
+                showTimeSlotDialog();
             }
         });
 
@@ -164,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
                                 String status = centerSnapshot.child("status").getValue(String.class);
                                 if (status != null && status.equals("Одобрено")) {
                                     String id = centerSnapshot.child("id").getValue(String.class);
+                                    if (id == null) {
+                                        id = centerSnapshot.getKey();
+                                    }
                                     centerNames.add(name);
                                     centersId.add(id);
                                 }
@@ -194,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 center = item;
                 currentId = position;
                 if (!centersId.isEmpty() && currentId < centersId.size()) {
+                    idC = centersId.get(currentId);
                     loadListData(centersId.get(currentId));
                     loadListUData(centersId.get(currentId));
                 }
@@ -208,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!centerNames.isEmpty()) {
 
+            idC = centersId.get(currentId);
             loadListData(centersId.get(currentId));
             loadListUData(centersId.get(currentId));
         }
@@ -289,6 +294,14 @@ public class MainActivity extends AppCompatActivity {
 
                 newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        AppointmentSlotUtil.bookSlot(
+                                mDatabase.child("Users").child(idC),
+                                date,
+                                time,
+                                applicationId,
+                                userId,
+                                fio
+                        );
                         Toast.makeText(
                                 MainActivity.this,
                                 getString(R.string.msg_application_sent),
@@ -325,6 +338,7 @@ public class MainActivity extends AppCompatActivity {
 
             String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; // Месяцы начинаются с 0
             editTextDate.setText(selectedDate);
+            editTextTime.setText("");
         }, year, month, day);
 
         datePickerDialog.show();
@@ -334,17 +348,42 @@ public class MainActivity extends AppCompatActivity {
      * Отображает Dialog выбора времени.
      * При выборе времени устанавливает значение в поле ввода времени.
      */
-    void showTimePickerDialog() {
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+    void showTimeSlotDialog() {
+        String selectedDate = editTextDate.getText().toString();
+        if (TextUtils.isEmpty(selectedDate)) {
+            Toast.makeText(this, getString(R.string.error_enter_date), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(idC)) {
+            Toast.makeText(this, getString(R.string.error_select_center), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, selectedHour, selectedMinute) -> {
-            String selectedTime = selectedHour + ":" + String.format("%02d", selectedMinute);
-            editTextTime.setText(selectedTime);
-        }, hour, minute, true);
+        AppointmentSlotUtil.loadOrCreateSlots(
+                mDatabase.child("Users").child(idC),
+                selectedDate,
+                new AppointmentSlotUtil.SlotsCallback() {
+                    @Override
+                    public void onLoaded(List<AppointmentSlotUtil.Slot> slots) {
+                        if (slots.isEmpty()) {
+                            Toast.makeText(MainActivity.this, getString(R.string.schedule_no_slots), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String[] values = new String[slots.size()];
+                        for (int i = 0; i < slots.size(); i++) {
+                            values[i] = slots.get(i).time;
+                        }
+                        new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
+                                .setTitle(getString(R.string.schedule_choose_slot))
+                                .setItems(values, (dialog, which) -> editTextTime.setText(values[which]))
+                                .show();
+                    }
 
-        timePickerDialog.show();
+                    @Override
+                    public void onError() {
+                        Toast.makeText(MainActivity.this, getString(R.string.error_load_data), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     /**
@@ -362,7 +401,8 @@ public class MainActivity extends AppCompatActivity {
                 listC.clear();
                 for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
                     Map<String, String> item = (Map<String, String>) itemSnapshot.getValue();
-                    if (item != null && item.containsKey("name") && item.containsKey("quantity")) {
+                    if (item != null && item.containsKey("name") && item.containsKey("quantity")
+                            && isPositiveQuantity(item.get("quantity"))) {
                         listC.add(item);
                     }
                 }
@@ -403,6 +443,21 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
         });
+    }
+
+    /**
+     * Пользователям показываются только доступные вещи с остатком больше нуля.
+     *
+     * @param rawQuantity количество из Firebase
+     * @return true, если вещь доступна для выбора
+     */
+    private boolean isPositiveQuantity(Object rawQuantity) {
+        if (rawQuantity == null) return false;
+        try {
+            return Double.parseDouble(String.valueOf(rawQuantity).replace(",", ".")) > 0;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
 }

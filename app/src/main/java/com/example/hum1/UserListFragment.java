@@ -94,7 +94,6 @@ public class UserListFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), layoutManager.getOrientation()));
 
-        // Обработчик нажатия на кнопку карты
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,7 +158,7 @@ public class UserListFragment extends Fragment {
 
             DataSnapshot snapshot = task.getResult();
             if (snapshot.exists()) {
-                centers.clear(); // Очищаем список перед загрузкой новых данных
+                centers.clear();
                 for (DataSnapshot applicationSnapshot : snapshot.getChildren()) {
                     String role = applicationSnapshot.child("role").getValue(String.class);
                     if ("center".equals(role)) {
@@ -169,11 +168,10 @@ public class UserListFragment extends Fragment {
                             address = applicationSnapshot.child("address").getValue(String.class);
                             email = applicationSnapshot.child("email").getValue(String.class);
                             fio = applicationSnapshot.child("fio").getValue(String.class);
-                            work_time = applicationSnapshot.child("work_time").getValue(String.class);
+                            work_time = ScheduleFormatter.fromSnapshot(requireContext(), applicationSnapshot);
                             phone_number = applicationSnapshot.child("phone_number").getValue(String.class);
                             id = applicationSnapshot.child("id").getValue(String.class);
 
-                            // Добавляем центр только если все обязательные поля не null
                             if (center_name != null && address != null && fio != null) {
                                 centers.add(new Center(id, center_name, address, email, fio, work_time, phone_number, list));
                             }

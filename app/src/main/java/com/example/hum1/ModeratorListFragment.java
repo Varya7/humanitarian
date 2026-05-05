@@ -86,6 +86,7 @@ public class ModeratorListFragment extends Fragment {
 
         // Локализованные подписи статусов в спиннере
         a1 = new ArrayList<>();
+        a1.add(getString(R.string.status_all));
         a1.add(getString(R.string.status_pending));
         a1.add(getString(R.string.status_approved));
         a1.add(getString(R.string.status_rejected));
@@ -115,7 +116,7 @@ public class ModeratorListFragment extends Fragment {
                             if (role != null
                                     && status != null
                                     && "center".equals(role)   // чтобы не цеплять обычных юзеров
-                                    && status.equals(dbStatus)) {
+                                    && (dbStatus == null || status.equals(dbStatus))) {
 
                                 center = applicationSnapshot.child("center_name")
                                         .getValue(String.class);
@@ -139,7 +140,9 @@ public class ModeratorListFragment extends Fragment {
      * Локализованный статус (из спиннера) -> русский статус в БД.
      */
     private String mapDisplayStatusToDb(String displayStatus) {
-        if (displayStatus.equals(getString(R.string.status_pending))) {
+        if (displayStatus.equals(getString(R.string.status_all))) {
+            return null;
+        } else if (displayStatus.equals(getString(R.string.status_pending))) {
             return "Рассматривается";
         } else if (displayStatus.equals(getString(R.string.status_approved))) {
             return "Одобрено";

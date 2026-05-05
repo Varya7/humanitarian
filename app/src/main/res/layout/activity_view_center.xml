@@ -286,17 +286,12 @@
                     android:paddingStart="4dp"
                     android:paddingBottom="8dp"/>
 
-                <ScrollView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView_list"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:maxHeight="250dp">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/bg_white_card"/>
-                </ScrollView>
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:background="@drawable/bg_white_card"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -333,5 +328,17 @@
                 android:paddingHorizontal="10dp"
                 android:textColor="@color/white"/>
         </LinearLayout>
+
+        <Button
+            android:id="@+id/chat"
+            android:text="@string/chat_with_center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/shape"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif"
+            android:paddingHorizontal="10dp"
+            android:textColor="@color/white"/>
     </LinearLayout>
 </ScrollView>

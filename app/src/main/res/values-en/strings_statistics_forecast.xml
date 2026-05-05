@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stats_loading_access">Checking access...</string>
+    <string name="stats_loading_center_apps">Loading center applications...</string>
+    <string name="stats_loading_forecast">Preparing forecast...</string>
+    <string name="stats_loading_ready">Ready</string>
+
+    <string name="stats_period_label">Display period</string>
+    <string name="stats_choose_period">Select date range</string>
+    <string name="stats_all_time_active">Showing all-time data</string>
+    <string name="stats_date_range_format">%1$s - %2$s</string>
+    <string name="stats_date_single_format">%1$s</string>
+
+    <string name="stats_warm_start_hint">A preliminary forecast is shown and will update from your applications.</string>
+    <string name="stats_forecast_updated_center">Forecast updated from your center applications.</string>
+
+    <string name="stats_completion_format">%1$.1f%% of total</string>
+    <string name="stats_dataset_total">Total applications</string>
+    <string name="stats_dataset_issued">Issued</string>
+
+    <string name="stats_forecast_apps_next_month">Forecasted applications next month</string>
+    <string name="stats_forecast_items_next_month">Items needed next month</string>
+    <string name="stats_recommended_prepare_format">Recommended to prepare: %1$d</string>
+    <string name="stats_items_at_risk_format">Items at shortage risk: %1$d</string>
+    <string name="stats_expected_center_load">Expected center load</string>
+    <string name="stats_load_low_label">Low</string>
+    <string name="stats_load_medium_label">Medium</string>
+    <string name="stats_load_high_label">High</string>
+    <string name="stats_load_critical_label">Very high</string>
+    <string name="stats_load_details_format">Item demand: %1$d | Reorder: %2$d | Risky items: %3$d</string>
+    <string name="stats_load_details_placeholder">Item demand: 0 | Reorder: 0 | Risky items: 0</string>
+
+    <string name="stats_busy_slots_title">Peak visit hours</string>
+    <string name="stats_busy_slots_desc">For queue and distribution planning</string>
+    <string name="stats_busy_slot_line">%1$s: ~%2$d visits (%3$d%%)</string>
+    <string name="stats_busy_slots_empty">Not enough visit-time data</string>
+    <string name="stats_peaks_format">Peak applications: %1$s | Peak item demand: %2$s</string>
+    <string name="stats_peaks_placeholder">Peak applications: - | Peak item demand: -</string>
+
+    <string name="stats_item_forecast_title">Item forecast (by name)</string>
+    <string name="stats_item_forecast_desc">How many units are needed for each item for 1 and 3 months</string>
+    <string name="stats_not_enough_items_data">Not enough item data for forecast</string>
+    <string name="stats_table_item">Item</string>
+    <string name="stats_table_stock">In stock</string>
+    <string name="stats_table_need_1m">Need for 1 month</string>
+    <string name="stats_table_need_3m">Need for 3 months</string>
+    <string name="stats_table_reorder">Reorder now</string>
+    <string name="stats_table_risk">Risk</string>
+    <string name="stats_risk_ok">OK</string>
+    <string name="stats_risk_watch">Watch</string>
+    <string name="stats_risk_critical">High risk</string>
+
+    <string name="stats_load_forecast_months_title">Load forecast by month</string>
+    <string name="stats_load_forecast_months_desc">Expected applications and already scheduled visits</string>
+    <string name="stats_timeline_expected_apps">Expected applications</string>
+    <string name="stats_timeline_committed_apps">Already scheduled</string>
+    <string name="stats_timeline_expected_items">Expected items</string>
+
+    <string name="stats_top_items_chart_title">Most needed items</string>
+    <string name="stats_top_items_chart_desc">Forecasted need per item for next month</string>
+    <string name="stats_chart_demand">Demand</string>
+    <string name="stats_chart_reorder">Recommended reorder</string>
+
+    <string name="stats_model_notes_title">How the forecast was calculated</string>
+    <string name="stats_model_notes_empty">Notes are not available yet.</string>
+
+    <string name="stats_no_data">No data to display</string>
+
+    <string-array name="stats_time_ranges">
+        <item>Last 3 months</item>
+        <item>Last 6 months</item>
+        <item>Last 12 months</item>
+        <item>Last 2 years</item>
+        <item>All time</item>
+    </string-array>
+</resources>

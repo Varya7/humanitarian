@@ -11,6 +11,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -21,15 +24,50 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light"
-        tools:targetApi="31">
+        android:usesCleartextTraffic="true"
+        tools:targetApi="33">
+
+        <meta-data
+            android:name="com.yandex.mapkit.USE_GOOGLE_PLAY_SERVICES"
+            android:value="false" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.yandex.mapkit.API_KEY"
+            android:value="3c89017d-c56c-4694-b14e-3085f7402ed4" />
+
         <activity
-            android:name=".StatisticPage"
-            android:theme="@style/Theme.Hum1.Material" />
+            android:name=".maps.MapActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light" />
+
+        <activity
+            android:name=".maps.MapActivityC"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light" />
+
         <activity
             android:name=".maps.MapActivityU"
-            android:exported="false" />
+            android:exported="true" />
 
-
+        <activity
+            android:name=".StatisticPage"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+        <activity
+            android:name=".CenterScheduleActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:name=".CenterChatsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".ModeratorActivity"
             android:exported="false" />
@@ -44,7 +82,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -77,14 +114,6 @@
         <activity
             android:name=".QRcodeActivity"
             android:exported="true" />
-        <activity
-            android:name=".maps.MapActivityC"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
-        <activity
-            android:name=".maps.MapActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".MainActivity3"
             android:exported="false"
@@ -125,6 +154,7 @@
             android:name=".MainActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
+
     </application>
 
 </manifest>

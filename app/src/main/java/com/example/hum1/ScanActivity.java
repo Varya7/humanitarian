@@ -57,7 +57,7 @@ public class ScanActivity extends AppCompatActivity {
 
         ScanOptions options = new ScanOptions();
         options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
-        options.setPrompt("Наведите камеру на QR-код");
+        options.setPrompt(getString(R.string.scan_prompt));
         options.setCameraId(0);
         options.setBeepEnabled(true);
         options.setBarcodeImageEnabled(true);

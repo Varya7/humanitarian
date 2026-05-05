@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hum1.LocaleUtil;
+import com.example.hum1.PickupCodeUtil;
 import com.example.hum1.QRcodeActivity;
 import com.example.hum1.R;
 import com.example.hum1.adapters.ListAdapter;
@@ -50,7 +51,7 @@ public class ViewApplic extends AppCompatActivity {
     DatabaseReference mDatabase;
 
     TextView centerV, statusV, dateV, timeV, emailV, fioV, phone_numberV, birthV, comV;
-    String id, date, time, email, fio, phone_number, birth, status, com;
+    String id, date, time, email, fio, phone_number, birth, status, com, pickupCode;
     Button qrcode;
     LinearLayout commentLayout;
     private ListAdapter adapter;
@@ -125,6 +126,7 @@ public class ViewApplic extends AppCompatActivity {
                         time = snapshot.child("time").getValue(String.class);
                         status = snapshot.child("status").getValue(String.class);
                         com = snapshot.child("comment").getValue(String.class);
+                        pickupCode = snapshot.child("pickup_code").getValue(String.class);
                         String center = snapshot.child("center").getValue(String.class);
                         dateV.setText(date);
                         timeV.setText(time);
@@ -170,8 +172,14 @@ public class ViewApplic extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if ("Одобрено".equals(status)) {
+                    String codeForQr = pickupCode;
+                    if (codeForQr == null || codeForQr.trim().isEmpty()) {
+                        codeForQr = PickupCodeUtil.generate(id);
+                        mDatabase.child("Applications").child(id).child("pickup_code").setValue(codeForQr);
+                        mDatabase.child("PickupCodes").child(codeForQr).setValue(id);
+                    }
                     Intent intent = new Intent(getApplicationContext(), QRcodeActivity.class);
-                    intent.putExtra("id", id);
+                    intent.putExtra("id", codeForQr);
                     startActivity(intent);
                 } else {
                     Toast.makeText(

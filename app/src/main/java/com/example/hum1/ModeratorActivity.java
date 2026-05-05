@@ -30,11 +30,11 @@ public class ModeratorActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         LocaleUtil.initAppLocale(this);
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
         setContentView(R.layout.activity_moderator);
+        LanguageToggleHelper.setup(this);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);

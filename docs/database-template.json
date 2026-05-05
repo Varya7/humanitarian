@@ -1,0 +1,115 @@
+﻿{
+  "Users": {
+    "CENTER_UID": {
+      "id": "CENTER_UID",
+      "role": "center",
+      "status": "Одобрено",
+      "center_name": "Название центра",
+      "address": "Адрес центра",
+      "email": "center@example.com",
+      "password": "stored-by-auth",
+      "fio": "ФИО представителя",
+      "phone_number": "+70000000000",
+      "doc": "Документы для заявки",
+      "comment": "",
+      "latitude": 55.751244,
+      "longitude": 37.618423,
+      "work_time": "09:00-18:00",
+      "work_start": "09:00",
+      "work_end": "18:00",
+      "appointment_interval_minutes": "30",
+      "working_days": "mon,tue,wed,thu,fri",
+      "list_c": [
+        { "name": "Одеяло", "quantity": "12" },
+        { "name": "Куртка", "quantity": "5" }
+      ],
+      "reserved_items": {
+        "Одеяло": 2,
+        "Куртка": 1
+      },
+      "list_u": ["Размер одежды", "Количество человек"],
+      "appointment_slots": {
+        "20260504": {
+          "09_00": {
+            "time": "09:00",
+            "available": true
+          },
+          "09_30": {
+            "time": "09:30",
+            "available": false,
+            "applicationId": "APPLICATION_ID",
+            "userId": "USER_UID",
+            "fio": "ФИО пользователя"
+          }
+        }
+      }
+    },
+    "USER_UID": {
+      "id": "USER_UID",
+      "role": "user",
+      "email": "user@example.com",
+      "fio": "ФИО пользователя",
+      "birth": "01/01/2000",
+      "phone_number": "+70000000001"
+    },
+    "MODERATOR_UID": {
+      "id": "MODERATOR_UID",
+      "role": "moderator",
+      "email": "moderator@example.com"
+    }
+  },
+  "Applications": {
+    "APPLICATION_ID": {
+      "id_appl": "APPLICATION_ID",
+      "id": "USER_UID",
+      "center": "Название центра",
+      "email": "user@example.com",
+      "fio": "ФИО пользователя",
+      "phone_number": "+70000000001",
+      "birth": "01/01/2000",
+      "date": "4/5/2026",
+      "time": "09:30",
+      "status": "Одобрено",
+      "comment": "",
+      "selected_items": {
+        "Одеяло": 2,
+        "Куртка": 1
+      },
+      "reserved_items": {
+        "Одеяло": 2,
+        "Куртка": 1
+      },
+      "reservation_applied": true,
+      "pickup_code": "123456789",
+      "list_u": {
+        "Размер одежды": "M",
+        "Количество человек": "2"
+      }
+    }
+  },
+  "PickupCodes": {
+    "123456789": "APPLICATION_ID"
+  },
+  "Chats": {
+    "CENTER_UID_USER_UID": {
+      "centerId": "CENTER_UID",
+      "userId": "USER_UID",
+      "userFio": "ФИО пользователя",
+      "centerName": "Название центра",
+      "lastMessage": "Здравствуйте, можно уточнить документы?",
+      "messages": {
+        "MESSAGE_ID": {
+          "senderId": "USER_UID",
+          "senderRole": "user",
+          "text": "Здравствуйте, можно уточнить документы?",
+          "created_at": 1777900000000
+        }
+      }
+    }
+  },
+  "CenterChats": {
+    "CENTER_UID": {
+      "CENTER_UID_USER_UID": "ФИО пользователя"
+    }
+  }
+}

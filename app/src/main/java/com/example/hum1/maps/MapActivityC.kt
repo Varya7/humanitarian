@@ -1,12 +1,14 @@
 package com.example.hum1.maps
 
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PointF
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -19,10 +21,6 @@ import androidx.core.content.ContextCompat
 import com.example.hum1.LocaleUtil
 import com.example.hum1.R
 import com.example.hum1.ui.CenterListActivity
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
@@ -32,7 +30,6 @@ import com.yandex.mapkit.directions.driving.DrivingRouter
 import com.yandex.mapkit.directions.driving.DrivingSession
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
-import com.yandex.mapkit.location.Location
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
@@ -57,8 +54,6 @@ import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import com.yandex.runtime.network.NetworkError
 import com.yandex.runtime.network.RemoteError
-import java.util.concurrent.TimeUnit
-
 
 /**
  * Активность для работы с картой на базе Yandex MapKit.
@@ -69,13 +64,9 @@ import java.util.concurrent.TimeUnit
 class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.SearchListener, CameraListener, DrivingSession.DrivingRouteListener {
 
     lateinit var mapview: MapView
-
     private lateinit var map: Map
-    val LOCATION_REQUEST_CODE = 100
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1
-
-
+    private lateinit var locationManager: LocationManager
+    private var locationListener: LocationListener? = null
 
     lateinit var jambut: Button
     lateinit var contbut: Button
@@ -85,35 +76,34 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
     private lateinit var searchManager: SearchManager
     lateinit var searchSession: Session
 
-
-    private var mapObjects:MapObjectCollection? = null
+    private var mapObjects: MapObjectCollection? = null
     private var drivingRouter: DrivingRouter? = null
-    private var drivingSession:DrivingSession? = null
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var locationCallback: LocationCallback
+    private var drivingSession: DrivingSession? = null
     private var latitude: Double = 55.700581
     private var longitude: Double = 37.520630
 
-
-
     private var latitudeM: Double = -1.0
     private var longitudeM: Double = -1.0
-    lateinit var currentLocation: Location
 
+    companion object {
+        const val LOCATION_PERMISSION_REQUEST_CODE = 123
+        private var isMapKitInitialized = false
+    }
 
     /**
      * Отправляет поисковый запрос на основании введённого текста и текущего видимого региона карты.
      * @param query Текст поискового запроса.
      */
     private fun submitQuery(query: String) {
-        searchSession = searchManager.submit(
-            query,
-            VisibleRegionUtils.toPolygon(mapview.map.visibleRegion),
-            SearchOptions(),
-            this
-        )
+        if (query.isNotEmpty()) {
+            searchSession = searchManager.submit(
+                query,
+                VisibleRegionUtils.toPolygon(mapview.map.visibleRegion),
+                SearchOptions(),
+                this
+            )
+        }
     }
-
 
     /**
      * Метод жизненного цикла Activity, вызывается при создании.
@@ -126,16 +116,13 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
         LocaleUtil.initAppLocale(this)
         super.onCreate(savedInstanceState)
 
-
-        MapKitFactory.setApiKey("3c89017d-c56c-4694-b14e-3085f7402ed4")
-        MapKitFactory.initialize(this)
-
-
+        YandexMapKitInitializer.init(this)
 
         if (supportActionBar != null) {
             supportActionBar!!.hide()
         }
         setContentView(R.layout.activity_map_c)
+        enableEdgeToEdge()
 
         val intent = intent
         val centerName = intent.getStringExtra("center_name")
@@ -144,51 +131,40 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
         val password = intent.getStringExtra("password")
         val fio = intent.getStringExtra("fio")
         val workTime = intent.getStringExtra("work_time")
+        val workStart = intent.getStringExtra("work_start")
+        val workEnd = intent.getStringExtra("work_end")
+        val interval = intent.getStringExtra("appointment_interval_minutes")
+        val workingDays = intent.getStringExtra("working_days")
         val phoneNumber = intent.getStringExtra("phone_number")
         val doc = intent.getStringExtra("doc")
 
         mapview = findViewById(R.id.mapview)
-        enableEdgeToEdge()
-
-
-
         jambut = findViewById(R.id.jambut)
         contbut = findViewById(R.id.continueButton)
+        searchEdit = findViewById(R.id.search_edit)
 
         map = mapview.map
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                Companion.LOCATION_PERMISSION_REQUEST_CODE
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
             )
         } else {
             getLastKnownLocation()
+            startLocationUpdates()
         }
-
-        checkLocationPermission()
-
-        locationRequest = LocationRequest().apply {
-
-            interval = TimeUnit.SECONDS.toMillis(60)
-            fastestInterval = TimeUnit.SECONDS.toMillis(30)
-            maxWaitTime = TimeUnit.MINUTES.toMillis(2)
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-
 
         placeUserMarker()
-        requestLocationPermission()
-        var mapKit: MapKit = MapKitFactory.getInstance()
-        var traffic_jam = mapKit.createTrafficLayer(mapview.mapWindow)
+
+        val mapKit: MapKit = MapKitFactory.getInstance()
+        val traffic_jam = mapKit.createTrafficLayer(mapview.mapWindow)
         traffic_jam.isTrafficVisible = true
-
-
 
         jambut.setOnClickListener {
             if (traffic_jam.isTrafficVisible == false) {
@@ -200,12 +176,10 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
             }
         }
 
-        contbut.setOnClickListener{
-            if (latitudeM==-1.0 || longitudeM==-1.0){
+        contbut.setOnClickListener {
+            if (latitudeM == -1.0 || longitudeM == -1.0) {
                 Toast.makeText(this, getString(R.string.error_select_location), Toast.LENGTH_SHORT).show()
-
-            }
-            else{
+            } else {
                 val intent = Intent(this, CenterListActivity::class.java)
                 intent.putExtra("center_name", centerName)
                 intent.putExtra("address", address)
@@ -213,6 +187,10 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
                 intent.putExtra("password", password)
                 intent.putExtra("fio", fio)
                 intent.putExtra("work_time", workTime)
+                intent.putExtra("work_start", workStart)
+                intent.putExtra("work_end", workEnd)
+                intent.putExtra("appointment_interval_minutes", interval)
+                intent.putExtra("working_days", workingDays)
                 intent.putExtra("phone_number", phoneNumber)
                 intent.putExtra("doc", doc)
                 intent.putExtra("latitude", latitudeM)
@@ -223,29 +201,24 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
         }
 
         locationmapkit = mapKit.createUserLocationLayer(mapview.mapWindow)
-        locationmapkit.isVisible = false
-
+        locationmapkit.isVisible = true
         locationmapkit.setObjectListener(this)
-        SearchFactory.initialize(this)
 
+        SearchFactory.initialize(this)
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
         mapview.map.addCameraListener(this)
-        searchEdit = findViewById(R.id.search_edit)
 
         map.addInputListener(inputListener)
 
-        searchEdit.setOnEditorActionListener { y, actionId, event
-            ->
+        searchEdit.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 submitQuery(searchEdit.text.toString())
             }
             false
         }
 
-
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
         mapObjects = mapview.map.mapObjects.addCollection()
-
     }
 
     /**
@@ -253,46 +226,37 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
      * Позволяет пользователю выбрать точку на карте.
      */
     val inputListener = object : InputListener {
-
         private var currentPlacemark: PlacemarkMapObject? = null
-        private lateinit var searchManager: SearchManager
-
 
         override fun onMapTap(map: Map, point: Point) {
-
             currentPlacemark?.let {
                 map.mapObjects.remove(it)
-
             }
 
-            currentPlacemark = map.mapObjects.addPlacemark(point, ImageProvider.fromResource(applicationContext,
-                R.drawable.user_arrow
-            ))
-            currentPlacemark?.setIcon(ImageProvider.fromResource(applicationContext,
-                R.drawable.user_arrow
-            ))
-
+            currentPlacemark = map.mapObjects.addPlacemark(
+                point,
+                ImageProvider.fromResource(applicationContext, R.drawable.user_arrow)
+            )
+            currentPlacemark?.setIcon(
+                ImageProvider.fromResource(applicationContext, R.drawable.user_arrow)
+            )
             currentPlacemark?.let { showCoordinates(it.geometry) }
-
         }
 
         override fun onMapLongTap(map: Map, point: Point) {
             currentPlacemark?.let {
                 map.mapObjects.remove(it)
-
             }
 
-            currentPlacemark = map.mapObjects.addPlacemark(point, ImageProvider.fromResource(applicationContext,
-                R.drawable.search_result
-            ))
-            currentPlacemark?.setIcon(ImageProvider.fromResource(applicationContext,
-                R.drawable.search_result
-            ))
+            currentPlacemark = map.mapObjects.addPlacemark(
+                point,
+                ImageProvider.fromResource(applicationContext, R.drawable.search_result)
+            )
+            currentPlacemark?.setIcon(
+                ImageProvider.fromResource(applicationContext, R.drawable.search_result)
+            )
             currentPlacemark?.let { showCoordinates(it.geometry) }
-
         }
-
-
 
         /**
          * Показывает координаты выбранной точки и сохраняет их.
@@ -300,130 +264,141 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
          */
         private fun showCoordinates(geometry: Point) {
             if (geometry is Point) {
-                val latitude = geometry.latitude
-                val longitude = geometry.longitude
-                    //Toast.makeText(applicationContext, "Latitude: $latitude, Longitude: $longitude", Toast.LENGTH_LONG).show()
-                latitudeM = latitude
-                longitudeM = longitude
-
+                latitudeM = geometry.latitude
+                longitudeM = geometry.longitude
             }
         }
-
-
     }
 
     /**
      * Перемещает камеру карты на координаты пользователя.
      */
     private fun placeUserMarker() {
-        val userLocation = Point(latitude, longitude)
-        mapview.map.move(
-            CameraPosition(Point(latitude, longitude), 11.0f, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 10f), null
-        )
-    }
-
-    /**
-     * Проверяет, предоставлено ли разрешение на доступ к местоположению.
-     * @return true, если разрешение предоставлено, иначе false.
-     */
-    private fun checkLocationPermission(): Boolean {
-        return ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    /**
-     * Обрабатывает результат запроса разрешений.
-     */
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == Companion.LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastKnownLocation()
-            }
+        if (latitude != -1.0 && longitude != -1.0) {
+            mapview.map.move(
+                CameraPosition(Point(latitude, longitude), 14.0f, 0.0f, 0.0f),
+                Animation(Animation.Type.SMOOTH, 1.0f),
+                null
+            )
         }
     }
 
-
     /**
-     * Получает последнее известное местоположение пользователя.
+     * Получает последнее известное местоположение пользователя через LocationManager.
      */
     private fun getLastKnownLocation() {
         try {
-            fusedLocationClient.lastLocation
-                .addOnCompleteListener(
-                    this
-                ) { task ->
-                    if (task.isSuccessful && task.result != null) {
-                        val location = task.result
-                        latitude = location!!.latitude
-                        longitude = location!!.longitude
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED
+            ) {
+                val providers = locationManager.getProviders(true)
+                var bestLocation: Location? = null
+
+                for (provider in providers) {
+                    val location = locationManager.getLastKnownLocation(provider)
+                    if (location != null) {
+                        if (bestLocation == null || location.accuracy < bestLocation.accuracy) {
+                            bestLocation = location
+                        }
                     }
                 }
+
+                bestLocation?.let { location ->
+                    latitude = location.latitude
+                    longitude = location.longitude
+                }
+            }
         } catch (e: SecurityException) {
             e.printStackTrace()
         }
     }
 
+    /**
+     * Запускает активное обновление местоположения.
+     */
+    private fun startLocationUpdates() {
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+
+            locationListener = LocationListener { location ->
+                latitude = location.latitude
+                longitude = location.longitude
+            }
+
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                5000,
+                10f,
+                locationListener!!
+            )
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+    }
 
     /**
-     * Запрашивает разрешение на доступ к местоположению.
+     * Прекращает обновление местоположения.
      */
-    private fun requestLocationPermission() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            LOCATION_PERMISSION_REQUEST_CODE
-        )
+    private fun stopLocationUpdates() {
+        locationListener?.let {
+            locationManager.removeUpdates(it)
+            locationListener = null
+        }
     }
 
     override fun onStop() {
+        stopLocationUpdates()
         mapview.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
     }
 
     override fun onStart() {
-        mapview.onStart()
         MapKitFactory.getInstance().onStart()
+        mapview.onStart()
         super.onStart()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLastKnownLocation()
+                startLocationUpdates()
+            }
+        }
     }
 
     /**
      * Настраивает пользовательский маркер на карте при добавлении.
      */
     override fun onObjectAdded(userLocationView: UserLocationView) {
+        mapview.post {
+            val width = mapview.width.toFloat()
+            val height = mapview.height.toFloat()
+            locationmapkit.setAnchor(
+                PointF(width * 0.5f, height * 0.5f),
+                PointF(width * 0.5f, height * 0.83f)
+            )
+        }
 
-
-        locationmapkit.
-
-
-        setAnchor(
-            PointF((mapview.width() *0.5).toFloat(), (mapview.height()*0.5).toFloat()),
-            PointF((mapview.width() *0.5).toFloat(), (mapview.height()*0.83).toFloat()))
         userLocationView.arrow.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
-        val picIcon = userLocationView.pin.useCompositeIcon()
-        picIcon.setIcon("icon", ImageProvider.fromResource(this, R.drawable.search_result), IconStyle().
-        setAnchor(PointF(0f, 0f))
-            .setRotationType(RotationType.ROTATE).setZIndex(0f).setScale(1f)
-        )
-        picIcon.setIcon("pin", ImageProvider.fromResource(this, R.drawable.nothing),
-            IconStyle().setAnchor(PointF(0.5f, 0.5f)).setRotationType(RotationType.ROTATE).setZIndex(1f).setScale(0.5f))
-        userLocationView.accuracyCircle.fillColor = Color.BLUE and -0x66000001
+        userLocationView.pin.setIcon(ImageProvider.fromResource(this, R.drawable.nothing))
+        userLocationView.accuracyCircle.fillColor = Color.argb(30, 66, 133, 244)
+        userLocationView.accuracyCircle.strokeColor = Color.argb(80, 66, 133, 244)
+        userLocationView.accuracyCircle.strokeWidth = 1f
     }
 
-    override fun onObjectRemoved(p0: UserLocationView) {
+    override fun onObjectRemoved(p0: UserLocationView) {}
 
-    }
-
-    override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {
-
-    }
+    override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {}
 
     /**
      * Обрабатывает ответ поискового запроса, отображая найденные точки на карте.
@@ -431,8 +406,8 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
     override fun onSearchResponse(response: Response) {
         val mapObjects: MapObjectCollection = mapview.map.mapObjects
         for (searchResult in response.collection.children) {
-            val resultLocation = searchResult.obj!!.geometry[0].point!!
-            if (response != null) {
+            val resultLocation = searchResult.obj?.geometry?.firstOrNull()?.point
+            if (resultLocation != null) {
                 mapObjects.addPlacemark(
                     resultLocation,
                     ImageProvider.fromResource(this, R.drawable.search_result)
@@ -446,13 +421,13 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
      * Выводит сообщение об ошибке пользователю.
      */
     override fun onSearchError(error: Error) {
-        var errorMessage = "Неизвестная Ошибка!"
+        var errorMessage = getString(R.string.error_unknown)
         if (error is RemoteError) {
-            errorMessage = "Беспроводная ошибка!"
+            errorMessage = getString(R.string.error_remote)
         } else if (error is NetworkError) {
-            errorMessage = "Проблема с интернетом!"
-            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+            errorMessage = getString(R.string.error_network)
         }
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
     }
 
     /**
@@ -465,7 +440,7 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
         cameraUpdateReason: CameraUpdateReason,
         finished: Boolean
     ) {
-        if(finished){
+        if (finished && searchEdit.text.toString().isNotEmpty()) {
             submitQuery(searchEdit.text.toString())
         }
     }
@@ -475,7 +450,7 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
      * Отображает маршрут на карте.
      */
     override fun onDrivingRoutes(p0: MutableList<DrivingRoute>) {
-        for(route in p0) {
+        for (route in p0) {
             mapObjects!!.addPolyline(route.geometry)
         }
     }
@@ -485,13 +460,5 @@ class MapActivityC : AppCompatActivity(), UserLocationObjectListener, Session.Se
      */
     override fun onDrivingRoutesError(p0: Error) {
         Toast.makeText(this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show()
-
     }
-
-    companion object {
-        const val LOCATION_PERMISSION_REQUEST_CODE = 123
-    }
-
-
-
 }

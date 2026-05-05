@@ -1,21 +1,25 @@
 package com.example.hum1.maps
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PointF
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.hum1.LangPrefs
 import com.example.hum1.LocaleUtil
 import com.example.hum1.R
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
@@ -32,10 +36,9 @@ import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
-import com.yandex.mapkit.map.IconStyle
+import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.MapObjectCollection
-import com.yandex.mapkit.map.RotationType
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchFactory
@@ -53,27 +56,33 @@ import com.yandex.runtime.image.ImageProvider
  * Поддерживает отображение пробок, определение текущего местоположения пользователя,
  * поиск по карте и построение маршрутов для автомобиля.
  */
-class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.SearchListener, CameraListener, DrivingSession.DrivingRouteListener {
-    lateinit var mapview: MapView
+class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.SearchListener, CameraListener, InputListener, DrivingSession.DrivingRouteListener {
 
+    lateinit var mapview: MapView
     lateinit var jambut: Button
+    private lateinit var useGpsButton: Button
+    private lateinit var chooseStartButton: Button
+    private lateinit var openYandexButton: Button
     lateinit var locationmapkit: UserLocationLayer
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationManager: LocationManager
+    private var locationListener: LocationListener? = null
 
     lateinit var searchManager: SearchManager
     lateinit var searchSession: Session
     private var ROUTE_START_LOCATION = Point(51.737062, 36.189906)
     private var ROUTE_END_LOCATION = Point(47.214004, 39.794605)
-    private val SCREEN_CENTER = Point(
-        (ROUTE_START_LOCATION.latitude+ROUTE_END_LOCATION.latitude)/2,
-        (ROUTE_START_LOCATION.longitude+ROUTE_END_LOCATION.longitude)/2)
-    public var mapObjects:MapObjectCollection? = null
+    public var mapObjects: MapObjectCollection? = null
     public var drivingRouter: DrivingRouter? = null
-    private var drivingSession:DrivingSession? = null
+    private var drivingSession: DrivingSession? = null
     private var latitude: Double = -1.0
     private var longitude: Double = -1.0
     private var latitudeM: Double = -1.0
     private var longitudeM: Double = -1.0
+    private var waitingForStartPoint: Boolean = false
+
+    companion object {
+        private var isMapKitInitialized = false
+    }
 
     /**
      * Инициализация активити, установка ключа API, инициализация карты,
@@ -83,10 +92,8 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
     override fun onCreate(savedInstanceState: Bundle?) {
         LocaleUtil.initAppLocale(this)
         super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey("3c89017d-c56c-4694-b14e-3085f7402ed4")
-        MapKitFactory.initialize(this)
 
-
+        YandexMapKitInitializer.init(this)
 
         enableEdgeToEdge()
         if (supportActionBar != null) {
@@ -95,7 +102,9 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         setContentView(R.layout.activity_map)
         mapview = findViewById(R.id.mapview)
         jambut = findViewById(R.id.jambut)
-
+        useGpsButton = findViewById(R.id.btn_use_gps)
+        chooseStartButton = findViewById(R.id.btn_choose_route_start)
+        openYandexButton = findViewById(R.id.btn_open_yandex_maps)
 
         latitudeM = intent.getDoubleExtra("latitude", 0.0)
         longitudeM = intent.getDoubleExtra("longitude", 0.0)
@@ -105,13 +114,10 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
             CameraPosition(Point(51.744059, 36.192162), 11.0f, 0.0f, 0.0f),
             Animation(Animation.Type.SMOOTH, 10f), null
         )
-        requestLocationPermission()
-        var mapKit: MapKit = MapKitFactory.getInstance()
-        var traffic_jam = mapKit.createTrafficLayer(mapview.mapWindow)
+
+        val mapKit: MapKit = MapKitFactory.getInstance()
+        val traffic_jam = mapKit.createTrafficLayer(mapview.mapWindow)
         traffic_jam.isTrafficVisible = true
-
-
-
 
         jambut.setOnClickListener {
             if (traffic_jam.isTrafficVisible == false) {
@@ -122,33 +128,93 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
                 jambut.setBackgroundResource(R.drawable.blueoff)
             }
         }
-        locationmapkit = mapKit.createUserLocationLayer(mapview.mapWindow)
-        locationmapkit.isVisible = false
 
+        useGpsButton.setOnClickListener { askGpsAndUseCurrentPoint() }
+        chooseStartButton.setOnClickListener {
+            waitingForStartPoint = true
+            Toast.makeText(this, getString(R.string.map_tap_start), Toast.LENGTH_SHORT).show()
+        }
+        openYandexButton.setOnClickListener { openInYandexMaps() }
+
+        locationmapkit = mapKit.createUserLocationLayer(mapview.mapWindow)
+        locationmapkit.isVisible = true
         locationmapkit.setObjectListener(this)
+
         SearchFactory.initialize(this)
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
         mapview.map.addCameraListener(this)
+        mapview.map.addInputListener(this)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+
+        drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
+        mapObjects = mapview.map.mapObjects.addCollection()
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 MapActivityC.LOCATION_PERMISSION_REQUEST_CODE
             )
         } else {
-            getLastKnownLocation()
+            askGpsAndUseCurrentPoint()
         }
 
-
-
-        drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
-        mapObjects = mapview.map.mapObjects.addCollection()
         submitRequest()
+    }
+
+    private fun askGpsAndUseCurrentPoint() {
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.map_gps_title))
+                .setMessage(getString(R.string.map_gps_message))
+                .setPositiveButton(getString(R.string.map_gps_enable)) { _, _ ->
+                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                }
+                .setNegativeButton(getString(android.R.string.cancel), null)
+                .show()
+            return
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                MapActivityC.LOCATION_PERMISSION_REQUEST_CODE
+            )
+            return
+        }
+
+        getLastKnownLocation()
+        startLocationUpdates()
+    }
+
+    private fun openInYandexMaps() {
+        if (latitudeM == 0.0 && longitudeM == 0.0) {
+            Toast.makeText(this, getString(R.string.error_coordinates_unavailable), Toast.LENGTH_SHORT).show()
+            return
+        }
+        val routeText = if (latitude != -1.0 && longitude != -1.0) {
+            "$latitude,$longitude~$latitudeM,$longitudeM"
+        } else {
+            "$latitudeM,$longitudeM"
+        }
+        val appUri = if (routeText.contains("~")) {
+            Uri.parse("yandexmaps://maps.yandex.ru/?rtext=$routeText&rtt=auto")
+        } else {
+            Uri.parse("yandexmaps://maps.yandex.ru/?pt=$longitudeM,$latitudeM&z=16")
+        }
+        val appIntent = Intent(Intent.ACTION_VIEW, appUri).setPackage("ru.yandex.yandexmaps")
+        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://yandex.ru/maps/?rtext=$routeText&rtt=auto"))
+        try {
+            startActivity(appIntent)
+        } catch (e: Exception) {
+            startActivity(webIntent)
+        }
     }
 
     /**
@@ -170,9 +236,11 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
     }
 
     /**
-     * Обрабатывает событие остановки активности — останавливает MapKit и MapView.
+     * Обрабатывает событие остановки активности — останавливает MapKit и MapView,
+     * а также прекращает обновление местоположения.
      */
     override fun onStop() {
+        stopLocationUpdates()
         mapview.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
@@ -182,30 +250,80 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
      * Обрабатывает событие старта активности — запускает MapKit и MapView.
      */
     override fun onStart() {
-        mapview.onStart()
         MapKitFactory.getInstance().onStart()
+        mapview.onStart()
         super.onStart()
     }
 
     /**
-     * Получает последнее известное местоположение устройства через FusedLocationProviderClient.
+     * Получает последнее известное местоположение устройства через LocationManager.
      * Устанавливает начальную точку маршрута.
      */
     private fun getLastKnownLocation() {
         try {
-            fusedLocationClient.lastLocation
-                .addOnCompleteListener(
-                    this
-                ) { task ->
-                    if (task.isSuccessful && task.result != null) {
-                        val location = task.result
-                        latitude = location!!.latitude
-                        longitude = location!!.longitude
-                        ROUTE_START_LOCATION = Point(latitude, longitude)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED
+            ) {
+                val providers = locationManager.getProviders(true)
+                var bestLocation: Location? = null
+
+                for (provider in providers) {
+                    val location = locationManager.getLastKnownLocation(provider)
+                    if (location != null) {
+                        if (bestLocation == null || location.accuracy < bestLocation.accuracy) {
+                            bestLocation = location
+                        }
                     }
                 }
+
+                bestLocation?.let { location ->
+                    latitude = location.latitude
+                    longitude = location.longitude
+                    ROUTE_START_LOCATION = Point(latitude, longitude)
+                    submitRequest()
+                }
+            }
         } catch (e: SecurityException) {
             e.printStackTrace()
+        }
+    }
+
+    /**
+     * Запускает активное обновление местоположения через GPS провайдер.
+     */
+    private fun startLocationUpdates() {
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+
+            locationListener = LocationListener { location ->
+                latitude = location.latitude
+                longitude = location.longitude
+                ROUTE_START_LOCATION = Point(latitude, longitude)
+                submitRequest()
+            }
+
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                5000,
+                10f,
+                locationListener!!
+            )
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Прекращает обновление местоположения.
+     */
+    private fun stopLocationUpdates() {
+        locationListener?.let {
+            locationManager.removeUpdates(it)
+            locationListener = null
         }
     }
 
@@ -223,7 +341,7 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == MapActivityC.LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastKnownLocation()
+                askGpsAndUseCurrentPoint()
             }
         }
     }
@@ -234,22 +352,23 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
      * @param userLocationView Вид текущего местоположения пользователя на карте
      */
     override fun onObjectAdded(userLocationView: UserLocationView) {
-        locationmapkit.
+        mapview.post {
+            val width = mapview.width.toFloat()
+            val height = mapview.height.toFloat()
+            locationmapkit.setAnchor(
+                PointF(width * 0.5f, height * 0.5f),
+                PointF(width * 0.5f, height * 0.83f)
+            )
+        }
 
-        setAnchor(
-            PointF((mapview.width() *0.5).toFloat(), (mapview.height()*0.5).toFloat()),
-            PointF((mapview.width() *0.5).toFloat(), (mapview.height()*0.83).toFloat()))
         userLocationView.arrow.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
-        val picIcon = userLocationView.pin.useCompositeIcon()
-        picIcon.setIcon("icon", ImageProvider.fromResource(this, R.drawable.search_result), IconStyle().
-        setAnchor(PointF(0f, 0f))
-            .setRotationType(RotationType.ROTATE).setZIndex(0f).setScale(1f)
-        )
-        picIcon.setIcon("pin", ImageProvider.fromResource(this, R.drawable.nothing),
-            IconStyle().setAnchor(PointF(0.5f, 0.5f)).setRotationType(RotationType.ROTATE).setZIndex(1f).setScale(0.5f))
-        userLocationView.accuracyCircle.fillColor = Color.BLUE and -0x66000001
-    }
+        userLocationView.pin.setIcon(ImageProvider.fromResource(this, R.drawable.nothing))
 
+        // Настройка круга точности
+        userLocationView.accuracyCircle.fillColor = Color.argb(45, 66, 133, 244)
+        userLocationView.accuracyCircle.strokeColor = Color.argb(100, 66, 133, 244)
+        userLocationView.accuracyCircle.strokeWidth = 1f
+    }
 
     override fun onObjectRemoved(p0: UserLocationView) {
 
@@ -261,13 +380,11 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
 
     override fun onSearchResponse(response: Response) {
 
-
     }
 
     override fun onSearchError(error: Error) {
 
     }
-
 
     override fun onCameraPositionChanged(
         map: Map,
@@ -278,14 +395,31 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
 
     }
 
+    override fun onMapTap(map: Map, point: Point) {
+        if (!waitingForStartPoint) {
+            return
+        }
+        waitingForStartPoint = false
+        latitude = point.latitude
+        longitude = point.longitude
+        ROUTE_START_LOCATION = point
+        Toast.makeText(this, getString(R.string.map_start_selected), Toast.LENGTH_SHORT).show()
+        submitRequest()
+    }
+
+    override fun onMapLongTap(map: Map, point: Point) {
+        waitingForStartPoint = true
+        onMapTap(map, point)
+    }
+
     /**
      * Обрабатывает получение маршрутов от роутера.
      * Добавляет линии маршрута на карту.
      * @param routes Список маршрутов для отображения
      */
     override fun onDrivingRoutes(p0: MutableList<DrivingRoute>) {
-        for(route in p0) {
-            mapObjects!!.addPolyline(route.geometry)
+        for (route in p0) {
+            mapObjects?.addPolyline(route.geometry)
         }
     }
 
@@ -295,19 +429,25 @@ class MapActivity : AppCompatActivity(), UserLocationObjectListener, Session.Sea
      */
     override fun onDrivingRoutesError(p0: Error) {
         Toast.makeText(this, getString(R.string.error_unknown), Toast.LENGTH_SHORT).show()
-
     }
 
     /**
      * Отправляет запрос на построение маршрута между начальной и конечной точками.
      */
     public fun submitRequest() {
+        if (drivingRouter == null) {
+            return
+        }
+        if (latitudeM == 0.0 && longitudeM == 0.0) {
+            Toast.makeText(this, getString(R.string.error_coordinates_unavailable), Toast.LENGTH_SHORT).show()
+            return
+        }
         val drivingOptions = DrivingOptions()
         val vehicleOptions = VehicleOptions()
         val requestPoints: ArrayList<RequestPoint> = ArrayList()
-        requestPoints.add(RequestPoint(ROUTE_START_LOCATION, RequestPointType.WAYPOINT, null))
-        requestPoints.add(RequestPoint(ROUTE_END_LOCATION,RequestPointType.WAYPOINT, null))
+        mapObjects?.clear()
+        requestPoints.add(RequestPoint(ROUTE_START_LOCATION, RequestPointType.WAYPOINT, null, null))
+        requestPoints.add(RequestPoint(ROUTE_END_LOCATION, RequestPointType.WAYPOINT, null, null))
         drivingSession = drivingRouter!!.requestRoutes(requestPoints, drivingOptions, vehicleOptions, this)
     }
-
 }

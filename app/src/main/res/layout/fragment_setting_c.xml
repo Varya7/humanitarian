@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:paddingTop="?attr/actionBarSize"
+        android:paddingTop="0dp"
         android:background="@drawable/background_b">
 
         <LinearLayout
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:paddingTop="32dp"
+            android:paddingTop="12dp"
             android:paddingBottom="24dp">
 
             <!-- Статус блока -->
@@ -310,6 +310,34 @@
                 android:text="@string/editdata"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/shape"
+                android:textSize="15sp"
+                android:layout_gravity="center_horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_schedule"
+                android:text="@string/schedule_manage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/shape"
+                android:textSize="15sp"
+                android:layout_gravity="center_horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_chats"
+                android:text="@string/chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/shape"
                 android:textSize="15sp"
                 android:layout_gravity="center_horizontal"

@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hum1.LocaleUtil;
+import com.example.hum1.ChatActivity;
 import com.example.hum1.MainActivity3;
 import com.example.hum1.R;
+import com.example.hum1.ScheduleFormatter;
 import com.example.hum1.adapters.ListAdapter;
 import com.example.hum1.maps.MapActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +44,7 @@ public class ViewCenter extends AppCompatActivity {
     private TextView fioV;
     private TextView work_timeV;
     private TextView docV;
-    private Button appl, mapB;
+    private Button appl, mapB, chatB;
     private String userId;
     String centerId;
     ListAdapter adapter;
@@ -90,6 +92,7 @@ public class ViewCenter extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+        recyclerView.setNestedScrollingEnabled(false);
 
         loadCenterData(centerId);
         loadListData();
@@ -109,6 +112,7 @@ public class ViewCenter extends AppCompatActivity {
         docV = findViewById(R.id.doc);
         mapB = findViewById(R.id.route);
         appl = findViewById(R.id.appl);
+        chatB = findViewById(R.id.chat);
     }
 
     /**
@@ -134,14 +138,13 @@ public class ViewCenter extends AppCompatActivity {
                     String phone = getStringValue(snapshot, "phone_number");
                     String email = getStringValue(snapshot, "email");
                     String fio = getStringValue(snapshot, "fio");
-                    String work_time = getStringValue(snapshot, "work_time");
                     String doc = getStringValue(snapshot, "doc");
                     center_nameV.setText(centerName);
                     addressV.setText(address);
                     phone_numberV.setText(phone);
                     emailV.setText(email);
                     fioV.setText(fio);
-                    work_timeV.setText(work_time);
+                    work_timeV.setText(ScheduleFormatter.fromSnapshot(ViewCenter.this, snapshot));
                     docV.setText(doc);
                     latitude = getDoubleValue(snapshot, "latitude");
                     longitude = getDoubleValue(snapshot, "longitude");
@@ -212,6 +215,13 @@ public class ViewCenter extends AppCompatActivity {
             }
         });
 
+        chatB.setOnClickListener(v -> {
+            Intent intent = new Intent(ViewCenter.this, ChatActivity.class);
+            intent.putExtra("center_id", centerId);
+            intent.putExtra("center_name", center_nameV.getText().toString());
+            startActivity(intent);
+        });
+
     }
 
     /**
@@ -225,7 +235,8 @@ public class ViewCenter extends AppCompatActivity {
                 listC.clear();
                 for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
                     Map<String, String> item = (Map<String, String>) itemSnapshot.getValue();
-                    if (item != null && item.containsKey("name") && item.containsKey("quantity")) {
+                    if (item != null && item.containsKey("name") && item.containsKey("quantity")
+                            && isPositiveQuantity(item.get("quantity"))) {
                         listC.add(item);
                     }
                 }
@@ -237,5 +248,20 @@ public class ViewCenter extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
         });
+    }
+
+    /**
+     * Проверяет, что вещь действительно доступна пользователям.
+     *
+     * @param rawQuantity количество из Firebase
+     * @return true, если остаток больше нуля
+     */
+    private boolean isPositiveQuantity(Object rawQuantity) {
+        if (rawQuantity == null) return false;
+        try {
+            return Double.parseDouble(String.valueOf(rawQuantity).replace(",", ".")) > 0;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 }

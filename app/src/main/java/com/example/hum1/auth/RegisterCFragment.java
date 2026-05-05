@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.hum1.R;
@@ -26,10 +27,12 @@ import com.example.hum1.maps.MapActivityC;
 public class RegisterCFragment extends Fragment {
 
     private EditText editTextNameCenter, editTextAddress, editTextEmail, editTextPassword;
-    private EditText editTextFIO, editTextWorkTime, editTextPhoneNumber, editTextDoc;
+    private EditText editTextFIO, editTextWorkStart, editTextWorkEnd, editTextInterval, editTextWorkingDays, editTextPhoneNumber, editTextDoc;
     private Button buttonReg;
     private TextView textViewLogin, textViewRegisterUser;
     private ProgressBar progressBar;
+    private final boolean[] selectedDays = new boolean[]{false, true, true, true, true, true, false};
+    private final String[] dayKeys = new String[]{"sun", "mon", "tue", "wed", "thu", "fri", "sat"};
 
 
     /**
@@ -62,7 +65,12 @@ public class RegisterCFragment extends Fragment {
         editTextEmail = view.findViewById(R.id.email);
         editTextPassword = view.findViewById(R.id.password);
         editTextFIO = view.findViewById(R.id.fio);
-        editTextWorkTime = view.findViewById(R.id.work_time);
+        editTextWorkStart = view.findViewById(R.id.work_start);
+        editTextWorkEnd = view.findViewById(R.id.work_end);
+        editTextInterval = view.findViewById(R.id.appointment_interval);
+        editTextWorkingDays = view.findViewById(R.id.working_days);
+        editTextWorkingDays.setFocusable(false);
+        editTextWorkingDays.setText(formatSelectedDays());
         editTextPhoneNumber = view.findViewById(R.id.phone_number);
         editTextDoc = view.findViewById(R.id.doc);
         buttonReg = view.findViewById(R.id.btn_register);
@@ -88,6 +96,35 @@ public class RegisterCFragment extends Fragment {
                         .commit());
 
         buttonReg.setOnClickListener(v -> proceedToMapActivity());
+        editTextWorkingDays.setOnClickListener(v -> showWorkingDaysDialog());
+    }
+
+    private void showWorkingDaysDialog() {
+        String[] labels = new String[]{
+                getString(R.string.day_sun),
+                getString(R.string.day_mon),
+                getString(R.string.day_tue),
+                getString(R.string.day_wed),
+                getString(R.string.day_thu),
+                getString(R.string.day_fri),
+                getString(R.string.day_sat)
+        };
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.schedule_days_select))
+                .setMultiChoiceItems(labels, selectedDays, (dialog, which, isChecked) -> selectedDays[which] = isChecked)
+                .setPositiveButton(getString(R.string.btn_ok), (dialog, which) -> editTextWorkingDays.setText(formatSelectedDays()))
+                .setNegativeButton(getString(R.string.btn_cancel), null)
+                .show();
+    }
+
+    private String formatSelectedDays() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < selectedDays.length; i++) {
+            if (!selectedDays[i]) continue;
+            if (builder.length() > 0) builder.append(",");
+            builder.append(dayKeys[i]);
+        }
+        return builder.toString();
     }
 
     /**
@@ -102,13 +139,17 @@ public class RegisterCFragment extends Fragment {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String fio = editTextFIO.getText().toString().trim();
-        String workTime = editTextWorkTime.getText().toString().trim();
+        String workStart = editTextWorkStart.getText().toString().trim();
+        String workEnd = editTextWorkEnd.getText().toString().trim();
+        String interval = editTextInterval.getText().toString().trim();
+        String workingDays = editTextWorkingDays.getText().toString().trim();
+        String workTime = workStart + "-" + workEnd;
         String phoneNumber = editTextPhoneNumber.getText().toString().trim();
         String doc = editTextDoc.getText().toString().trim();
 
-        if (validateInputs(centerName, address, email, password, fio, workTime, phoneNumber, doc)) {
+        if (validateInputs(centerName, address, email, password, fio, workStart, workEnd, interval, workingDays, phoneNumber, doc)) {
             progressBar.setVisibility(View.GONE);
-            navigateToMapActivity(centerName, address, email, password, fio, workTime, phoneNumber, doc);
+            navigateToMapActivity(centerName, address, email, password, fio, workTime, workStart, workEnd, interval, workingDays, phoneNumber, doc);
         } else {
             progressBar.setVisibility(View.GONE);
         }
@@ -128,8 +169,8 @@ public class RegisterCFragment extends Fragment {
      * @return true если все данные валидны, false если есть ошибки
      */
     boolean validateInputs(String centerName, String address, String email,
-                           String password, String fio, String workTime,
-                           String phoneNumber, String doc) {
+                           String password, String fio, String workStart, String workEnd,
+                           String interval, String workingDays, String phoneNumber, String doc) {
         if (TextUtils.isEmpty(centerName)) {
             showToast(getString(R.string.error_enter_center_name));
             return false;
@@ -150,8 +191,12 @@ public class RegisterCFragment extends Fragment {
             showToast(getString(R.string.error_enter_fio));
             return false;
         }
-        if (TextUtils.isEmpty(workTime)) {
+        if (TextUtils.isEmpty(workStart) || TextUtils.isEmpty(workEnd)) {
             showToast(getString(R.string.error_enter_work_time));
+            return false;
+        }
+        if (TextUtils.isEmpty(interval) || TextUtils.isEmpty(workingDays)) {
+            showToast(getString(R.string.error_fill_all_fields_short));
             return false;
         }
         if (TextUtils.isEmpty(phoneNumber)) {
@@ -180,6 +225,7 @@ public class RegisterCFragment extends Fragment {
      */
     private void navigateToMapActivity(String centerName, String address, String email,
                                        String password, String fio, String workTime,
+                                       String workStart, String workEnd, String interval, String workingDays,
                                        String phoneNumber, String doc) {
         Intent intent = new Intent(getActivity(), MapActivityC.class);
         intent.putExtra("center_name", centerName);
@@ -188,6 +234,10 @@ public class RegisterCFragment extends Fragment {
         intent.putExtra("password", password);
         intent.putExtra("fio", fio);
         intent.putExtra("work_time", workTime);
+        intent.putExtra("work_start", workStart);
+        intent.putExtra("work_end", workEnd);
+        intent.putExtra("appointment_interval_minutes", interval);
+        intent.putExtra("working_days", workingDays);
         intent.putExtra("phone_number", phoneNumber);
         intent.putExtra("doc", doc);
         startActivity(intent);

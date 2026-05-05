@@ -77,7 +77,7 @@ public class ListAdapter2 extends RecyclerView.Adapter<ListAdapter2.ViewHolder> 
         // Обработчик кнопки увеличения количества
         holder.btnIncrease.setOnClickListener(v -> {
             int current = selectedQuantities.getOrDefault(itemName, 0);
-            if (current < Integer.parseInt(maxQuantity)) {
+            if (current < parseQuantity(maxQuantity)) {
                 selectedQuantities.put(itemName, current + 1);
                 holder.quantityText.setText(String.valueOf(current + 1));
             }
@@ -110,6 +110,21 @@ public class ListAdapter2 extends RecyclerView.Adapter<ListAdapter2.ViewHolder> 
      */
     public Map<String, Integer> getSelectedQuantities() {
         return selectedQuantities;
+    }
+
+    /**
+     * Безопасно читает максимальный остаток вещи из Firebase.
+     *
+     * @param rawQuantity количество в виде строки
+     * @return неотрицательное целое количество
+     */
+    private int parseQuantity(String rawQuantity) {
+        if (rawQuantity == null) return 0;
+        try {
+            return Math.max(0, (int) Math.round(Double.parseDouble(rawQuantity.replace(",", "."))));
+        } catch (Exception ignored) {
+            return 0;
+        }
     }
 
     /**

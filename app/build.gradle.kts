@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.kotlin.android)
-
 }
 
 android {
@@ -12,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.example.hum1"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
@@ -50,11 +49,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1,DEPENDENCIES,LICENSE,LICENSE.txt,NOTICE,NOTICE.txt}"
         }
     }
-
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
@@ -76,7 +73,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation (libs.maps.mobile)
+
+    implementation("com.yandex.android:maps.mobile:4.4.0-full")
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     androidTestImplementation(platform(libs.compose.bom))
@@ -84,21 +83,18 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation ("com.google.android.gms:play-services-location:21.0.1")
-    //implementation("com.google.android.material:material:1.4.0")
+
+    implementation("com.google.android.gms:play-services-location:19.0.1")
+    implementation("com.google.android.gms:play-services-base:18.0.1")
+
     implementation("androidx.appcompat:appcompat:1.6.0")
-    ///implementation("com.google.android.material:material:1.6.0")
-    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation ("com.google.zxing:core:3.5.2")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.5.2")
     implementation("com.google.code.gson:gson:2.10.1")
 
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test:rules:1.5.0")
-    
-
-    //androidTestImplementation("com.google.firebase:firebase-auth:21.0.1")
-    //androidTestImplementation("com.google.firebase:firebase-database:20.0.0")
     androidTestImplementation("androidx.test:core:1.5.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.fragment:fragment-testing:1.6.1")
@@ -107,21 +103,12 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
 
-
-
     implementation("com.google.firebase:firebase-messaging:24.0.0")
     implementation("com.google.firebase:firebase-database:21.0.0")
     implementation("com.google.firebase:firebase-auth:23.0.0")
-
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    //implementation("com.google.firebase:firebase-database:20.3.0")
-    //implementation("com.google.firebase:firebase-auth:22.3.0")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("com.google.android.material:material:1.11.0")
-
-
     implementation("com.google.auth:google-auth-library-oauth2-http:1.11.0")
     implementation("com.google.api-client:google-api-client:2.2.0")
-
-
 }

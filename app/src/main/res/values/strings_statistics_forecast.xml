@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stats_loading_access">Проверка доступа...</string>
+    <string name="stats_loading_center_apps">Загрузка заявок центра...</string>
+    <string name="stats_loading_forecast">Подготовка прогноза...</string>
+    <string name="stats_loading_ready">Готово</string>
+
+    <string name="stats_period_label">Период отображения</string>
+    <string name="stats_choose_period">Выбрать период в календаре</string>
+    <string name="stats_all_time_active">Показаны данные за всё время</string>
+    <string name="stats_date_range_format">%1$s - %2$s</string>
+    <string name="stats_date_single_format">%1$s</string>
+
+    <string name="stats_warm_start_hint">Показан предварительный прогноз, обновляем по вашим заявкам.</string>
+    <string name="stats_forecast_updated_center">Прогноз обновлён по заявкам вашего центра.</string>
+
+    <string name="stats_completion_format">%1$.1f%% от всех</string>
+    <string name="stats_dataset_total">Всего заявок</string>
+    <string name="stats_dataset_issued">Выдано</string>
+
+    <string name="stats_forecast_apps_next_month">Прогноз заявок на следующий месяц</string>
+    <string name="stats_forecast_items_next_month">Сколько вещей нужно в следующем месяце</string>
+    <string name="stats_recommended_prepare_format">Рекомендуется подготовить: %1$d</string>
+    <string name="stats_items_at_risk_format">Позиции с риском нехватки: %1$d</string>
+    <string name="stats_expected_center_load">Ожидаемая нагрузка на центр</string>
+    <string name="stats_load_low_label">Низкая</string>
+    <string name="stats_load_medium_label">Средняя</string>
+    <string name="stats_load_high_label">Высокая</string>
+    <string name="stats_load_critical_label">Очень высокая</string>
+    <string name="stats_load_details_format">Спрос по вещам: %1$d | Дозаказ: %2$d | Риск позиций: %3$d</string>
+    <string name="stats_load_details_placeholder">Спрос по вещам: 0 | Дозаказ: 0 | Риск позиций: 0</string>
+
+    <string name="stats_busy_slots_title">Пиковые часы посещений</string>
+    <string name="stats_busy_slots_desc">Для удобного планирования выдачи и очереди</string>
+    <string name="stats_busy_slot_line">%1$s: ~%2$d визитов (%3$d%%)</string>
+    <string name="stats_busy_slots_empty">Недостаточно данных по времени визитов</string>
+    <string name="stats_peaks_format">Пик заявок: %1$s | Пик спроса на вещи: %2$s</string>
+    <string name="stats_peaks_placeholder">Пик заявок: - | Пик спроса на вещи: -</string>
+
+    <string name="stats_item_forecast_title">Прогноз по вещам (по названиям)</string>
+    <string name="stats_item_forecast_desc">Сколько нужно каждой вещи на 1 и 3 месяца вперед</string>
+    <string name="stats_not_enough_items_data">Недостаточно данных по вещам для прогноза</string>
+    <string name="stats_table_item">Вещь</string>
+    <string name="stats_table_stock">Остаток</string>
+    <string name="stats_table_need_1m">Нужно на 1 мес</string>
+    <string name="stats_table_need_3m">Нужно на 3 мес</string>
+    <string name="stats_table_reorder">Дозаказ сейчас</string>
+    <string name="stats_table_risk">Риск</string>
+    <string name="stats_risk_ok">Нормально</string>
+    <string name="stats_risk_watch">Нужен контроль</string>
+    <string name="stats_risk_critical">Высокий риск</string>
+
+    <string name="stats_load_forecast_months_title">Прогноз нагрузки по месяцам</string>
+    <string name="stats_load_forecast_months_desc">Ожидаемые заявки и уже запланированные визиты</string>
+    <string name="stats_timeline_expected_apps">Ожидаемые заявки</string>
+    <string name="stats_timeline_committed_apps">Уже запланировано</string>
+    <string name="stats_timeline_expected_items">Ожидаемые вещи</string>
+
+    <string name="stats_top_items_chart_title">Какие вещи будут нужны больше всего</string>
+    <string name="stats_top_items_chart_desc">Прогноз потребности по каждой вещи на следующий месяц</string>
+    <string name="stats_chart_demand">Потребность</string>
+    <string name="stats_chart_reorder">Рекомендуемый дозаказ</string>
+
+    <string name="stats_model_notes_title">Как посчитан прогноз</string>
+    <string name="stats_model_notes_empty">Пояснения пока недоступны.</string>
+
+    <string name="stats_no_data">Нет данных для отображения</string>
+
+    <string-array name="stats_time_ranges">
+        <item>Последние 3 месяца</item>
+        <item>Последние 6 месяцев</item>
+        <item>Последние 12 месяцев</item>
+        <item>Последние 2 года</item>
+        <item>Все время</item>
+    </string-array>
+</resources>

@@ -120,7 +120,7 @@ public class MainActivity3 extends AppCompatActivity {
         assert bundle != null;
         String center_name = bundle.getString("center_name");
         centerId = bundle.getString("id");
-        center_nameV.setText("Подача заявки в центр " + center_name);
+        center_nameV.setText(getString(R.string.center_application_title, center_name));
 
         loadListData(centerId);
         loadListUData(centerId);
@@ -135,7 +135,7 @@ public class MainActivity3 extends AppCompatActivity {
         editTextTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showTimePickerDialog();
+                showTimeSlotDialog();
             }
         });
 
@@ -227,6 +227,14 @@ public class MainActivity3 extends AppCompatActivity {
 
                 newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        AppointmentSlotUtil.bookSlot(
+                                mDatabase.child("Users").child(centerId),
+                                date,
+                                time,
+                                applicationId,
+                                finalUserId,
+                                fio
+                        );
                         Toast.makeText(MainActivity3.this,
                                 getString(R.string.msg_application_sent),
                                 Toast.LENGTH_SHORT).show();
@@ -256,6 +264,7 @@ public class MainActivity3 extends AppCompatActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, selectedYear, selectedMonth, selectedDay) -> {
             String selectedDate = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear; // Месяцы начинаются с 0
             editTextDate.setText(selectedDate);
+            editTextTime.setText("");
         }, year, month, day);
 
         datePickerDialog.show();
@@ -265,17 +274,38 @@ public class MainActivity3 extends AppCompatActivity {
      * Отображает Dialog выбора времени.
      * При выборе времени устанавливает выбранное значение в поле ввода времени.
      */
-    private void showTimePickerDialog() {
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+    private void showTimeSlotDialog() {
+        String selectedDate = editTextDate.getText().toString();
+        if (TextUtils.isEmpty(selectedDate)) {
+            Toast.makeText(this, getString(R.string.error_enter_date), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, (view, selectedHour, selectedMinute) -> {
-            String selectedTime = selectedHour + ":" + String.format("%02d", selectedMinute);
-            editTextTime.setText(selectedTime);
-        }, hour, minute, true);
+        AppointmentSlotUtil.loadOrCreateSlots(
+                mDatabase.child("Users").child(centerId),
+                selectedDate,
+                new AppointmentSlotUtil.SlotsCallback() {
+                    @Override
+                    public void onLoaded(List<AppointmentSlotUtil.Slot> slots) {
+                        if (slots.isEmpty()) {
+                            Toast.makeText(MainActivity3.this, getString(R.string.schedule_no_slots), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String[] values = new String[slots.size()];
+                        for (int i = 0; i < slots.size(); i++) {
+                            values[i] = slots.get(i).time;
+                        }
+                        new androidx.appcompat.app.AlertDialog.Builder(MainActivity3.this)
+                                .setTitle(getString(R.string.schedule_choose_slot))
+                                .setItems(values, (dialog, which) -> editTextTime.setText(values[which]))
+                                .show();
+                    }
 
-        timePickerDialog.show();
+                    @Override
+                    public void onError() {
+                        Toast.makeText(MainActivity3.this, getString(R.string.error_load_data), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     /**
@@ -292,7 +322,8 @@ public class MainActivity3 extends AppCompatActivity {
                 listC.clear();
                 for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
                     Map<String, String> item = (Map<String, String>) itemSnapshot.getValue();
-                    if (item != null && item.containsKey("name") && item.containsKey("quantity")) {
+                    if (item != null && item.containsKey("name") && item.containsKey("quantity")
+                            && isPositiveQuantity(item.get("quantity"))) {
                         listC.add(item);
                     }
                 }
@@ -330,5 +361,20 @@ public class MainActivity3 extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
+
+    /**
+     * Пользователю доступны только позиции с положительным остатком.
+     *
+     * @param rawQuantity количество из Firebase
+     * @return true, если остаток больше нуля
+     */
+    private boolean isPositiveQuantity(Object rawQuantity) {
+        if (rawQuantity == null) return false;
+        try {
+            return Double.parseDouble(String.valueOf(rawQuantity).replace(",", ".")) > 0;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 }

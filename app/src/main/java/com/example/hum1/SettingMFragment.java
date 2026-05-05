@@ -133,11 +133,7 @@ public class SettingMFragment extends Fragment {
      * Устанавливает обработчики нажатий на кнопки: выход, изменение пароля и удаление аккаунта.
      */
     private void setupButtons() {
-        logoutV.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(getActivity(), AuthActivity.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-        });
+        logoutV.setOnClickListener(v -> showLogoutConfirmationDialog());
 
         deleteV.setOnClickListener(v -> showDeleteConfirmationDialog());
 
@@ -155,7 +151,21 @@ public class SettingMFragment extends Fragment {
                 .setTitle(getString(R.string.confirm_delete_title))
                 .setMessage(getString(R.string.confirm_delete_message))
                 .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteAccount())
-                .setNegativeButton(getString(android.R.string.cancel), null);
+                .setNegativeButton(getString(android.R.string.cancel), null)
+                .show();
+    }
+
+    private void showLogoutConfirmationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.confirm_logout_title))
+                .setMessage(getString(R.string.confirm_logout_message))
+                .setPositiveButton(getString(R.string.logout), (dialog, which) -> {
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(getActivity(), AuthActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                })
+                .setNegativeButton(getString(android.R.string.cancel), null)
+                .show();
     }
 
     /**

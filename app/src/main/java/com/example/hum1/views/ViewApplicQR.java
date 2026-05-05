@@ -3,6 +3,7 @@ package com.example.hum1.views;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hum1.CenterApplicationsFragment;
+import com.example.hum1.CenterActivity;
+import com.example.hum1.InventoryReservationUtil;
 import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.example.hum1.adapters.ListAdapter;
@@ -139,58 +141,7 @@ public class ViewApplicQR extends AppCompatActivity {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
                         center_name = snapshot.child("center_name").getValue(String.class);
-                    }
-                }
-            }
-        });
-
-        mDatabase.child("Applications").child(id).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DataSnapshot snapshot = task.getResult();
-                    if (snapshot.exists()) {
-                        String center = snapshot.child("center").getValue(String.class);
-                        status = snapshot.child("status").getValue(String.class);
-                        if (!center_name.equals(center)) {
-                            errorV.setText(getString(R.string.error_application_other_center));
-                            linearLayoutDate.setVisibility(View.GONE);
-                            linearLayoutTime.setVisibility(View.GONE);
-                            linearLayoutEmail.setVisibility(View.GONE);
-                            linearLayoutFio.setVisibility(View.GONE);
-                            linearLayoutPhone.setVisibility(View.GONE);
-                            linearLayoutBirth.setVisibility(View.GONE);
-                            StatusB.setVisibility(View.GONE);
-                        }
-                        else if (!("Одобрено").equals(status)) {
-                            errorV.setText(getString(R.string.error_application_already_issued));
-                            linearLayoutDate.setVisibility(View.GONE);
-                            linearLayoutTime.setVisibility(View.GONE);
-                            linearLayoutEmail.setVisibility(View.GONE);
-                            linearLayoutFio.setVisibility(View.GONE);
-                            linearLayoutPhone.setVisibility(View.GONE);
-                            linearLayoutBirth.setVisibility(View.GONE);
-                            StatusB.setVisibility(View.GONE);
-                        }
-
-                        else {
-                            errorV.setVisibility(View.GONE);
-                            linearLayoutError.setVisibility(View.GONE);
-                            email = snapshot.child("email").getValue(String.class);
-                            fio = snapshot.child("fio").getValue(String.class);
-                            phone_number = snapshot.child("phone_number").getValue(String.class);
-                            birth = snapshot.child("birth").getValue(String.class);
-                            date = snapshot.child("date").getValue(String.class);
-                            time = snapshot.child("time").getValue(String.class);
-                            dateV.setText(date);
-                            timeV.setText(time);
-                            emailV.setText(email);
-                            fioV.setText(fio);
-                            phone_numberV.setText(phone_number);
-                            birthV.setText(birth);
-                            loadListData();
-                            loadListU3Data();
-                        }
+                        resolveAndLoadApplication(id);
                     }
                 }
             }
@@ -199,20 +150,121 @@ public class ViewApplicQR extends AppCompatActivity {
 
 
         StatusB.setOnClickListener(v -> {
-            mDatabase.child("Applications").child(id).child("status")
-                    .setValue("Выдано")
-                    .addOnSuccessListener(aVoid -> updateItemQuantities())
-                    .addOnFailureListener(e ->
+            InventoryReservationUtil.issueApplication(
+                    ViewApplicQR.this,
+                    mDatabase,
+                    userId,
+                    id,
+                    new InventoryReservationUtil.Completion() {
+                        @Override
+                        public void onSuccess() {
                             Toast.makeText(
-                                    this,
-                                    getString(R.string.error_update_status),
+                                    ViewApplicQR.this,
+                                    getString(R.string.status_changed_to_issued),
                                     Toast.LENGTH_SHORT
-                            ).show());
-            Intent intent = new Intent(ViewApplicQR.this, CenterApplicationsFragment.class);
-            startActivity(intent);
-            finish();
+                            ).show();
+                            Intent intent = new Intent(ViewApplicQR.this, CenterActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onError(String message) {
+                            Toast.makeText(
+                                    ViewApplicQR.this,
+                                    TextUtils.isEmpty(message) ? getString(R.string.error_update_status) : message,
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    });
         });
 
+    }
+
+    /**
+     * Находит заявку либо по старому Firebase-id, либо по новому числовому коду получения.
+     *
+     * @param rawCode значение из QR-кода или ручного ввода
+     */
+    private void resolveAndLoadApplication(String rawCode) {
+        if (TextUtils.isEmpty(rawCode)) {
+            showApplicationError(getString(R.string.error_get_application));
+            return;
+        }
+
+        mDatabase.child("PickupCodes").child(rawCode).get().addOnCompleteListener(codeTask -> {
+                if (!codeTask.isSuccessful() || codeTask.getResult() == null || !codeTask.getResult().exists()) {
+                    showApplicationError(getString(R.string.error_get_application));
+                    return;
+                }
+
+                String resolvedId = codeTask.getResult().getValue(String.class);
+                if (TextUtils.isEmpty(resolvedId)) {
+                    showApplicationError(getString(R.string.error_get_application));
+                    return;
+                }
+
+                id = resolvedId;
+                mDatabase.child("Applications").child(resolvedId).get().addOnCompleteListener(appTask -> {
+                    if (appTask.isSuccessful() && appTask.getResult() != null && appTask.getResult().exists()) {
+                        loadApplicationSnapshot(appTask.getResult());
+                    } else {
+                        showApplicationError(getString(R.string.error_get_application));
+                    }
+                });
+        });
+    }
+
+    /**
+     * Заполняет экран данными найденной заявки и проверяет, относится ли она к текущему центру.
+     *
+     * @param snapshot снимок заявки из Firebase
+     */
+    private void loadApplicationSnapshot(DataSnapshot snapshot) {
+        String center = snapshot.child("center").getValue(String.class);
+        status = snapshot.child("status").getValue(String.class);
+
+        if (!TextUtils.equals(center_name, center)) {
+            showApplicationError(getString(R.string.error_application_other_center));
+            return;
+        }
+        if (!InventoryReservationUtil.STATUS_APPROVED.equals(status)) {
+            showApplicationError(getString(R.string.error_application_already_issued));
+            return;
+        }
+
+        errorV.setVisibility(View.GONE);
+        linearLayoutError.setVisibility(View.GONE);
+        email = snapshot.child("email").getValue(String.class);
+        fio = snapshot.child("fio").getValue(String.class);
+        phone_number = snapshot.child("phone_number").getValue(String.class);
+        birth = snapshot.child("birth").getValue(String.class);
+        date = snapshot.child("date").getValue(String.class);
+        time = snapshot.child("time").getValue(String.class);
+        dateV.setText(date);
+        timeV.setText(time);
+        emailV.setText(email);
+        fioV.setText(fio);
+        phone_numberV.setText(phone_number);
+        birthV.setText(birth);
+        loadListData();
+        loadListU3Data();
+    }
+
+    /**
+     * Скрывает данные заявки и показывает причину, почему выдача невозможна.
+     *
+     * @param message текст ошибки для пользователя
+     */
+    private void showApplicationError(String message) {
+        errorV.setText(message);
+        linearLayoutDate.setVisibility(View.GONE);
+        linearLayoutTime.setVisibility(View.GONE);
+        linearLayoutEmail.setVisibility(View.GONE);
+        linearLayoutFio.setVisibility(View.GONE);
+        linearLayoutPhone.setVisibility(View.GONE);
+        linearLayoutBirth.setVisibility(View.GONE);
+        StatusB.setVisibility(View.GONE);
     }
 
     /**

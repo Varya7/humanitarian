@@ -39,7 +39,7 @@ public class CenterListActivity extends AppCompatActivity {
     private Button btnReg, btnAddRow;
     private LinearLayout containerFields;
     private Double latitude, longitude;
-    String centerName, address, email, password, fio, work_time, phone_number, doc;
+    String centerName, address, email, password, fio, work_time, work_start, work_end, appointment_interval, working_days, phone_number, doc;
     private List<Map<String, String>> dataList = new ArrayList<>();
 
     /**
@@ -69,6 +69,10 @@ public class CenterListActivity extends AppCompatActivity {
         password = getIntent().getStringExtra("password");
         fio = getIntent().getStringExtra("fio");
         work_time = getIntent().getStringExtra("work_time");
+        work_start = getIntent().getStringExtra("work_start");
+        work_end = getIntent().getStringExtra("work_end");
+        appointment_interval = getIntent().getStringExtra("appointment_interval_minutes");
+        working_days = getIntent().getStringExtra("working_days");
         phone_number = getIntent().getStringExtra("phone_number");
         doc = getIntent().getStringExtra("doc");
         latitude = getIntent().getDoubleExtra("latitude", 0.0);
@@ -183,6 +187,10 @@ public class CenterListActivity extends AppCompatActivity {
         intent.putExtra("password", password);
         intent.putExtra("fio", fio);
         intent.putExtra("work_time", work_time);
+        intent.putExtra("work_start", work_start);
+        intent.putExtra("work_end", work_end);
+        intent.putExtra("appointment_interval_minutes", appointment_interval);
+        intent.putExtra("working_days", working_days);
         intent.putExtra("phone_number", phone_number);
         intent.putExtra("doc", doc);
         intent.putExtra("latitude", latitude);

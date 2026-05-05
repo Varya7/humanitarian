@@ -113,6 +113,7 @@ public class CenterApplicationsFragment extends Fragment {
 
         // Локализованные статусы для спиннера
         List<String> statuses = new ArrayList<>();
+        statuses.add(getString(R.string.status_all));
         statuses.add(getString(R.string.status_pending));
         statuses.add(getString(R.string.status_approved));
         statuses.add(getString(R.string.status_rejected));
@@ -241,7 +242,7 @@ public class CenterApplicationsFragment extends Fragment {
         statusFiltered.clear();
         for (Application app : allCenterApps) {
             String status = app.getStatus();
-            if (status != null && status.equals(selectedDbStatus)) {
+            if (selectedDbStatus == null || (status != null && status.equals(selectedDbStatus))) {
                 statusFiltered.add(app);
             }
         }
@@ -346,7 +347,9 @@ public class CenterApplicationsFragment extends Fragment {
             return displayStatus;
         }
 
-        if (displayStatus.equals(getString(R.string.status_pending))) {
+        if (displayStatus.equals(getString(R.string.status_all))) {
+            return null;
+        } else if (displayStatus.equals(getString(R.string.status_pending))) {
             return "Рассматривается";
         } else if (displayStatus.equals(getString(R.string.status_approved))) {
             return "Одобрено";

@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">hum1</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">Главная</string>
+    <string name="title_dashboard">Панель</string>
+    <string name="title_notifications">Уведомления</string>
     <string name="login">Вход</string>
     <string name="email">Email</string>
     <string name="password">Пароль</string>
@@ -13,7 +13,7 @@
     <string name="name">Имя</string>
     <string name="surname">Фамилия</string>
     <string name="phone_number">Номер телефона</string>
-    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_main2">Центр</string>
     <string name="registration_of_the_center">Регистрация центра</string>
     <string name="center_name">Название центра</string>
     <string name="address">Адрес</string>
@@ -22,10 +22,9 @@
     <string name="register_user">Регистрация аккаунта</string>
     <string name="title_activity_app_true">Одобрено</string>
     <string name="title_activity_app_false">Отклонено</string>
-    <string name="title_activity_map_c">MapActivityC</string>
-    <string name="title_activity_view_applic_qr">ViewApplicQR</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_map_c">Карта</string>
+    <string name="title_activity_view_applic_qr">Выдача заявки</string>
+    <string name="hello_blank_fragment">Пустой раздел</string>
     <string name="applic">Заявки</string>
     <string name="account">Аккаунт</string>
     <string name="activity_center_list1">Укажите, за какими вещами можно обратиться в центр</string>
@@ -195,7 +194,10 @@
     <string name="error_coordinates_unavailable">Координаты не доступны</string>
     <string name="status_approved_exclamation">Заявка одобрена!</string>
     <string name="status_pending">Рассматривается</string>
-
+    <string name="error_remote">Ошибка удаленного сервиса</string>
+    <string name="error_network">Ошибка сети. Проверьте интернет</string>
+    <string name="try_again">Повторить попытку</string>
+    <string name="no_connection">Нет подключения к интернету</string>
 
 
     <string-array name="sort_options">
@@ -214,6 +216,41 @@
     <string name="delete">Удалить</string>
 
     <string name="id_copied">Id скопирован</string>
+    <string name="auth_internet_still_unavailable">Интернет всё ещё недоступен. Проверьте подключение.</string>
+    <string name="auth_no_internet_toast">Нет подключения к интернету</string>
+    <string name="auth_network_error">Ошибка сети. Пожалуйста, проверьте подключение к интернету.</string>
+    <string name="auth_server_unavailable">Не удалось подключиться к серверу. Пожалуйста, проверьте интернет-соединение.</string>
+    <string name="auth_user_check_error">Ошибка при проверке данных пользователя: %1$s</string>
+    <string name="scan_prompt">Наведите камеру на QR-код</string>
+    <string name="confirm_logout_title">Подтверждение выхода</string>
+    <string name="confirm_logout_message">Вы действительно хотите выйти из аккаунта?</string>
+    <string name="inventory_shortage_title">Недостаточно доступных вещей</string>
+    <string name="inventory_shortage_message">Для части вещей доступный остаток меньше, чем запрошено. Если продолжить, доступный остаток станет 0, а вся заявка будет забронирована.</string>
+    <string name="inventory_reserve_anyway">Всё равно забронировать</string>
+    <string name="inventory_reserved">Забронировано</string>
+    <string name="stats_access_denied_center_pending">Статистика будет доступна после одобрения регистрации центра.</string>
+    <string name="stats_table_reserved">Забронировано</string>
+    <string name="schedule_title">Расписание приёма</string>
+    <string name="schedule_work_start">Начало работы</string>
+    <string name="schedule_work_end">Окончание работы</string>
+    <string name="schedule_interval">Интервал записи, минут</string>
+    <string name="schedule_working_days">Рабочие дни (mon,tue,wed,thu,fri,sat,sun)</string>
+    <string name="schedule_manage">Календарь записей</string>
+    <string name="schedule_choose_slot">Выберите свободное окно</string>
+    <string name="schedule_no_slots">На выбранный день нет свободных окон</string>
+    <string name="schedule_slot_saved">Окно сохранено</string>
+    <string name="schedule_slot_deleted">Окно удалено</string>
+    <string name="schedule_add_slot">Добавить окно</string>
+    <string name="schedule_delete_free_slot">Удалить свободное окно</string>
+    <string name="schedule_free">Свободно</string>
+    <string name="chat">Чат</string>
+    <string name="chat_with_center">Написать в центр</string>
+    <string name="chat_title">Сообщения</string>
+    <string name="chat_message_hint">Введите сообщение</string>
+    <string name="chat_send">Отправить</string>
+    <string name="chat_empty">Сообщений пока нет</string>
+    <string name="chat_message_sent">Сообщение отправлено</string>
+    <string name="center_application_title">Подача заявки в центр %1$s</string>
 
     <string-array name="time_ranges">
         <item>Последние 3 месяца</item>
@@ -222,5 +259,27 @@
         <item>Последние 2 года</item>
         <item>Все время</item>
     </string-array>
-
+    <string name="schedule_tab">&#1047;&#1072;&#1087;&#1080;&#1089;&#1080;</string>
+    <string name="chat_tab">&#1063;&#1072;&#1090;&#1099;</string>
+    <string name="schedule_hint">&#1042;&#1099;&#1073;&#1077;&#1088;&#1080;&#1090;&#1077; &#1076;&#1077;&#1085;&#1100;: &#1079;&#1072;&#1085;&#1103;&#1090;&#1099;&#1077; &#1079;&#1072;&#1087;&#1080;&#1089;&#1080; &#1084;&#1086;&#1078;&#1085;&#1086; &#1086;&#1090;&#1082;&#1088;&#1099;&#1090;&#1100;, &#1089;&#1074;&#1086;&#1073;&#1086;&#1076;&#1085;&#1099;&#1077; &#1086;&#1082;&#1085;&#1072; &#1084;&#1086;&#1078;&#1085;&#1086; &#1091;&#1076;&#1072;&#1083;&#1080;&#1090;&#1100; &#1080;&#1083;&#1080; &#1076;&#1086;&#1073;&#1072;&#1074;&#1080;&#1090;&#1100; &#1074;&#1088;&#1091;&#1095;&#1085;&#1091;&#1102;.</string>
+    <string name="schedule_open_booking">&#1054;&#1090;&#1082;&#1088;&#1099;&#1090;&#1100;</string>
+    <string name="chat_center_hint">&#1047;&#1076;&#1077;&#1089;&#1100; &#1074;&#1080;&#1076;&#1085;&#1099; &#1086;&#1073;&#1088;&#1072;&#1097;&#1077;&#1085;&#1080;&#1103; &#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1077;&#1083;&#1077;&#1081; &#1082; &#1074;&#1072;&#1096;&#1077;&#1084;&#1091; &#1094;&#1077;&#1085;&#1090;&#1088;&#1091;.</string>
+    <string name="inventory_available_reserved_format">&#1044;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1086;: %1$s - &#1047;&#1072;&#1073;&#1088;&#1086;&#1085;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1086;: %2$d</string>
+    <string name="map_use_gps_start">&#1048;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1100; &#1084;&#1086;&#1105; &#1084;&#1077;&#1089;&#1090;&#1086;</string>
+    <string name="map_open_yandex">&#1054;&#1090;&#1082;&#1088;&#1099;&#1090;&#1100; &#1074; &#1071;&#1085;&#1076;&#1077;&#1082;&#1089; &#1050;&#1072;&#1088;&#1090;&#1072;&#1093;</string>
+    <string name="map_gps_title">&#1042;&#1082;&#1083;&#1102;&#1095;&#1080;&#1090;&#1100; GPS?</string>
+    <string name="map_gps_message">&#1063;&#1090;&#1086;&#1073;&#1099; &#1087;&#1086;&#1089;&#1090;&#1088;&#1086;&#1080;&#1090;&#1100; &#1084;&#1072;&#1088;&#1096;&#1088;&#1091;&#1090; &#1086;&#1090; &#1074;&#1072;&#1096;&#1077;&#1075;&#1086; &#1084;&#1077;&#1089;&#1090;&#1072;, &#1088;&#1072;&#1079;&#1088;&#1077;&#1096;&#1080;&#1090;&#1077; &#1075;&#1077;&#1086;&#1083;&#1086;&#1082;&#1072;&#1094;&#1080;&#1102; &#1074; &#1085;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1072;&#1093;.</string>
+    <string name="map_gps_enable">&#1054;&#1090;&#1082;&#1088;&#1099;&#1090;&#1100; &#1085;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080;</string>
+    <string name="schedule_days_select">&#1042;&#1099;&#1073;&#1077;&#1088;&#1080;&#1090;&#1077; &#1088;&#1072;&#1073;&#1086;&#1095;&#1080;&#1077; &#1076;&#1085;&#1080;</string>
+    <string name="day_mon">&#1055;&#1085;</string>
+    <string name="day_tue">&#1042;&#1090;</string>
+    <string name="day_wed">&#1057;&#1088;</string>
+    <string name="day_thu">&#1063;&#1090;</string>
+    <string name="day_fri">&#1055;&#1090;</string>
+    <string name="day_sat">&#1057;&#1073;</string>
+    <string name="day_sun">&#1042;&#1089;</string>
+    <string name="map_choose_start">&#1042;&#1099;&#1073;&#1088;&#1072;&#1090;&#1100; &#1085;&#1072;&#1095;&#1072;&#1083;&#1086; &#1085;&#1072; &#1082;&#1072;&#1088;&#1090;&#1077;</string>
+    <string name="map_tap_start">&#1053;&#1072;&#1078;&#1084;&#1080;&#1090;&#1077; &#1085;&#1072; &#1082;&#1072;&#1088;&#1090;&#1091;, &#1095;&#1090;&#1086;&#1073;&#1099; &#1074;&#1099;&#1073;&#1088;&#1072;&#1090;&#1100; &#1085;&#1072;&#1095;&#1072;&#1083;&#1086; &#1084;&#1072;&#1088;&#1096;&#1088;&#1091;&#1090;&#1072;</string>
+    <string name="map_start_selected">&#1053;&#1072;&#1095;&#1072;&#1083;&#1100;&#1085;&#1072;&#1103; &#1090;&#1086;&#1095;&#1082;&#1072; &#1074;&#1099;&#1073;&#1088;&#1072;&#1085;&#1072;</string>
+    <string name="status_all">&#1042;&#1089;&#1077; &#1079;&#1072;&#1103;&#1074;&#1082;&#1080;</string>
 </resources>

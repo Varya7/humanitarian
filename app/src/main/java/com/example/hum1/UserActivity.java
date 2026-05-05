@@ -35,9 +35,9 @@ public class UserActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
-        EdgeToEdge.enable(this);
 
         setContentView(R.layout.activity_user);
+        LanguageToggleHelper.setup(this);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 

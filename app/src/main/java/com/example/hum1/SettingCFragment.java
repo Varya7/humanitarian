@@ -50,9 +50,10 @@ public class SettingCFragment extends Fragment {
 
     private LinearLayout commentLayout;
     private TextView commV, statusV, emailV, fioV, work_timeV, phone_numberV, logoutV, deleteV, center_nameV, addressV, docV;
-    private Button edit_dataB, edit_passwordB, edit_listB, edit_listU;
+    private Button edit_dataB, edit_passwordB, edit_listB, edit_listU, scheduleB, chatsB;
     private ImageButton statB;
     private Spinner spinnerLanguage;
+    private ValueEventListener listDataListener;
 
 
     /**
@@ -119,6 +120,10 @@ public class SettingCFragment extends Fragment {
         work_timeV = view.findViewById(R.id.work_time);
         phone_numberV = view.findViewById(R.id.phone_number);
         edit_dataB = view.findViewById(R.id.btn_edit_data);
+        scheduleB = view.findViewById(R.id.btn_schedule);
+        chatsB = view.findViewById(R.id.btn_chats);
+        scheduleB.setVisibility(View.GONE);
+        chatsB.setVisibility(View.GONE);
         edit_passwordB = view.findViewById(R.id.btn_edit_password);
         edit_listB = view.findViewById(R.id.btn_edit_list);
         edit_listU = view.findViewById(R.id.btn_edit_list_user);
@@ -165,11 +170,12 @@ public class SettingCFragment extends Fragment {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!isAdded() || getView() == null) return;
                 if (snapshot.exists()) {
                     center_nameV.setText(snapshot.child("center_name").getValue(String.class));
                     addressV.setText(snapshot.child("address").getValue(String.class));
                     fioV.setText(snapshot.child("fio").getValue(String.class));
-                    work_timeV.setText(snapshot.child("work_time").getValue(String.class));
+                    work_timeV.setText(ScheduleFormatter.fromSnapshot(requireContext(), snapshot));
                     emailV.setText(snapshot.child("email").getValue(String.class));
                     phone_numberV.setText(snapshot.child("phone_number").getValue(String.class));
                     docV.setText(snapshot.child("doc").getValue(String.class));
@@ -201,14 +207,22 @@ public class SettingCFragment extends Fragment {
      * Загрузка списка заявок центра из базы данных и обновление адаптера RecyclerView.
      */
     private void loadListData() {
-        userRef.child("list_c").addValueEventListener(new ValueEventListener() {
+        listDataListener = new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!isAdded() || getView() == null) return;
                 listC.clear();
-                for (DataSnapshot itemSnapshot : dataSnapshot.getChildren()) {
+                DataSnapshot reservedSnapshot = dataSnapshot.child("reserved_items");
+                for (DataSnapshot itemSnapshot : dataSnapshot.child("list_c").getChildren()) {
                     Map<String, String> item = (Map<String, String>) itemSnapshot.getValue();
                     if (item != null && item.containsKey("name") && item.containsKey("quantity")) {
+                        String name = item.get("name");
+                        int reserved = readReservedQuantity(reservedSnapshot, name);
+                        if (reserved > 0) {
+                            item = new java.util.HashMap<>(item);
+                            item.put("quantity", getString(R.string.inventory_available_reserved_format, item.get("quantity"), reserved));
+                        }
                         listC.add(item);
                     }
                 }
@@ -218,7 +232,30 @@ public class SettingCFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
-        });
+        };
+        userRef.addValueEventListener(listDataListener);
+    }
+
+    private int readReservedQuantity(DataSnapshot reservedSnapshot, String itemName) {
+        if (itemName == null || !reservedSnapshot.exists()) return 0;
+        for (DataSnapshot child : reservedSnapshot.getChildren()) {
+            if (itemName.equalsIgnoreCase(child.getKey())) {
+                return parseInt(child.getValue());
+            }
+            String name = child.child("name").getValue(String.class);
+            if (itemName.equalsIgnoreCase(name)) {
+                return parseInt(child.child("quantity").getValue());
+            }
+        }
+        return 0;
+    }
+
+    private int parseInt(Object raw) {
+        try {
+            return Math.max(0, (int) Math.round(Double.parseDouble(String.valueOf(raw).replace(",", "."))));
+        } catch (Exception ignored) {
+            return 0;
+        }
     }
 
     /**
@@ -226,7 +263,7 @@ public class SettingCFragment extends Fragment {
      * Позволяет избежать проблем с прокруткой внутри ограниченного пространства.
      */
     private void updateRecyclerViewHeight() {
-        if (adapter.getItemCount() > 0 && getContext() != null) {
+        if (adapter.getItemCount() > 0 && isAdded() && getContext() != null) {
             int heightInDp = adapter.getItemCount() * 56;
             int heightInPx = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP, heightInDp, getResources().getDisplayMetrics());
@@ -237,18 +274,29 @@ public class SettingCFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        if (userRef != null && listDataListener != null) {
+            userRef.removeEventListener(listDataListener);
+            listDataListener = null;
+        }
+        super.onDestroyView();
+    }
+
     /**
      * Настройка обработчиков нажатий для кнопок редактирования, выхода и удаления аккаунта.
      */
     private void setupButtons() {
-        logoutV.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(getActivity(), AuthActivity.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-        });
+        logoutV.setOnClickListener(v -> showLogoutConfirmationDialog());
 
         edit_dataB.setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), EditDataCenterActivity.class)));
+
+        scheduleB.setOnClickListener(v ->
+                startActivity(new Intent(getActivity(), CenterScheduleActivity.class)));
+
+        chatsB.setOnClickListener(v ->
+                startActivity(new Intent(getActivity(), CenterChatsActivity.class)));
 
         edit_passwordB.setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), ChangePasswordActivity.class)));
@@ -274,8 +322,25 @@ public class SettingCFragment extends Fragment {
                 .setTitle(getString(R.string.confirm_delete_title))
                 .setMessage(getString(R.string.confirm_delete_message))
                 .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteAccount())
-                .setNegativeButton(getString(android.R.string.cancel), null);
+                .setNegativeButton(getString(android.R.string.cancel), null)
+                .show();
 
+    }
+
+    /**
+     * Показывает подтверждение перед выходом из аккаунта.
+     */
+    private void showLogoutConfirmationDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.confirm_logout_title))
+                .setMessage(getString(R.string.confirm_logout_message))
+                .setPositiveButton(getString(R.string.logout), (dialog, which) -> {
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(getActivity(), AuthActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                })
+                .setNegativeButton(getString(android.R.string.cancel), null)
+                .show();
     }
 
     /**

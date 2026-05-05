@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hum1.CenterActivity;
-import com.example.hum1.CenterApplicationsFragment;
+import com.example.hum1.InventoryReservationUtil;
 import com.example.hum1.LocaleUtil;
 import com.example.hum1.R;
 import com.example.hum1.adapters.ListAdapter;
@@ -30,6 +31,7 @@ import com.example.hum1.adapters.ListU3Adapter;
 import com.example.hum1.classes.ListU3;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -150,25 +152,40 @@ public class ViewApplicC extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String commentText = String.valueOf(comV.getText());
+                String centerId = FirebaseAuth.getInstance().getCurrentUser() == null
+                        ? ""
+                        : FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                mDatabase.child("Applications").child(id)
-                        .child("status")
-                        .setValue("Одобрено");
-                if (!commentText.equals("")) {
-                    mDatabase.child("Applications").child(id)
-                            .child("comment")
-                            .setValue(commentText);
-                }
-
-                Toast.makeText(
+                InventoryReservationUtil.approveApplication(
                         ViewApplicC.this,
-                        getString(R.string.status_changed_to_approved),
-                        Toast.LENGTH_SHORT
-                ).show();
+                        mDatabase,
+                        centerId,
+                        id,
+                        commentText,
+                        false,
+                        new InventoryReservationUtil.Completion() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(
+                                        ViewApplicC.this,
+                                        getString(R.string.status_changed_to_approved),
+                                        Toast.LENGTH_SHORT
+                                ).show();
 
-                Intent intent = new Intent(ViewApplicC.this, CenterActivity.class);
-                startActivity(intent);
-                finish();
+                                Intent intent = new Intent(ViewApplicC.this, CenterActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onError(String message) {
+                                Toast.makeText(
+                                        ViewApplicC.this,
+                                        TextUtils.isEmpty(message) ? getString(R.string.error_save_data) : message,
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
+                        });
             }
         });
 
@@ -179,7 +196,7 @@ public class ViewApplicC extends AppCompatActivity {
 
                 mDatabase.child("Applications").child(id)
                         .child("status")
-                        .setValue("Отклонено");
+                        .setValue(InventoryReservationUtil.STATUS_REJECTED);
                 if (!commentText.equals("")) {
                     mDatabase.child("Applications").child(id)
                             .child("comment")

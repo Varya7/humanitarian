@@ -19,8 +19,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hum1.LocaleUtil;
-import com.example.hum1.ModeratorListFragment;
+import com.example.hum1.ModeratorActivity;
 import com.example.hum1.R;
+import com.example.hum1.ScheduleFormatter;
 import com.example.hum1.adapters.ListAdapter;
 import com.example.hum1.adapters.ListUAdapter;
 import com.example.hum1.classes.ListU;
@@ -109,11 +110,10 @@ public class ViewCenterApp extends AppCompatActivity {
 
                         phone_number = snapshot.child("phone_number").getValue(String.class);
                         center_name = snapshot.child("center_name").getValue(String.class);
-                        work_time = snapshot.child("work_time").getValue(String.class);
                         address = snapshot.child("address").getValue(String.class);
                         doc = snapshot.child("doc").getValue(String.class);
                         status = snapshot.child("status").getValue(String.class);
-                        work_timeV.setText(work_time);
+                        work_timeV.setText(ScheduleFormatter.fromSnapshot(ViewCenterApp.this, snapshot));
                         addressV.setText(address);
                         emailV.setText(email);
                         fioV.setText(fio);
@@ -121,7 +121,7 @@ public class ViewCenterApp extends AppCompatActivity {
                         docV.setText(doc);
                         center_nameV.setText(center_name);
                         if (status.equals("Одобрено")){
-                            statusT.setText("Заявка одобрена!");
+                            statusT.setText(getString(R.string.status_approved_exclamation));
                         }
 
                     }
@@ -146,7 +146,7 @@ public class ViewCenterApp extends AppCompatActivity {
                         getString(R.string.status_changed_to_approved),
                         Toast.LENGTH_SHORT
                 ).show();
-                Intent intent = new Intent(ViewCenterApp.this, ModeratorListFragment.class);
+                Intent intent = new Intent(ViewCenterApp.this, ModeratorActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -169,7 +169,7 @@ public class ViewCenterApp extends AppCompatActivity {
                         getString(R.string.status_changed_to_rejected),
                         Toast.LENGTH_SHORT
                 ).show();
-                Intent intent = new Intent(ViewCenterApp.this, ModeratorListFragment.class);
+                Intent intent = new Intent(ViewCenterApp.this, ModeratorActivity.class);
                 startActivity(intent);
                 finish();
             }

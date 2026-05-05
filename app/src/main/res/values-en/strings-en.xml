@@ -15,7 +15,7 @@
     <string name="surname">Last name</string>
     <string name="phone_number">Phone number</string>
 
-    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_main2">Center</string>
     <string name="registration_of_the_center">Center registration</string>
     <string name="center_name">Center name</string>
     <string name="address">Address</string>
@@ -24,9 +24,9 @@
     <string name="register_user">Register account</string>
     <string name="title_activity_app_true">Approved</string>
     <string name="title_activity_app_false">Rejected</string>
-    <string name="title_activity_map_c">MapActivityC</string>
-    <string name="title_activity_view_applic_qr">ViewApplicQR</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_map_c">Map</string>
+    <string name="title_activity_view_applic_qr">Application issue</string>
+    <string name="hello_blank_fragment">Empty section</string>
 
     <string name="applic">Applications</string>
     <string name="account">Account</string>
@@ -74,6 +74,8 @@
     <string name="monthdinamic">Monthly dynamics</string>
     <string name="appsofthisperiod">Applications for the selected period</string>
     <string name="nodata">No data to display</string>
+    <string name="try_again">Try again</string>
+    <string name="no_connection">No internet connection</string>
 
     <string name="myapps">My applications</string>
     <string name="status">Status</string>
@@ -221,7 +223,44 @@
     <string name="confirm_delete_message">Do you want to delete your account?</string>
     <string name="delete">Delete</string>
 
+    <string name="error_remote">Remote service error</string>
+    <string name="error_network">Network connection error. Check your internet</string>
     <string name="id_copied">ID copied</string>
+    <string name="auth_internet_still_unavailable">Internet is still unavailable. Check your connection.</string>
+    <string name="auth_no_internet_toast">No internet connection</string>
+    <string name="auth_network_error">Network error. Please check your internet connection.</string>
+    <string name="auth_server_unavailable">Could not connect to the server. Please check your internet connection.</string>
+    <string name="auth_user_check_error">Error checking user data: %1$s</string>
+    <string name="scan_prompt">Point the camera at the QR code</string>
+    <string name="confirm_logout_title">Confirm logout</string>
+    <string name="confirm_logout_message">Do you really want to log out?</string>
+    <string name="inventory_shortage_title">Not enough available items</string>
+    <string name="inventory_shortage_message">Some requested items exceed the available stock. If you continue, available stock will become 0 and the whole request will be reserved.</string>
+    <string name="inventory_reserve_anyway">Reserve anyway</string>
+    <string name="inventory_reserved">Reserved</string>
+    <string name="stats_access_denied_center_pending">Statistics will be available after the center registration is approved.</string>
+    <string name="stats_table_reserved">Reserved</string>
+    <string name="schedule_title">Appointment schedule</string>
+    <string name="schedule_work_start">Work start</string>
+    <string name="schedule_work_end">Work end</string>
+    <string name="schedule_interval">Appointment interval, minutes</string>
+    <string name="schedule_working_days">Working days (mon,tue,wed,thu,fri,sat,sun)</string>
+    <string name="schedule_manage">Appointment calendar</string>
+    <string name="schedule_choose_slot">Choose an available slot</string>
+    <string name="schedule_no_slots">No available slots for the selected day</string>
+    <string name="schedule_slot_saved">Slot saved</string>
+    <string name="schedule_slot_deleted">Slot deleted</string>
+    <string name="schedule_add_slot">Add slot</string>
+    <string name="schedule_delete_free_slot">Delete free slot</string>
+    <string name="schedule_free">Available</string>
+    <string name="chat">Chat</string>
+    <string name="chat_with_center">Message center</string>
+    <string name="chat_title">Messages</string>
+    <string name="chat_message_hint">Enter a message</string>
+    <string name="chat_send">Send</string>
+    <string name="chat_empty">No messages yet</string>
+    <string name="chat_message_sent">Message sent</string>
+    <string name="center_application_title">Application to %1$s</string>
 
 
     <string-array name="time_ranges">
@@ -231,5 +270,27 @@
         <item>Last 2 years</item>
         <item>All time</item>
     </string-array>
-
+    <string name="schedule_tab">Visits</string>
+    <string name="chat_tab">Chats</string>
+    <string name="schedule_hint">Choose a day: booked visits can be opened, free slots can be deleted or added manually.</string>
+    <string name="schedule_open_booking">Open</string>
+    <string name="chat_center_hint">User questions to your center are shown here.</string>
+    <string name="inventory_available_reserved_format">Available: %1$s - Reserved: %2$d</string>
+    <string name="map_use_gps_start">Use my location</string>
+    <string name="map_open_yandex">Open in Yandex Maps</string>
+    <string name="map_gps_title">Enable GPS?</string>
+    <string name="map_gps_message">Enable location on your phone to build a route from your current point.</string>
+    <string name="map_gps_enable">Open settings</string>
+    <string name="schedule_days_select">Choose working days</string>
+    <string name="day_mon">Mon</string>
+    <string name="day_tue">Tue</string>
+    <string name="day_wed">Wed</string>
+    <string name="day_thu">Thu</string>
+    <string name="day_fri">Fri</string>
+    <string name="day_sat">Sat</string>
+    <string name="day_sun">Sun</string>
+    <string name="map_choose_start">Choose start on map</string>
+    <string name="map_tap_start">Tap the map to choose the route start</string>
+    <string name="map_start_selected">Start point selected</string>
+    <string name="status_all">All applications</string>
 </resources>

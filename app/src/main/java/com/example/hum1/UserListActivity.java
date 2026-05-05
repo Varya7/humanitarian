@@ -36,7 +36,7 @@ public class UserListActivity extends AppCompatActivity {
     LinearLayout containerFields;
     private List<String> dataList = new ArrayList<>();
     List<Map<String, String>> listC = new ArrayList<>();
-    private String centerName, address, email, password, fio, work_time, phone_number, doc;
+    private String centerName, address, email, password, fio, work_time, work_start, work_end, appointment_interval, working_days, phone_number, doc;
     private double latitude, longitude;
 
     /**
@@ -69,6 +69,10 @@ public class UserListActivity extends AppCompatActivity {
         password = getIntent().getStringExtra("password");
         fio = getIntent().getStringExtra("fio");
         work_time = getIntent().getStringExtra("work_time");
+        work_start = getIntent().getStringExtra("work_start");
+        work_end = getIntent().getStringExtra("work_end");
+        appointment_interval = getIntent().getStringExtra("appointment_interval_minutes");
+        working_days = getIntent().getStringExtra("working_days");
         phone_number = getIntent().getStringExtra("phone_number");
         doc = getIntent().getStringExtra("doc");
         latitude = getIntent().getDoubleExtra("latitude", 0.0);
@@ -99,7 +103,7 @@ public class UserListActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
         EditText etMargin = new EditText(this);
-        etMargin.setHint("Поле");
+        etMargin.setHint(getString(R.string.field));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         etMargin.setLayoutParams(params);
@@ -180,6 +184,10 @@ public class UserListActivity extends AppCompatActivity {
         userData.put("password", password);
         userData.put("fio", fio);
         userData.put("work_time", work_time);
+        userData.put("work_start", work_start);
+        userData.put("work_end", work_end);
+        userData.put("appointment_interval_minutes", appointment_interval);
+        userData.put("working_days", working_days);
         userData.put("phone_number", phone_number);
         userData.put("doc", doc);
         userData.put("role", "center");

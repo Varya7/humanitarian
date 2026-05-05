@@ -5,6 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PointF
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -15,8 +18,6 @@ import androidx.core.content.ContextCompat
 import com.example.hum1.LocaleUtil
 import com.example.hum1.R
 import com.example.hum1.views.ViewCenter
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -65,7 +66,8 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
     private lateinit var mapview: MapView
     private lateinit var jambut: Button
     private lateinit var locationmapkit: UserLocationLayer
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationManager: LocationManager
+    private var locationListener: LocationListener? = null
     private lateinit var searchManager: SearchManager
 
     private var ROUTE_START_LOCATION = Point(55.700581, 37.520630)
@@ -83,6 +85,11 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
     private var selectedCenter: CenterInfo? = null
 
     private lateinit var database: FirebaseDatabase
+
+    companion object {
+        const val LOCATION_PERMISSION_REQUEST_CODE = 123
+        private var isMapKitInitialized = false
+    }
 
     /**
      * Класс для хранения информации о центре помощи
@@ -104,8 +111,9 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
     override fun onCreate(savedInstanceState: Bundle?) {
         LocaleUtil.initAppLocale(this)
         super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey("3c89017d-c56c-4694-b14e-3085f7402ed4")
-        MapKitFactory.initialize(this)
+
+        YandexMapKitInitializer.init(this)
+
         enableEdgeToEdge()
         supportActionBar?.hide()
 
@@ -119,8 +127,6 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
             CameraPosition(SCREEN_CENTER, 11.0f, 0.0f, 0.0f),
             Animation(Animation.Type.SMOOTH, 10f), null
         )
-
-        requestLocationPermission()
 
         val mapKit: MapKit = MapKitFactory.getInstance()
         val trafficLayer = mapKit.createTrafficLayer(mapview.mapWindow)
@@ -137,14 +143,14 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
         }
 
         locationmapkit = mapKit.createUserLocationLayer(mapview.mapWindow)
-        locationmapkit.isVisible = false
+        locationmapkit.isVisible = true
         locationmapkit.setObjectListener(this)
 
         SearchFactory.initialize(this)
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
         mapview.map.addCameraListener(this)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
@@ -156,6 +162,7 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
             )
         } else {
             getLastKnownLocation()
+            startLocationUpdates()
         }
 
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
@@ -197,8 +204,6 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
                     }
                 }
 
-                println("Total centers: $totalCenters, Approved: $approvedCenters, Added to map: ${centers.size}")
-
                 if (centers.isEmpty()) {
                     Toast.makeText(
                         this@MapActivityU,
@@ -212,7 +217,6 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -225,7 +229,6 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
                     loadCentersFromFirebase()
                 }, 2000)
             }
-
         })
     }
 
@@ -260,11 +263,8 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
             }
 
             if (latitude == 0.0 && longitude == 0.0) {
-                println("Center $name has zero coordinates, skipping")
                 return null
             }
-
-            println("Successfully parsed center: $name at ($latitude, $longitude)")
 
             return CenterInfo(
                 id = id,
@@ -281,7 +281,6 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
             )
         } catch (e: Exception) {
             e.printStackTrace()
-            println("Error parsing center: ${e.message}")
             return null
         }
     }
@@ -292,14 +291,12 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
     private fun addCenterToMap(center: CenterInfo) {
         val point = Point(center.latitude, center.longitude)
 
-
         val placemark = mapObjects?.addPlacemark(
             point,
             ImageProvider.fromResource(this, R.drawable.search_result)
         )
 
         placemark?.let {
-
             it.setIcon(
                 ImageProvider.fromResource(this, R.drawable.search_result),
                 IconStyle().setAnchor(PointF(0.5f, 0.5f))
@@ -310,8 +307,6 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
             it.userData = center
             it.addTapListener(this@MapActivityU)
             centerMarkers.add(it)
-
-            println("Added marker for center: ${center.name} at (${center.latitude}, ${center.longitude})")
         }
     }
 
@@ -321,7 +316,6 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
     override fun onMapObjectTap(mapObject: MapObject, point: Point): Boolean {
         val centerInfo = mapObject.userData as? CenterInfo
         centerInfo?.let { center ->
-            // Сразу открываем ViewCenter с полной информацией
             val intent = Intent(this, ViewCenter::class.java)
             intent.putExtra("id", center.id)
             startActivity(intent)
@@ -343,20 +337,17 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
             return
         }
 
-
         ROUTE_START_LOCATION = Point(latitude, longitude)
         val routeEndLocation = Point(center.latitude, center.longitude)
 
-
         mapObjects?.clear()
-
         centers.forEach { addCenterToMap(it) }
 
         val drivingOptions = DrivingOptions()
         val vehicleOptions = VehicleOptions()
         val requestPoints = arrayListOf(
-            RequestPoint(ROUTE_START_LOCATION, RequestPointType.WAYPOINT, null),
-            RequestPoint(routeEndLocation, RequestPointType.WAYPOINT, null)
+            RequestPoint(ROUTE_START_LOCATION, RequestPointType.WAYPOINT, null, null),
+            RequestPoint(routeEndLocation, RequestPointType.WAYPOINT, null, null)
         )
 
         drivingSession = drivingRouter?.requestRoutes(requestPoints, drivingOptions, vehicleOptions, this)
@@ -380,7 +371,6 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
                 Toast.LENGTH_SHORT
             ).show()
         }
-
     }
 
     override fun onDrivingRoutesError(error: Error) {
@@ -391,27 +381,72 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
         ).show()
     }
 
-
     /**
-     * Получает последнее известное местоположение
+     * Получает последнее известное местоположение через LocationManager
      */
     private fun getLastKnownLocation() {
         try {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED
             ) {
-                fusedLocationClient.lastLocation
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful && task.result != null) {
-                            val location = task.result
-                            latitude = location.latitude
-                            longitude = location.longitude
-                            ROUTE_START_LOCATION = Point(latitude, longitude)
+                val providers = locationManager.getProviders(true)
+                var bestLocation: Location? = null
+
+                for (provider in providers) {
+                    val location = locationManager.getLastKnownLocation(provider)
+                    if (location != null) {
+                        if (bestLocation == null || location.accuracy < bestLocation.accuracy) {
+                            bestLocation = location
                         }
                     }
+                }
+
+                bestLocation?.let { location ->
+                    latitude = location.latitude
+                    longitude = location.longitude
+                    ROUTE_START_LOCATION = Point(latitude, longitude)
+                }
             }
         } catch (e: SecurityException) {
             e.printStackTrace()
+        }
+    }
+
+    /**
+     * Запускает активное обновление местоположения
+     */
+    private fun startLocationUpdates() {
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+
+            locationListener = LocationListener { location ->
+                latitude = location.latitude
+                longitude = location.longitude
+                ROUTE_START_LOCATION = Point(latitude, longitude)
+            }
+
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                5000,
+                10f,
+                locationListener!!
+            )
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Прекращает обновление местоположения
+     */
+    private fun stopLocationUpdates() {
+        locationListener?.let {
+            locationManager.removeUpdates(it)
+            locationListener = null
         }
     }
 
@@ -437,41 +472,33 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLastKnownLocation()
+                startLocationUpdates()
             }
         }
     }
 
-    // Остальные методы интерфейсов...
     override fun onObjectAdded(userLocationView: UserLocationView) {
-        locationmapkit.setAnchor(
-            PointF((mapview.width * 0.5).toFloat(), (mapview.height * 0.5).toFloat()),
-            PointF((mapview.width * 0.5).toFloat(), (mapview.height * 0.83).toFloat())
-        )
+        mapview.post {
+            val width = mapview.width.toFloat()
+            val height = mapview.height.toFloat()
+            locationmapkit.setAnchor(
+                PointF(width * 0.5f, height * 0.5f),
+                PointF(width * 0.5f, height * 0.83f)
+            )
+        }
+
         userLocationView.arrow.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
-        val picIcon = userLocationView.pin.useCompositeIcon()
-        picIcon.setIcon(
-            "icon",
-            ImageProvider.fromResource(this, R.drawable.search_result),
-            IconStyle().setAnchor(PointF(0f, 0f))
-                .setRotationType(RotationType.ROTATE)
-                .setZIndex(0f)
-                .setScale(1f)
-        )
-        picIcon.setIcon(
-            "pin",
-            ImageProvider.fromResource(this, R.drawable.nothing),
-            IconStyle().setAnchor(PointF(0.5f, 0.5f))
-                .setRotationType(RotationType.ROTATE)
-                .setZIndex(1f)
-                .setScale(0.5f)
-        )
-        userLocationView.accuracyCircle.fillColor = Color.BLUE and -0x66000001
+        userLocationView.pin.setIcon(ImageProvider.fromResource(this, R.drawable.nothing))
+        userLocationView.accuracyCircle.fillColor = Color.argb(30, 66, 133, 244)
+        userLocationView.accuracyCircle.strokeColor = Color.argb(80, 66, 133, 244)
+        userLocationView.accuracyCircle.strokeWidth = 1f
     }
 
     override fun onObjectRemoved(p0: UserLocationView) {}
     override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {}
     override fun onSearchResponse(response: Response) {}
     override fun onSearchError(error: Error) {}
+
     override fun onCameraPositionChanged(
         map: Map,
         cameraPosition: CameraPosition,
@@ -480,18 +507,15 @@ class MapActivityU : AppCompatActivity(), UserLocationObjectListener, Session.Se
     ) {}
 
     override fun onStop() {
+        stopLocationUpdates()
         mapview.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
     }
 
     override fun onStart() {
-        mapview.onStart()
         MapKitFactory.getInstance().onStart()
+        mapview.onStart()
         super.onStart()
-    }
-
-    companion object {
-        const val LOCATION_PERMISSION_REQUEST_CODE = 123
     }
 }
