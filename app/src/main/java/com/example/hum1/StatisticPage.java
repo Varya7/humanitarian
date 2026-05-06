@@ -103,6 +103,7 @@ public class StatisticPage extends AppCompatActivity {
     private HorizontalBarChart hBarTopItems;
     private TextView tvNoTopItemsData;
 
+    private View cardModelNotes;
     private TextView tvModelNotes;
 
     private Spinner spinnerTimeRange;
@@ -132,6 +133,12 @@ public class StatisticPage extends AppCompatActivity {
     private Calendar customRangeTo;
 
     private final SimpleDateFormat uiDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+    private final ValueFormatter integerValueFormatter = new ValueFormatter() {
+        @Override
+        public String getFormattedValue(float value) {
+            return String.valueOf(Math.round(value));
+        }
+    };
 
     private enum StatusGroup {
         reviewing,
@@ -208,6 +215,7 @@ public class StatisticPage extends AppCompatActivity {
         hBarTopItems = findViewById(R.id.hBarTopItems);
         tvNoTopItemsData = findViewById(R.id.tvNoTopItemsData);
 
+        cardModelNotes = findViewById(R.id.cardModelNotes);
         tvModelNotes = findViewById(R.id.tvModelNotes);
 
         spinnerTimeRange = findViewById(R.id.spinnerTimeRange);
@@ -239,6 +247,7 @@ public class StatisticPage extends AppCompatActivity {
         YAxis barLeft = barChartMonthly.getAxisLeft();
         barLeft.setAxisMinimum(0f);
         barLeft.setGranularity(1f);
+        barLeft.setValueFormatter(integerValueFormatter);
 
         lineChartForecast.getDescription().setEnabled(false);
         lineChartForecast.setDrawGridBackground(false);
@@ -248,6 +257,7 @@ public class StatisticPage extends AppCompatActivity {
         lineChartForecast.getXAxis().setDrawGridLines(false);
         lineChartForecast.getAxisLeft().setAxisMinimum(0f);
         lineChartForecast.getAxisLeft().setGranularity(1f);
+        lineChartForecast.getAxisLeft().setValueFormatter(integerValueFormatter);
 
         hBarTopItems.getDescription().setEnabled(false);
         hBarTopItems.setDrawGridBackground(false);
@@ -256,6 +266,8 @@ public class StatisticPage extends AppCompatActivity {
         hBarTopItems.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         hBarTopItems.getXAxis().setGranularity(1f);
         hBarTopItems.getAxisLeft().setAxisMinimum(0f);
+        hBarTopItems.getAxisLeft().setGranularity(1f);
+        hBarTopItems.getAxisLeft().setValueFormatter(integerValueFormatter);
     }
 
     private void setupTimeRangeSpinner() {
@@ -507,7 +519,7 @@ public class StatisticPage extends AppCompatActivity {
         updateStatusPieChart(filtered);
         updateMonthlyDynamicsChart(filtered);
 
-        CenterLoadForecastModel.CenterLoadForecast liveForecast = buildForecast(filtered);
+        CenterLoadForecastModel.CenterLoadForecast liveForecast = buildForecast(applications);
         CenterLoadForecastModel.CenterLoadForecast forecastToRender = hasLoadedApps
                 ? liveForecast
                 : (cachedForecast != null ? cachedForecast : liveForecast);
@@ -527,9 +539,9 @@ public class StatisticPage extends AppCompatActivity {
         updateWarmStartHint();
     }
 
-    private CenterLoadForecastModel.CenterLoadForecast buildForecast(List<ApplicationRecord> filteredApplications) {
+    private CenterLoadForecastModel.CenterLoadForecast buildForecast(List<ApplicationRecord> sourceApplications) {
         List<CenterLoadForecastModel.ApplicationData> source = new ArrayList<>();
-        for (ApplicationRecord record : filteredApplications) {
+        for (ApplicationRecord record : sourceApplications) {
             CenterLoadForecastModel.ApplicationData item = new CenterLoadForecastModel.ApplicationData();
             item.date = record.dateRaw;
             item.time = record.timeRaw;
@@ -684,10 +696,12 @@ public class StatisticPage extends AppCompatActivity {
         BarDataSet totalSet = new BarDataSet(totalEntries, getString(R.string.stats_dataset_total));
         totalSet.setColor(Color.parseColor("#3b82f6"));
         totalSet.setValueTextSize(10f);
+        totalSet.setValueFormatter(integerValueFormatter);
 
         BarDataSet issuedSet = new BarDataSet(issuedEntries, getString(R.string.stats_dataset_issued));
         issuedSet.setColor(Color.parseColor("#22c55e"));
         issuedSet.setValueTextSize(10f);
+        issuedSet.setValueFormatter(integerValueFormatter);
 
         BarData barData = new BarData(totalSet, issuedSet);
         barData.setBarWidth(0.38f);
@@ -853,6 +867,7 @@ public class StatisticPage extends AppCompatActivity {
         expectedSet.setLineWidth(2f);
         expectedSet.setCircleRadius(3f);
         expectedSet.setValueTextSize(9f);
+        expectedSet.setValueFormatter(integerValueFormatter);
 
         LineDataSet committedSet = new LineDataSet(committedEntries, getString(R.string.stats_timeline_committed_apps));
         committedSet.setColor(Color.parseColor("#f97316"));
@@ -861,6 +876,7 @@ public class StatisticPage extends AppCompatActivity {
         committedSet.setCircleRadius(3f);
         committedSet.setValueTextSize(9f);
         committedSet.enableDashedLine(10f, 8f, 0f);
+        committedSet.setValueFormatter(integerValueFormatter);
 
         LineData lineData = new LineData(expectedSet, committedSet);
         lineChartForecast.setData(lineData);
@@ -904,10 +920,12 @@ public class StatisticPage extends AppCompatActivity {
         BarDataSet demandSet = new BarDataSet(demandEntries, getString(R.string.stats_chart_demand));
         demandSet.setColor(Color.parseColor("#8b5cf6"));
         demandSet.setValueTextSize(8f);
+        demandSet.setValueFormatter(integerValueFormatter);
 
         BarDataSet reorderSet = new BarDataSet(reorderEntries, getString(R.string.stats_chart_reorder));
         reorderSet.setColor(Color.parseColor("#f59e0b"));
         reorderSet.setValueTextSize(8f);
+        reorderSet.setValueFormatter(integerValueFormatter);
 
         BarData data = new BarData(demandSet, reorderSet);
         float groupSpace = 0.34f;
@@ -924,6 +942,7 @@ public class StatisticPage extends AppCompatActivity {
         float groupWidth = data.getGroupWidth(groupSpace, barSpace);
         hBarTopItems.getXAxis().setAxisMinimum(0f);
         hBarTopItems.getXAxis().setAxisMaximum(groupWidth * labels.size());
+        hBarTopItems.getAxisLeft().setValueFormatter(integerValueFormatter);
         hBarTopItems.groupBars(0f, groupSpace, barSpace);
 
         hBarTopItems.setVisibility(View.VISIBLE);
@@ -932,30 +951,9 @@ public class StatisticPage extends AppCompatActivity {
     }
 
     private void updateModelNotes(CenterLoadForecastModel.CenterLoadForecast forecast) {
-        if (forecast == null || forecast.modelNotes == null || forecast.modelNotes.isEmpty()) {
-            tvModelNotes.setText(getString(R.string.stats_model_notes_empty));
-            return;
+        if (cardModelNotes != null) {
+            cardModelNotes.setVisibility(View.GONE);
         }
-
-        if (LangPrefs.loadLang(this).startsWith("en")) {
-            StringBuilder english = new StringBuilder();
-            english.append("• The forecast uses application history, available stock, reserved items, and scheduled visits.");
-            if (forecast.syntheticMonths > 0) {
-                english.append("\n• When the center has little history, a preliminary history is used to keep the forecast stable.");
-            }
-            if (forecast.itemsAtRisk > 0) {
-                english.append("\n• Items with shortage risk: ").append(forecast.itemsAtRisk).append(".");
-            }
-            tvModelNotes.setText(english.toString());
-            return;
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < forecast.modelNotes.size(); i++) {
-            if (i > 0) builder.append("\n");
-            builder.append("• ").append(forecast.modelNotes.get(i));
-        }
-        tvModelNotes.setText(builder.toString());
     }
 
     private void updateWarmStartHint() {
