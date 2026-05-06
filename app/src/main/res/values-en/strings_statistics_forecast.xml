@@ -40,6 +40,11 @@
     <string name="stats_item_forecast_title">Item forecast (by name)</string>
     <string name="stats_item_forecast_desc">How many units are needed for each item for 1 and 3 months</string>
     <string name="stats_not_enough_items_data">Not enough item data for forecast</string>
+    <string name="stats_items_visible_count">Showing %1$d of %2$d</string>
+    <string name="stats_show_all_items">Show all items (%1$d)</string>
+    <string name="stats_show_all_items_placeholder">Show all items</string>
+    <string name="stats_show_less_items">Show compact list</string>
+    <string name="stats_all_items_visible">All items are shown</string>
     <string name="stats_table_item">Item</string>
     <string name="stats_table_stock">In stock</string>
     <string name="stats_table_need_1m">Need for 1 month</string>
@@ -58,6 +63,10 @@
 
     <string name="stats_top_items_chart_title">Most needed items</string>
     <string name="stats_top_items_chart_desc">Forecasted need per item for next month</string>
+    <string name="stats_expand_chart">Expand chart (%1$d)</string>
+    <string name="stats_expand_chart_placeholder">Expand chart</string>
+    <string name="stats_collapse_chart">Compact chart</string>
+    <string name="stats_full_chart_visible">Chart already shows all items</string>
     <string name="stats_chart_demand">Demand</string>
     <string name="stats_chart_reorder">Recommended reorder</string>
 

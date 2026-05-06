@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -96,12 +97,16 @@ public class StatisticPage extends AppCompatActivity {
 
     private TableLayout tableProcurement;
     private TextView tvNoProcurementData;
+    private Button btnToggleProcurementTable;
+    private TextView tvProcurementCount;
 
     private LineChart lineChartForecast;
     private TextView tvNoTimelineData;
 
     private HorizontalBarChart hBarTopItems;
     private TextView tvNoTopItemsData;
+    private Button btnToggleTopItemsChart;
+    private TextView tvTopItemsChartCount;
 
     private View cardModelNotes;
     private TextView tvModelNotes;
@@ -127,10 +132,15 @@ public class StatisticPage extends AppCompatActivity {
     private boolean hasLoadedApps = false;
     private boolean authLoading = true;
     private boolean appsLoading = false;
+    private boolean procurementTableExpanded = false;
+    private boolean topItemsChartExpanded = false;
+    private CenterLoadForecastModel.CenterLoadForecast currentForecastToRender;
+    private static final String FORECAST_CACHE_VERSION = "v2";
 
     private int selectedTimeRangeMonths = 6;
     private Calendar customRangeFrom;
     private Calendar customRangeTo;
+    private static final int COMPACT_ITEMS_LIMIT = 12;
 
     private final SimpleDateFormat uiDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
     private final ValueFormatter integerValueFormatter = new ValueFormatter() {
@@ -208,12 +218,16 @@ public class StatisticPage extends AppCompatActivity {
 
         tableProcurement = findViewById(R.id.tableProcurement);
         tvNoProcurementData = findViewById(R.id.tvNoProcurementData);
+        btnToggleProcurementTable = findViewById(R.id.btnToggleProcurementTable);
+        tvProcurementCount = findViewById(R.id.tvProcurementCount);
 
         lineChartForecast = findViewById(R.id.lineChartForecast);
         tvNoTimelineData = findViewById(R.id.tvNoTimelineData);
 
         hBarTopItems = findViewById(R.id.hBarTopItems);
         tvNoTopItemsData = findViewById(R.id.tvNoTopItemsData);
+        btnToggleTopItemsChart = findViewById(R.id.btnToggleTopItemsChart);
+        tvTopItemsChartCount = findViewById(R.id.tvTopItemsChartCount);
 
         cardModelNotes = findViewById(R.id.cardModelNotes);
         tvModelNotes = findViewById(R.id.tvModelNotes);
@@ -223,6 +237,19 @@ public class StatisticPage extends AppCompatActivity {
 
         tvLoadingStatus.setText(getString(R.string.stats_loading_access));
         updateRangeLabel();
+        setupExpansionButtons();
+    }
+
+    private void setupExpansionButtons() {
+        btnToggleProcurementTable.setOnClickListener(v -> {
+            procurementTableExpanded = !procurementTableExpanded;
+            updateProcurementTable(currentForecastToRender);
+        });
+
+        btnToggleTopItemsChart.setOnClickListener(v -> {
+            topItemsChartExpanded = !topItemsChartExpanded;
+            updateTopItemsChart(currentForecastToRender);
+        });
     }
 
     private void setupCharts() {
@@ -423,7 +450,7 @@ public class StatisticPage extends AppCompatActivity {
     }
 
     private void loadCachedForecast(String centerName) {
-        String key = "forecast-cache:" + centerName;
+        String key = "forecast-cache:" + FORECAST_CACHE_VERSION + ":" + centerName;
         String json = cachePreferences.getString(key, null);
         if (json == null) {
             cachedForecast = null;
@@ -438,7 +465,7 @@ public class StatisticPage extends AppCompatActivity {
 
     private void saveCachedForecast(CenterLoadForecastModel.CenterLoadForecast forecast) {
         if (TextUtils.isEmpty(currentUserCenterName) || forecast == null) return;
-        String key = "forecast-cache:" + currentUserCenterName;
+        String key = "forecast-cache:" + FORECAST_CACHE_VERSION + ":" + currentUserCenterName;
         cachePreferences.edit().putString(key, gson.toJson(forecast)).apply();
     }
 
@@ -447,7 +474,7 @@ public class StatisticPage extends AppCompatActivity {
             appsQuery.removeEventListener(appsListener);
         }
 
-        appsQuery = mDatabase.child("Applications").orderByChild("center").equalTo(centerName);
+        appsQuery = mDatabase.child("Applications");
         appsLoading = true;
         setLoadingStatus(getString(R.string.stats_loading_center_apps));
         updateWarmStartHint();
@@ -457,6 +484,9 @@ public class StatisticPage extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 applications.clear();
                 for (DataSnapshot appSnapshot : snapshot.getChildren()) {
+                    if (!applicationBelongsToCurrentCenter(appSnapshot, centerName)) {
+                        continue;
+                    }
                     ApplicationRecord record = parseApplicationRecord(appSnapshot);
                     if (record != null) {
                         applications.add(record);
@@ -478,6 +508,20 @@ public class StatisticPage extends AppCompatActivity {
         };
 
         appsQuery.addValueEventListener(appsListener);
+    }
+
+    private boolean applicationBelongsToCurrentCenter(DataSnapshot appSnapshot, String centerName) {
+        String appCenterId = appSnapshot.child("centerId").getValue(String.class);
+        if (!TextUtils.isEmpty(appCenterId) && appCenterId.equals(currentUserId)) {
+            return true;
+        }
+
+        String appCenterName = appSnapshot.child("center").getValue(String.class);
+        return normalizeCenterName(appCenterName).equals(normalizeCenterName(centerName));
+    }
+
+    private String normalizeCenterName(String value) {
+        return value == null ? "" : value.trim().toLowerCase(Locale.ROOT);
     }
 
     private ApplicationRecord parseApplicationRecord(DataSnapshot appSnapshot) {
@@ -523,6 +567,7 @@ public class StatisticPage extends AppCompatActivity {
         CenterLoadForecastModel.CenterLoadForecast forecastToRender = hasLoadedApps
                 ? liveForecast
                 : (cachedForecast != null ? cachedForecast : liveForecast);
+        currentForecastToRender = forecastToRender;
 
         if (hasLoadedApps) {
             saveCachedForecast(liveForecast);
@@ -774,9 +819,13 @@ public class StatisticPage extends AppCompatActivity {
 
         if (forecast == null || forecast.itemProcurementPlan == null || forecast.itemProcurementPlan.isEmpty()) {
             tvNoProcurementData.setVisibility(View.VISIBLE);
+            btnToggleProcurementTable.setVisibility(View.GONE);
+            tvProcurementCount.setVisibility(View.GONE);
             return;
         }
         tvNoProcurementData.setVisibility(View.GONE);
+        btnToggleProcurementTable.setVisibility(View.VISIBLE);
+        tvProcurementCount.setVisibility(View.VISIBLE);
 
         addProcurementHeaderRow();
 
@@ -788,7 +837,11 @@ public class StatisticPage extends AppCompatActivity {
             }
         });
 
-        for (CenterLoadForecastModel.ItemProcurementPlan row : rows) {
+        int visibleRows = procurementTableExpanded ? rows.size() : Math.min(COMPACT_ITEMS_LIMIT, rows.size());
+        updateTableToggleButton(visibleRows, rows.size());
+
+        for (int index = 0; index < visibleRows; index++) {
+            CenterLoadForecastModel.ItemProcurementPlan row = rows.get(index);
             TableRow tableRow = new TableRow(this);
             tableRow.setPadding(0, 6, 0, 6);
 
@@ -805,6 +858,21 @@ public class StatisticPage extends AppCompatActivity {
 
             tableProcurement.addView(tableRow);
         }
+    }
+
+    private void updateTableToggleButton(int visibleRows, int totalRows) {
+        tvProcurementCount.setText(getString(R.string.stats_items_visible_count, visibleRows, totalRows));
+
+        if (totalRows <= COMPACT_ITEMS_LIMIT) {
+            btnToggleProcurementTable.setEnabled(false);
+            btnToggleProcurementTable.setText(getString(R.string.stats_all_items_visible));
+            return;
+        }
+
+        btnToggleProcurementTable.setEnabled(true);
+        btnToggleProcurementTable.setText(procurementTableExpanded
+                ? getString(R.string.stats_show_less_items)
+                : getString(R.string.stats_show_all_items, totalRows));
     }
 
     private void addProcurementHeaderRow() {
@@ -895,16 +963,30 @@ public class StatisticPage extends AppCompatActivity {
         if (forecast == null || forecast.itemProcurementPlan == null || forecast.itemProcurementPlan.isEmpty()) {
             hBarTopItems.setVisibility(View.GONE);
             tvNoTopItemsData.setVisibility(View.VISIBLE);
+            btnToggleTopItemsChart.setVisibility(View.GONE);
+            tvTopItemsChartCount.setVisibility(View.GONE);
             return;
         }
+        btnToggleTopItemsChart.setVisibility(View.VISIBLE);
+        tvTopItemsChartCount.setVisibility(View.VISIBLE);
 
         List<CenterLoadForecastModel.ItemProcurementPlan> rows = new ArrayList<>(forecast.itemProcurementPlan);
         rows.sort(new Comparator<CenterLoadForecastModel.ItemProcurementPlan>() {
             @Override
             public int compare(CenterLoadForecastModel.ItemProcurementPlan a, CenterLoadForecastModel.ItemProcurementPlan b) {
+                if (a.recommendedOrder != b.recommendedOrder) {
+                    return Integer.compare(b.recommendedOrder, a.recommendedOrder);
+                }
+                if (a.nextMonthDemand != b.nextMonthDemand) {
+                    return Integer.compare(b.nextMonthDemand, a.nextMonthDemand);
+                }
                 return a.item.compareToIgnoreCase(b.item);
             }
         });
+
+        int visibleRows = topItemsChartExpanded ? rows.size() : Math.min(COMPACT_ITEMS_LIMIT, rows.size());
+        updateTopItemsToggleButton(visibleRows, rows.size());
+        rows = new ArrayList<>(rows.subList(0, visibleRows));
 
         List<BarEntry> demandEntries = new ArrayList<>();
         List<BarEntry> reorderEntries = new ArrayList<>();
@@ -933,6 +1015,7 @@ public class StatisticPage extends AppCompatActivity {
         float barWidth = 0.29f;
         data.setBarWidth(barWidth);
 
+        setTopItemsChartHeight(rows.size());
         hBarTopItems.setData(data);
         hBarTopItems.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
         hBarTopItems.getXAxis().setGranularity(1f);
@@ -948,6 +1031,32 @@ public class StatisticPage extends AppCompatActivity {
         hBarTopItems.setVisibility(View.VISIBLE);
         tvNoTopItemsData.setVisibility(View.GONE);
         hBarTopItems.invalidate();
+    }
+
+    private void updateTopItemsToggleButton(int visibleRows, int totalRows) {
+        tvTopItemsChartCount.setText(getString(R.string.stats_items_visible_count, visibleRows, totalRows));
+
+        if (totalRows <= COMPACT_ITEMS_LIMIT) {
+            btnToggleTopItemsChart.setEnabled(false);
+            btnToggleTopItemsChart.setText(getString(R.string.stats_full_chart_visible));
+            return;
+        }
+
+        btnToggleTopItemsChart.setEnabled(true);
+        btnToggleTopItemsChart.setText(topItemsChartExpanded
+                ? getString(R.string.stats_collapse_chart)
+                : getString(R.string.stats_expand_chart, totalRows));
+    }
+
+    private void setTopItemsChartHeight(int rowCount) {
+        int heightDp = Math.max(340, 90 + rowCount * 42);
+        ViewGroup.LayoutParams params = hBarTopItems.getLayoutParams();
+        params.height = dpToPx(heightDp);
+        hBarTopItems.setLayoutParams(params);
+    }
+
+    private int dpToPx(int dp) {
+        return Math.round(dp * getResources().getDisplayMetrics().density);
     }
 
     private void updateModelNotes(CenterLoadForecastModel.CenterLoadForecast forecast) {

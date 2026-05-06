@@ -604,6 +604,22 @@
                     android:textColor="#6b7280"
                     android:textSize="12sp" />
 
+                <Button
+                    android:id="@+id/btnToggleProcurementTable"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/stats_show_all_items_placeholder" />
+
+                <TextView
+                    android:id="@+id/tvProcurementCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="#6b7280"
+                    android:textSize="12sp" />
+
                 <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -699,6 +715,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:text="@string/stats_top_items_chart_desc"
+                    android:textColor="#6b7280"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btnToggleTopItemsChart"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/stats_expand_chart_placeholder" />
+
+                <TextView
+                    android:id="@+id/tvTopItemsChartCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:textColor="#6b7280"
                     android:textSize="12sp" />
 

@@ -40,6 +40,11 @@
     <string name="stats_item_forecast_title">Прогноз по вещам (по названиям)</string>
     <string name="stats_item_forecast_desc">Сколько нужно каждой вещи на 1 и 3 месяца вперед</string>
     <string name="stats_not_enough_items_data">Недостаточно данных по вещам для прогноза</string>
+    <string name="stats_items_visible_count">Показано %1$d из %2$d</string>
+    <string name="stats_show_all_items">Показать все вещи (%1$d)</string>
+    <string name="stats_show_all_items_placeholder">Показать все вещи</string>
+    <string name="stats_show_less_items">Свернуть список</string>
+    <string name="stats_all_items_visible">Показаны все вещи</string>
     <string name="stats_table_item">Вещь</string>
     <string name="stats_table_stock">Остаток</string>
     <string name="stats_table_need_1m">Нужно на 1 мес</string>
@@ -58,6 +63,10 @@
 
     <string name="stats_top_items_chart_title">Какие вещи будут нужны больше всего</string>
     <string name="stats_top_items_chart_desc">Прогноз потребности по каждой вещи на следующий месяц</string>
+    <string name="stats_expand_chart">Раскрыть график (%1$d)</string>
+    <string name="stats_expand_chart_placeholder">Раскрыть график</string>
+    <string name="stats_collapse_chart">Свернуть график</string>
+    <string name="stats_full_chart_visible">График уже показывает все вещи</string>
     <string name="stats_chart_demand">Потребность</string>
     <string name="stats_chart_reorder">Рекомендуемый дозаказ</string>
 
