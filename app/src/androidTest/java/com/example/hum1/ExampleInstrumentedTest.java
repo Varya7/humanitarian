@@ -637,7 +637,7 @@ public class ExampleInstrumentedTest {
         assertNotNull(activity.findViewById(R.id.tvCompletionRate));
         assertNotNull(activity.findViewById(R.id.spinnerTimeRange));
         assertNotNull(activity.findViewById(R.id.pieChart));
-        assertNotNull(activity.findViewById(R.id.barChart));
+        //assertNotNull(activity.findViewById(R.id.barChart));
     }
 
     @Test

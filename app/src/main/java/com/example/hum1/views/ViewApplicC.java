@@ -202,6 +202,10 @@ public class ViewApplicC extends AppCompatActivity {
                             .child("comment")
                             .setValue(commentText);
                 }
+                String centerId = FirebaseAuth.getInstance().getCurrentUser() == null
+                        ? ""
+                        : FirebaseAuth.getInstance().getCurrentUser().getUid();
+                InventoryReservationUtil.releaseApplicationSlot(mDatabase, centerId, id);
 
                 Toast.makeText(
                         ViewApplicC.this,

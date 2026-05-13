@@ -98,6 +98,8 @@ public class MainActivity3 extends AppCompatActivity {
         user = auth.getCurrentUser();
         editTextDate = findViewById(R.id.date);
         editTextTime = findViewById(R.id.time);
+        editTextTime.setFocusable(false);
+        editTextTime.setInputType(0);
         editTextList = findViewById(R.id.list);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -217,36 +219,7 @@ public class MainActivity3 extends AppCompatActivity {
                 Map<String, Integer> selectedItems = adapter1.getSelectedQuantities();
                 applicationInfo.put("selected_items", selectedItems);
 
-                editTextDate.setText("");
-                editTextTime.setText("");
-
-                DatabaseReference newApplicationRef = FirebaseDatabase.getInstance()
-                        .getReference("Applications").push();
-                String applicationId = newApplicationRef.getKey();
-                applicationInfo.put("id_appl", applicationId);
-
-                newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        AppointmentSlotUtil.bookSlot(
-                                mDatabase.child("Users").child(centerId),
-                                date,
-                                time,
-                                applicationId,
-                                finalUserId,
-                                fio
-                        );
-                        Toast.makeText(MainActivity3.this,
-                                getString(R.string.msg_application_sent),
-                                Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainActivity3.this, UserActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(MainActivity3.this,
-                                getString(R.string.error_application_submit),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                saveApplicationAfterSlotCheck(centerId, date, time, applicationInfo);
             }
         });
     }
@@ -267,6 +240,7 @@ public class MainActivity3 extends AppCompatActivity {
             editTextTime.setText("");
         }, year, month, day);
 
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
         datePickerDialog.show();
     }
 
@@ -299,6 +273,61 @@ public class MainActivity3 extends AppCompatActivity {
                                 .setTitle(getString(R.string.schedule_choose_slot))
                                 .setItems(values, (dialog, which) -> editTextTime.setText(values[which]))
                                 .show();
+                    }
+
+                    @Override
+                    public void onError() {
+                        Toast.makeText(MainActivity3.this, getString(R.string.error_load_data), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void saveApplicationAfterSlotCheck(
+            String centerId,
+            String date,
+            String time,
+            HashMap<String, Object> applicationInfo
+    ) {
+        AppointmentSlotUtil.loadOrCreateSlots(
+                mDatabase.child("Users").child(centerId),
+                date,
+                new AppointmentSlotUtil.SlotsCallback() {
+                    @Override
+                    public void onLoaded(List<AppointmentSlotUtil.Slot> slots) {
+                        boolean available = false;
+                        for (AppointmentSlotUtil.Slot slot : slots) {
+                            if (slot.available && time.equals(slot.time)) {
+                                available = true;
+                                break;
+                            }
+                        }
+                        if (!available) {
+                            editTextTime.setText("");
+                            Toast.makeText(MainActivity3.this, getString(R.string.schedule_no_slots), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        DatabaseReference newApplicationRef = FirebaseDatabase.getInstance()
+                                .getReference("Applications").push();
+                        String applicationId = newApplicationRef.getKey();
+                        applicationInfo.put("id_appl", applicationId);
+
+                        newApplicationRef.setValue(applicationInfo).addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                editTextDate.setText("");
+                                editTextTime.setText("");
+                                Toast.makeText(MainActivity3.this,
+                                        getString(R.string.msg_application_sent),
+                                        Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(MainActivity3.this, UserActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Toast.makeText(MainActivity3.this,
+                                        getString(R.string.error_application_submit),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override

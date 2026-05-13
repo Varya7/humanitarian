@@ -27,19 +27,19 @@
     <string name="stats_load_medium_label">Средняя</string>
     <string name="stats_load_high_label">Высокая</string>
     <string name="stats_load_critical_label">Очень высокая</string>
-    <string name="stats_load_details_format">Спрос по вещам: %1$d | Дозаказ: %2$d | Риск позиций: %3$d</string>
-    <string name="stats_load_details_placeholder">Спрос по вещам: 0 | Дозаказ: 0 | Риск позиций: 0</string>
+    <string name="stats_load_details_format">Спрос: %1$d | Дозаказ: %2$d | Риск позиций: %3$d</string>
+    <string name="stats_load_details_placeholder">Спрос: 0 | Дозаказ: 0 | Риск позиций: 0</string>
 
     <string name="stats_busy_slots_title">Пиковые часы посещений</string>
     <string name="stats_busy_slots_desc">Для удобного планирования выдачи и очереди</string>
     <string name="stats_busy_slot_line">%1$s: ~%2$d визитов (%3$d%%)</string>
     <string name="stats_busy_slots_empty">Недостаточно данных по времени визитов</string>
-    <string name="stats_peaks_format">Пик заявок: %1$s | Пик спроса на вещи: %2$s</string>
-    <string name="stats_peaks_placeholder">Пик заявок: - | Пик спроса на вещи: -</string>
+    <string name="stats_peaks_format">Пик заявок: %1$s | Пик спроса: %2$s</string>
+    <string name="stats_peaks_placeholder">Пик заявок: - | Пик спроса: -</string>
 
-    <string name="stats_item_forecast_title">Прогноз по вещам (по названиям)</string>
+    <string name="stats_item_forecast_title">Прогноз по названиям</string>
     <string name="stats_item_forecast_desc">Сколько нужно каждой вещи на 1 и 3 месяца вперед</string>
-    <string name="stats_not_enough_items_data">Недостаточно данных по вещам для прогноза</string>
+    <string name="stats_not_enough_items_data">Недостаточно данных для прогноза</string>
     <string name="stats_items_visible_count">Показано %1$d из %2$d</string>
     <string name="stats_show_all_items">Показать все вещи (%1$d)</string>
     <string name="stats_show_all_items_placeholder">Показать все вещи</string>

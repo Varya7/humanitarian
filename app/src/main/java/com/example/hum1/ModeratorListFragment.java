@@ -116,6 +116,7 @@ public class ModeratorListFragment extends Fragment {
                             if (role != null
                                     && status != null
                                     && "center".equals(role)   // чтобы не цеплять обычных юзеров
+                                    && InventoryReservationUtil.isValidCenterStatus(status)
                                     && (dbStatus == null || status.equals(dbStatus))) {
 
                                 center = applicationSnapshot.child("center_name")

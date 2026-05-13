@@ -102,12 +102,14 @@ public class CenterScheduleFragment extends Fragment {
         if (!isAdded()) return;
         slotsContainer.removeAllViews();
         String dateKey = AppointmentSlotUtil.toDateKey(selectedDate);
-        centerRef.child("appointment_slots").child(dateKey)
+        centerRef
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot centerSnapshot) {
                         if (!isAdded() || getView() == null) return;
-                        List<AppointmentSlotUtil.Slot> allSlots = AppointmentSlotUtil.readSlots(snapshot, false);
+                        DataSnapshot slotsSnapshot = centerSnapshot.child("appointment_slots").child(dateKey);
+                        boolean workingDay = AppointmentSlotUtil.isWorkingDay(centerSnapshot, selectedDate);
+                        List<AppointmentSlotUtil.Slot> allSlots = AppointmentSlotUtil.readSlots(slotsSnapshot, false, workingDay);
                         if (allSlots.isEmpty()) {
                             slotsContainer.addView(createSlotCard(getString(R.string.schedule_no_slots), false, null));
                             return;
@@ -197,6 +199,9 @@ public class CenterScheduleFragment extends Fragment {
         Map<String, Object> slot = new HashMap<>();
         slot.put("time", time);
         slot.put("available", true);
+        slot.put("manual", true);
+        slot.put("created_by", "center");
+        slot.put("source", "manual_center");
         centerRef.child("appointment_slots").child(dateKey).child(slotKey).setValue(slot)
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(requireContext(), getString(R.string.schedule_slot_saved), Toast.LENGTH_SHORT).show();

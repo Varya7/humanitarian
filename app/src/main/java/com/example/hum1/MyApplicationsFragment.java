@@ -28,8 +28,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Фрагмент для отображения списка заявок пользователя с возможностью фильтрации по статусу.
@@ -136,7 +141,9 @@ public class MyApplicationsFragment extends Fragment {
                     String userIdFromDb = snapshot.child("id").getValue(String.class);
                     String statusFromDb = snapshot.child("status").getValue(String.class);
 
-                    if (userId.equals(userIdFromDb) && (selectedDbStatus == null || selectedDbStatus.equals(statusFromDb))) {
+                    if (userId.equals(userIdFromDb)
+                            && InventoryReservationUtil.isValidApplicationStatus(statusFromDb)
+                            && (selectedDbStatus == null || selectedDbStatus.equals(statusFromDb))) {
                         center = snapshot.child("center").getValue(String.class);
                         date = snapshot.child("date").getValue(String.class);
                         time = snapshot.child("time").getValue(String.class);
@@ -166,11 +173,31 @@ public class MyApplicationsFragment extends Fragment {
                         ));
                     }
                 }
+                Collections.sort(applications, (a, b) -> {
+                    Date da = parseDateTime(a.getDate(), a.getTime());
+                    Date db = parseDateTime(b.getDate(), b.getTime());
+                    if (da == null && db == null) return 0;
+                    if (da == null) return 1;
+                    if (db == null) return -1;
+                    return -da.compareTo(db);
+                });
                 adapter.notifyDataSetChanged();
             } else {
                 Log.e("Firebase", "Failed to fetch applications", task.getException());
             }
         });
+    }
+
+    private Date parseDateTime(String dateStr, String timeStr) {
+        if (dateStr == null) return null;
+        String timeValue = timeStr == null || timeStr.trim().isEmpty() ? "00:00" : timeStr.trim();
+        for (String pattern : new String[]{"dd/MM/yyyy HH:mm", "dd.MM.yyyy HH:mm", "d/M/yyyy HH:mm"}) {
+            try {
+                return new SimpleDateFormat(pattern, Locale.getDefault()).parse(dateStr.trim() + " " + timeValue);
+            } catch (ParseException ignored) {
+            }
+        }
+        return null;
     }
 
     /**

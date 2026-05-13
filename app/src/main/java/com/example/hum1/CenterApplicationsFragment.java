@@ -202,6 +202,7 @@ public class CenterApplicationsFragment extends Fragment {
                         if (center == null || !center.equals(center_name)) continue;
 
                         String status = applicationSnapshot.child("status").getValue(String.class);
+                        if (!InventoryReservationUtil.isValidApplicationStatus(status)) continue;
                         String date = applicationSnapshot.child("date").getValue(String.class);
                         String time = applicationSnapshot.child("time").getValue(String.class);
                         String email = applicationSnapshot.child("email").getValue(String.class);
@@ -242,7 +243,8 @@ public class CenterApplicationsFragment extends Fragment {
         statusFiltered.clear();
         for (Application app : allCenterApps) {
             String status = app.getStatus();
-            if (selectedDbStatus == null || (status != null && status.equals(selectedDbStatus))) {
+            if (InventoryReservationUtil.isValidApplicationStatus(status)
+                    && (selectedDbStatus == null || status.equals(selectedDbStatus))) {
                 statusFiltered.add(app);
             }
         }

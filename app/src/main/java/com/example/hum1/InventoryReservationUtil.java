@@ -44,6 +44,27 @@ public final class InventoryReservationUtil {
         void onError(String message);
     }
 
+    public static boolean isValidApplicationStatus(String status) {
+        return STATUS_REVIEWING.equals(status)
+                || STATUS_APPROVED.equals(status)
+                || STATUS_REJECTED.equals(status)
+                || STATUS_ISSUED.equals(status);
+    }
+
+    public static boolean isValidCenterStatus(String status) {
+        return STATUS_REVIEWING.equals(status)
+                || STATUS_APPROVED.equals(status)
+                || STATUS_REJECTED.equals(status);
+    }
+
+    private static boolean hasAppliedReservation(DataSnapshot appSnapshot) {
+        Boolean reservationApplied = appSnapshot.child("reservation_applied").getValue(Boolean.class);
+        String status = appSnapshot.child("status").getValue(String.class);
+        return Boolean.TRUE.equals(reservationApplied)
+                || STATUS_APPROVED.equals(status)
+                || STATUS_ISSUED.equals(status);
+    }
+
     /**
      * Одобряет заявку и переносит выбранные вещи из доступных в забронированные.
      * Если доступного остатка не хватает, сначала показывает диалог подтверждения.
@@ -73,11 +94,12 @@ public final class InventoryReservationUtil {
 
                         Boolean reservationApplied = appSnapshot.child("reservation_applied").getValue(Boolean.class);
                         if (Boolean.TRUE.equals(reservationApplied)) {
-                            Map<String, Object> appUpdates = new HashMap<>();
-                            appUpdates.put("status", STATUS_APPROVED);
-                            if (!TextUtils.isEmpty(comment)) appUpdates.put("comment", comment);
-                            ensurePickupCode(rootRef, applicationId, appSnapshot, appUpdates);
-                            rootRef.child("Applications").child(applicationId).updateChildren(appUpdates)
+                            Map<String, Object> updates = new HashMap<>();
+                            updates.put("Applications/" + applicationId + "/status", STATUS_APPROVED);
+                            if (!TextUtils.isEmpty(comment)) updates.put("Applications/" + applicationId + "/comment", comment);
+                            ensurePickupCode(rootRef, applicationId, appSnapshot, updates, "Applications/" + applicationId + "/");
+                            putApprovedSlotUpdates(updates, centerId, applicationId, appSnapshot);
+                            rootRef.updateChildren(updates)
                                     .addOnSuccessListener(unused -> notifySuccess(completion))
                                     .addOnFailureListener(error -> notifyError(completion, activity.getString(R.string.error_save_data)));
                             return;
@@ -90,6 +112,7 @@ public final class InventoryReservationUtil {
                             updates.put("Applications/" + applicationId + "/reservation_applied", true);
                             if (!TextUtils.isEmpty(comment)) updates.put("Applications/" + applicationId + "/comment", comment);
                             ensurePickupCode(rootRef, applicationId, appSnapshot, updates, "Applications/" + applicationId + "/");
+                            putApprovedSlotUpdates(updates, centerId, applicationId, appSnapshot);
                             rootRef.updateChildren(updates)
                                     .addOnSuccessListener(unused -> notifySuccess(completion))
                                     .addOnFailureListener(error -> notifyError(completion, activity.getString(R.string.error_save_data)));
@@ -128,6 +151,7 @@ public final class InventoryReservationUtil {
                                             updates.put("Applications/" + applicationId + "/comment", comment);
                                         }
                                         ensurePickupCode(rootRef, applicationId, appSnapshot, updates, "Applications/" + applicationId + "/");
+                                        putApprovedSlotUpdates(updates, centerId, applicationId, appSnapshot);
 
                                         rootRef.updateChildren(updates)
                                                 .addOnSuccessListener(unused -> notifySuccess(completion))
@@ -173,6 +197,12 @@ public final class InventoryReservationUtil {
                             return;
                         }
 
+                        String status = appSnapshot.child("status").getValue(String.class);
+                        if (!STATUS_APPROVED.equals(status)) {
+                            notifyError(completion, activity.getString(R.string.error_update_status));
+                            return;
+                        }
+
                         Map<String, Integer> toIssue = readQuantityMap(appSnapshot.child("reserved_items"));
                         if (toIssue.isEmpty()) {
                             toIssue = readQuantityMap(appSnapshot.child("selected_items"));
@@ -206,6 +236,7 @@ public final class InventoryReservationUtil {
                                         }
                                         updates.put("Applications/" + applicationId + "/status", STATUS_ISSUED);
                                         updates.put("Applications/" + applicationId + "/issued_at", ServerValue.TIMESTAMP);
+                                        putSlotStatusUpdates(updates, centerId, appSnapshot, STATUS_ISSUED);
 
                                         rootRef.updateChildren(updates)
                                                 .addOnSuccessListener(unused -> notifySuccess(completion))
@@ -248,6 +279,107 @@ public final class InventoryReservationUtil {
                         approveApplication(activity, rootRef, centerId, applicationId, comment, true, completion))
                 .setNegativeButton(activity.getString(R.string.cancel), null)
                 .show();
+    }
+
+    public static void releaseApplicationSlot(
+            DatabaseReference rootRef,
+            String centerId,
+            String applicationId
+    ) {
+        if (rootRef == null || TextUtils.isEmpty(centerId) || TextUtils.isEmpty(applicationId)) return;
+        rootRef.child("Applications").child(applicationId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot appSnapshot) {
+                if (!appSnapshot.exists()) return;
+                if (!hasAppliedReservation(appSnapshot)) return;
+
+                String dateKey = AppointmentSlotUtil.toDateKey(appSnapshot.child("date").getValue(String.class));
+                String slotKey = AppointmentSlotUtil.toSlotKey(appSnapshot.child("time").getValue(String.class));
+                if (TextUtils.isEmpty(dateKey) || TextUtils.isEmpty(slotKey)) return;
+
+                rootRef.child("Users").child(centerId).child("appointment_slots").child(dateKey).child(slotKey)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot slotSnapshot) {
+                                String slotApplicationId = slotSnapshot.child("applicationId").getValue(String.class);
+                                if (!TextUtils.isEmpty(slotApplicationId) && !applicationId.equals(slotApplicationId)) {
+                                    return;
+                                }
+
+                                Map<String, Object> updates = new HashMap<>();
+                                putReleasedSlotUpdates(updates, centerId, appSnapshot);
+                                if (!updates.isEmpty()) rootRef.updateChildren(updates);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                            }
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    private static void putApprovedSlotUpdates(
+            Map<String, Object> updates,
+            String centerId,
+            String applicationId,
+            DataSnapshot appSnapshot
+    ) {
+        String date = appSnapshot.child("date").getValue(String.class);
+        String time = appSnapshot.child("time").getValue(String.class);
+        String dateKey = AppointmentSlotUtil.toDateKey(date);
+        String slotKey = AppointmentSlotUtil.toSlotKey(time);
+        if (TextUtils.isEmpty(centerId) || TextUtils.isEmpty(dateKey) || TextUtils.isEmpty(slotKey)) return;
+
+        String base = "Users/" + centerId + "/appointment_slots/" + dateKey + "/" + slotKey + "/";
+        updates.put(base + "time", time);
+        updates.put(base + "available", false);
+        updates.put(base + "applicationId", applicationId);
+        updates.put(base + "userId", appSnapshot.child("id").getValue(String.class));
+        updates.put(base + "fio", appSnapshot.child("fio").getValue(String.class));
+        updates.put(base + "status", STATUS_APPROVED);
+        String code = appSnapshot.child("pickup_code").getValue(String.class);
+        if (TextUtils.isEmpty(code)) code = PickupCodeUtil.generate(applicationId);
+        updates.put(base + "pickupCode", code);
+    }
+
+    private static void putSlotStatusUpdates(
+            Map<String, Object> updates,
+            String centerId,
+            DataSnapshot appSnapshot,
+            String status
+    ) {
+        String date = appSnapshot.child("date").getValue(String.class);
+        String time = appSnapshot.child("time").getValue(String.class);
+        String dateKey = AppointmentSlotUtil.toDateKey(date);
+        String slotKey = AppointmentSlotUtil.toSlotKey(time);
+        if (TextUtils.isEmpty(centerId) || TextUtils.isEmpty(dateKey) || TextUtils.isEmpty(slotKey)) return;
+        updates.put("Users/" + centerId + "/appointment_slots/" + dateKey + "/" + slotKey + "/status", status);
+    }
+
+    private static void putReleasedSlotUpdates(
+            Map<String, Object> updates,
+            String centerId,
+            DataSnapshot appSnapshot
+    ) {
+        String date = appSnapshot.child("date").getValue(String.class);
+        String time = appSnapshot.child("time").getValue(String.class);
+        String dateKey = AppointmentSlotUtil.toDateKey(date);
+        String slotKey = AppointmentSlotUtil.toSlotKey(time);
+        if (TextUtils.isEmpty(centerId) || TextUtils.isEmpty(dateKey) || TextUtils.isEmpty(slotKey)) return;
+
+        String base = "Users/" + centerId + "/appointment_slots/" + dateKey + "/" + slotKey + "/";
+        updates.put(base + "time", time);
+        updates.put(base + "available", true);
+        updates.put(base + "applicationId", null);
+        updates.put(base + "userId", null);
+        updates.put(base + "fio", null);
+        updates.put(base + "status", null);
+        updates.put(base + "pickupCode", null);
     }
 
     private static List<String> findShortages(Map<String, Integer> selected, Map<String, Integer> available) {

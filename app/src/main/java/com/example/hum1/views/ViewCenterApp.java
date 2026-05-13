@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hum1.LocaleUtil;
+import com.example.hum1.InventoryReservationUtil;
 import com.example.hum1.ModeratorActivity;
 import com.example.hum1.R;
 import com.example.hum1.ScheduleFormatter;
@@ -135,7 +136,7 @@ public class ViewCenterApp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mDatabase.child("Users").child(id).child("status")
-                        .setValue(getString(R.string.status_approved));
+                        .setValue(InventoryReservationUtil.STATUS_APPROVED);
                 String commentText = String.valueOf(comV.getText());
                 if (!commentText.isEmpty()) {
                     mDatabase.child("Users").child(id).child("comment")
@@ -158,7 +159,7 @@ public class ViewCenterApp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mDatabase.child("Users").child(id).child("status")
-                        .setValue(getString(R.string.status_rejected));
+                        .setValue(InventoryReservationUtil.STATUS_REJECTED);
                 String commentText = String.valueOf(comV.getText());
                 if (!commentText.isEmpty()) {
                     mDatabase.child("Users").child(id).child("comment")

@@ -94,11 +94,13 @@ public class CenterScheduleActivity extends AppCompatActivity {
     private void renderSlots(List<AppointmentSlotUtil.Slot> availableSlots) {
         slotsContainer.removeAllViews();
         String dateKey = AppointmentSlotUtil.toDateKey(selectedDate);
-        centerRef.child("appointment_slots").child(dateKey)
+        centerRef
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<AppointmentSlotUtil.Slot> allSlots = AppointmentSlotUtil.readSlots(snapshot, false);
+                    public void onDataChange(@NonNull DataSnapshot centerSnapshot) {
+                        DataSnapshot slotsSnapshot = centerSnapshot.child("appointment_slots").child(dateKey);
+                        boolean workingDay = AppointmentSlotUtil.isWorkingDay(centerSnapshot, selectedDate);
+                        List<AppointmentSlotUtil.Slot> allSlots = AppointmentSlotUtil.readSlots(slotsSnapshot, false, workingDay);
                         if (allSlots.isEmpty()) {
                             TextView empty = createSlotText(getString(R.string.schedule_no_slots));
                             slotsContainer.addView(empty);
@@ -159,6 +161,9 @@ public class CenterScheduleActivity extends AppCompatActivity {
         Map<String, Object> slot = new HashMap<>();
         slot.put("time", time);
         slot.put("available", true);
+        slot.put("manual", true);
+        slot.put("created_by", "center");
+        slot.put("source", "manual_center");
         centerRef.child("appointment_slots").child(dateKey).child(slotKey).setValue(slot)
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(this, getString(R.string.schedule_slot_saved), Toast.LENGTH_SHORT).show();

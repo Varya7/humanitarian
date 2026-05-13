@@ -13,13 +13,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Утилита для расписания центра: хранит рабочее время как диапазон,
- * генерирует свободные окна на выбранный день и бронирует окно при подаче заявки.
+ * РЈС‚РёР»РёС‚Р° РґР»СЏ СЂР°СЃРїРёСЃР°РЅРёСЏ С†РµРЅС‚СЂР°: С…СЂР°РЅРёС‚ СЂР°Р±РѕС‡РµРµ РІСЂРµРјСЏ РєР°Рє РґРёР°РїР°Р·РѕРЅ,
+ * РіРµРЅРµСЂРёСЂСѓРµС‚ СЃРІРѕР±РѕРґРЅС‹Рµ РѕРєРЅР° РЅР° РІС‹Р±СЂР°РЅРЅС‹Р№ РґРµРЅСЊ Рё Р±СЂРѕРЅРёСЂСѓРµС‚ РѕРєРЅРѕ РїСЂРё РїРѕРґР°С‡Рµ Р·Р°СЏРІРєРё.
  */
 public final class AppointmentSlotUtil {
 
@@ -33,7 +35,7 @@ public final class AppointmentSlotUtil {
     }
 
     /**
-     * Одно окно записи центра.
+     * РћРґРЅРѕ РѕРєРЅРѕ Р·Р°РїРёСЃРё С†РµРЅС‚СЂР°.
      */
     public static class Slot {
         public String key;
@@ -42,10 +44,13 @@ public final class AppointmentSlotUtil {
         public String applicationId;
         public String userId;
         public String fio;
+        public String status;
+        public String pickupCode;
+        public boolean manual;
     }
 
     /**
-     * Загружает слоты дня. Если слотов ещё нет, создаёт их из графика центра.
+     * Р—Р°РіСЂСѓР¶Р°РµС‚ СЃР»РѕС‚С‹ РґРЅСЏ. Р•СЃР»Рё СЃР»РѕС‚РѕРІ РµС‰С‘ РЅРµС‚, СЃРѕР·РґР°С‘С‚ РёС… РёР· РіСЂР°С„РёРєР° С†РµРЅС‚СЂР°.
      */
     public static void loadOrCreateSlots(DatabaseReference centerRef, String displayDate, SlotsCallback callback) {
         if (centerRef == null || TextUtils.isEmpty(displayDate)) {
@@ -63,8 +68,9 @@ public final class AppointmentSlotUtil {
             @Override
             public void onDataChange(@NonNull DataSnapshot centerSnapshot) {
                 DataSnapshot slotsSnapshot = centerSnapshot.child("appointment_slots").child(dateKey);
+                boolean workingDay = isWorkingDay(centerSnapshot, displayDate);
                 if (slotsSnapshot.exists()) {
-                    if (callback != null) callback.onLoaded(readSlots(slotsSnapshot, true));
+                    if (callback != null) callback.onLoaded(readSlots(slotsSnapshot, true, workingDay));
                     return;
                 }
 
@@ -75,6 +81,8 @@ public final class AppointmentSlotUtil {
                     Map<String, Object> slot = new HashMap<>();
                     slot.put("time", time);
                     slot.put("available", true);
+                    slot.put("manual", false);
+                    slot.put("created_by", "auto");
                     slot.put("created_at", ServerValue.TIMESTAMP);
                     updates.put("appointment_slots/" + dateKey + "/" + slotKey, slot);
                 }
@@ -89,7 +97,7 @@ public final class AppointmentSlotUtil {
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        if (callback != null) callback.onLoaded(readSlots(snapshot, true));
+                                        if (callback != null) callback.onLoaded(readSlots(snapshot, true, workingDay));
                                     }
 
                                     @Override
@@ -110,7 +118,7 @@ public final class AppointmentSlotUtil {
     }
 
     /**
-     * Бронирует выбранное окно за заявкой.
+     * Р‘СЂРѕРЅРёСЂСѓРµС‚ РІС‹Р±СЂР°РЅРЅРѕРµ РѕРєРЅРѕ Р·Р° Р·Р°СЏРІРєРѕР№.
      */
     public static void bookSlot(
             DatabaseReference centerRef,
@@ -129,12 +137,13 @@ public final class AppointmentSlotUtil {
         updates.put("applicationId", applicationId);
         updates.put("userId", userId);
         updates.put("fio", fio);
+        updates.put("status", InventoryReservationUtil.STATUS_APPROVED);
         updates.put("booked_at", ServerValue.TIMESTAMP);
         centerRef.child("appointment_slots").child(dateKey).child(slotKey).updateChildren(updates);
     }
 
     /**
-     * Преобразует отображаемую дату d/M/yyyy в безопасный ключ yyyyMMdd.
+     * РџСЂРµРѕР±СЂР°Р·СѓРµС‚ РѕС‚РѕР±СЂР°Р¶Р°РµРјСѓСЋ РґР°С‚Сѓ d/M/yyyy РІ Р±РµР·РѕРїР°СЃРЅС‹Р№ РєР»СЋС‡ yyyyMMdd.
      */
     public static String toDateKey(String displayDate) {
         Calendar calendar = parseDate(displayDate);
@@ -151,16 +160,39 @@ public final class AppointmentSlotUtil {
     }
 
     public static List<Slot> readSlots(DataSnapshot slotsSnapshot, boolean onlyAvailable) {
+        return readSlots(slotsSnapshot, onlyAvailable, true);
+    }
+
+    public static List<Slot> readSlots(DataSnapshot slotsSnapshot, boolean onlyAvailable, boolean workingDay) {
         List<Slot> slots = new ArrayList<>();
         for (DataSnapshot child : slotsSnapshot.getChildren()) {
             Slot slot = new Slot();
             slot.key = child.getKey();
             slot.time = child.child("time").getValue(String.class);
-            Boolean available = child.child("available").getValue(Boolean.class);
-            slot.available = available == null || available;
+            Object available = child.child("available").getValue();
+            slot.available = available == null || truthyDayValue(available);
             slot.applicationId = child.child("applicationId").getValue(String.class);
             slot.userId = child.child("userId").getValue(String.class);
             slot.fio = child.child("fio").getValue(String.class);
+            slot.status = child.child("status").getValue(String.class);
+            slot.pickupCode = child.child("pickupCode").getValue(String.class);
+            String createdBy = child.child("created_by").getValue(String.class);
+            String source = child.child("source").getValue(String.class);
+            slot.manual = "center".equals(createdBy)
+                    || "manual_center".equals(source);
+            boolean oldBookedSlotWithoutStatus = !slot.available
+                    && TextUtils.isEmpty(slot.status)
+                    && !TextUtils.isEmpty(slot.applicationId);
+            if (!slot.available && !isScheduledStatus(slot.status) && !oldBookedSlotWithoutStatus) {
+                slot.available = true;
+                slot.applicationId = null;
+                slot.userId = null;
+                slot.fio = null;
+                slot.pickupCode = null;
+            }
+            if (!workingDay && slot.available && !slot.manual) {
+                continue;
+            }
             if (!TextUtils.isEmpty(slot.time) && (!onlyAvailable || slot.available)) {
                 slots.add(slot);
             }
@@ -193,28 +225,34 @@ public final class AppointmentSlotUtil {
         return result;
     }
 
-    private static boolean isWorkingDay(DataSnapshot centerSnapshot, String displayDate) {
+    public static boolean isWorkingDay(DataSnapshot centerSnapshot, String displayDate) {
         Calendar date = parseDate(displayDate);
         if (date == null) return true;
 
         DataSnapshot daysSnapshot = centerSnapshot.child("working_days");
-        if (!daysSnapshot.exists()) return true;
-
         int day = date.get(Calendar.DAY_OF_WEEK);
         String key = dayKey(day);
+        if (!daysSnapshot.exists()) return isDefaultWorkingDay(key);
+
 
         if (daysSnapshot.child(key).exists()) {
-            Boolean value = daysSnapshot.child(key).getValue(Boolean.class);
-            return value == null || value;
+            return truthyDayValue(daysSnapshot.child(key).getValue());
         }
 
-        Object raw = daysSnapshot.getValue();
-        if (raw instanceof String) {
-            String text = ((String) raw).toLowerCase(Locale.ROOT);
-            return text.contains(key) || text.contains(String.valueOf(day));
+        WorkingDays parsed = parseWorkingDays(daysSnapshot);
+        if (parsed.hasExplicitSelected) {
+            return parsed.selected.contains(key);
+        }
+        if (parsed.hasExplicitClosed) {
+            return true;
         }
 
-        return true;
+        return isDefaultWorkingDay(key);
+    }
+
+    private static boolean isScheduledStatus(String status) {
+        return InventoryReservationUtil.STATUS_APPROVED.equals(status)
+                || InventoryReservationUtil.STATUS_ISSUED.equals(status);
     }
 
     private static Calendar parseDate(String displayDate) {
@@ -254,9 +292,115 @@ public final class AppointmentSlotUtil {
         }
     }
 
+    private static boolean isDefaultWorkingDay(String key) {
+        return !"sat".equals(key) && !"sun".equals(key);
+    }
+
+    private static WorkingDays parseWorkingDays(DataSnapshot daysSnapshot) {
+        WorkingDays result = new WorkingDays();
+        Object raw = daysSnapshot.getValue();
+        if (raw instanceof String) {
+            addDaysFromText(result, (String) raw);
+            return result;
+        }
+
+        for (DataSnapshot child : daysSnapshot.getChildren()) {
+            String keyDay = normalizeDay(child.getKey());
+            String valueDay = normalizeDay(child.getValue());
+            if (!TextUtils.isEmpty(valueDay)) {
+                result.selected.add(valueDay);
+                result.hasExplicitSelected = true;
+            } else if (!TextUtils.isEmpty(keyDay)) {
+                if (truthyDayValue(child.getValue())) {
+                    result.selected.add(keyDay);
+                    result.hasExplicitSelected = true;
+                } else {
+                    result.hasExplicitClosed = true;
+                }
+            }
+        }
+        return result;
+    }
+
+    private static void addDaysFromText(WorkingDays result, String value) {
+        if (value == null) return;
+        String[] parts = value.toLowerCase(Locale.ROOT).split("[,\\s;|]+");
+        for (String part : parts) {
+            String day = normalizeDay(part);
+            if (!TextUtils.isEmpty(day)) {
+                result.selected.add(day);
+                result.hasExplicitSelected = true;
+            }
+        }
+    }
+
+    private static String normalizeDay(Object value) {
+        if (value == null) return "";
+        String text = String.valueOf(value).trim().toLowerCase(Locale.ROOT);
+        switch (text) {
+            case "1":
+            case "mon":
+            case "monday":
+            case "\u043f\u043d":
+            case "\u043f\u043e\u043d\u0435\u0434\u0435\u043b\u044c\u043d\u0438\u043a":
+                return "mon";
+            case "2":
+            case "tue":
+            case "tuesday":
+            case "\u0432\u0442":
+            case "\u0432\u0442\u043e\u0440\u043d\u0438\u043a":
+                return "tue";
+            case "3":
+            case "wed":
+            case "wednesday":
+            case "\u0441\u0440":
+            case "\u0441\u0440\u0435\u0434\u0430":
+                return "wed";
+            case "4":
+            case "thu":
+            case "thursday":
+            case "\u0447\u0442":
+            case "\u0447\u0435\u0442\u0432\u0435\u0440\u0433":
+                return "thu";
+            case "5":
+            case "fri":
+            case "friday":
+            case "\u043f\u0442":
+            case "\u043f\u044f\u0442\u043d\u0438\u0446\u0430":
+                return "fri";
+            case "6":
+            case "sat":
+            case "saturday":
+            case "\u0441\u0431":
+            case "\u0441\u0443\u0431\u0431\u043e\u0442\u0430":
+                return "sat";
+            case "0":
+            case "7":
+            case "sun":
+            case "sunday":
+            case "\u0432\u0441":
+            case "\u0432\u043e\u0441\u043a\u0440\u0435\u0441\u0435\u043d\u044c\u0435":
+                return "sun";
+            default:
+                return "";
+        }
+    }
+    private static boolean truthyDayValue(Object value) {
+        if (value == null) return false;
+        if (value instanceof Boolean) return (Boolean) value;
+        String text = String.valueOf(value).trim().toLowerCase(Locale.ROOT);
+        return !"false".equals(text) && !"0".equals(text) && !"null".equals(text);
+    }
+
+    private static class WorkingDays {
+        final Set<String> selected = new HashSet<>();
+        boolean hasExplicitSelected;
+        boolean hasExplicitClosed;
+    }
+
     private static String[] parseLegacyWorkTime(String value) {
         if (value == null) return new String[]{"09:00", "18:00"};
-        String normalized = value.replace("—", "-").replace("–", "-");
+        String normalized = value.replace("вЂ”", "-").replace("вЂ“", "-");
         String[] parts = normalized.split("-");
         if (parts.length >= 2) {
             return new String[]{parts[0].trim(), parts[1].trim()};
@@ -285,3 +429,4 @@ public final class AppointmentSlotUtil {
         }
     }
 }
+

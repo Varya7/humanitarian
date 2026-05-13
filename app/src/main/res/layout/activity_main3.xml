@@ -37,8 +37,8 @@
             android:inputType="date"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="12dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
+            android:focusable="false"
+            android:clickable="true"
             />
 
         <EditText
@@ -51,8 +51,8 @@
             android:inputType="time"
             android:background="@drawable/edittext_background"
             android:layout_marginBottom="16dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
+            android:focusable="false"
+            android:clickable="true"
             />
 
         <androidx.recyclerview.widget.RecyclerView

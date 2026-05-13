@@ -238,6 +238,7 @@
     <string name="schedule_manage">Календарь записей</string>
     <string name="schedule_choose_slot">Выберите свободное окно</string>
     <string name="schedule_no_slots">На выбранный день нет свободных окон</string>
+    <string name="schedule_day_off">Центр не работает в выбранный день</string>
     <string name="schedule_slot_saved">Окно сохранено</string>
     <string name="schedule_slot_deleted">Окно удалено</string>
     <string name="schedule_add_slot">Добавить окно</string>
